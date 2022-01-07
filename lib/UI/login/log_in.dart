@@ -169,8 +169,8 @@ class _Log_InState extends State<Log_In> {
   }
 
   _loginMethod() {
-    _emailcontroller.text = "y@y.com";
-    _passwordcontroller.text = "1234567";
+    _emailcontroller.text = "m@m.com";
+    _passwordcontroller.text = "123456";
     if (_emailcontroller.text.isEmpty) {
       showToast("Enter Email");
       return;

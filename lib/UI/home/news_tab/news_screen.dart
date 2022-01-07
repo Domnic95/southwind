@@ -1,217 +1,23 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:southwind/Models/news/singleNews.dart';
+import 'package:southwind/UI/components/NetworkImageLoader.dart';
+
+import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/news_tab/comment_tab.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/component/bottom_navigation.dart';
 import 'package:southwind/component/navigationtheme.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:southwind/data/providers/news_notifier.dart';
+import 'package:southwind/data/providers/providers.dart';
+import 'package:video_player/video_player.dart';
 
 const String profilePath = "assets/images/image2.jpg";
 
-class Post {
-  final String name;
-  final List<String> image;
-  final String user;
-  final String message;
-  final String profile;
-  final String time;
-  final String like;
-  final String comment;
-  Post(
-      {this.image = const [],
-      this.name = "Southwind Ops",
-      this.message = "",
-      this.user = "",
-      this.time = "",
-      this.like = "",
-      this.comment = "",
-      this.profile = "assets/images/southwind_logo_single.png"});
-}
-
-List<Post> posts = [
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "Happy birthday to these Southwinders this week and congrats to those celebrating their anniversary!",
-    user: "Domnic_lakra",
-    time: "10 h",
-    like: "14",
-    comment: "2",
-    image: ["assets/images/celebrations.jpeg"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "To wrap up performers week, we have our business of the month which was Indianapolis! Congrats on an amazing month, tea!",
-    user: "Domnic_lakra",
-    time: "a day",
-    like: "37",
-    comment: "13",
-    image: ["assets/images/businesofthemonth.png"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "Huge shoutout to Salt Lake City for being the most engaged franchise on the Southwinds App for the month of November! Bryce and his team liked and commented on all post from last month, amazing work! Thank you for continued support of the app!",
-    user: "Domnic_lakra",
-    time: "a day",
-    like: "41",
-    comment: "14",
-    image: ["assets/images/saltlake.png"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "The top truckers from every Junk franchise for the month of November! Great work all aroung, Southwind!",
-    user: "Domnic_lakra",
-    time: "3 day",
-    like: "50",
-    comment: "18",
-    image: ["assets/images/totruckers.png"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "More great career path advancements to recognize today! Shoutput to Raymond and DaQuan on being the newest CSLs in Southwind!",
-    user: "Domnic_lakra",
-    time: "4 day",
-    like: "41",
-    comment: "14",
-    image: ["assets/images/daquanmartin.png"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "Shoutout to Beau in SLC on also being the newest CSL in Southwind!",
-    user: "Domnic_lakra",
-    time: "4 day",
-    like: "38",
-    comment: "15",
-    image: ["assets/images/beauflygare.png"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "Today is all about career path recognition! Starting out with KC, shoutout toRichard, River, and Zach on being the newest CSIs in Southwind!",
-    user: "Domnic_lakra",
-    time: "4 day",
-    like: "38",
-    comment: "12",
-    image: ["assets/images/richardfisher.png"],
-  ),
-  Post(
-    name: "Southwind Ops",
-    message:
-        "Shoutout to Chris Scott on being named MVPs tech of the month for November! Way to be excellent, Chris!",
-    user: "________________",
-    time: "11h",
-    like: "23",
-    comment: "7",
-    image: [
-      "assets/images/chris_scott.jpeg",
-      "assets/images/tre_daniels.jpeg",
-      "assets/images/john_bonebrank.jpeg",
-      "assets/images/rhonda_van.jpeg",
-      "assets/images/johnique_cherry.jpeg",
-    ],
-  ),
-  Post(
-    name: "Southwind Ops",
-    message:
-        "Shoutout to tre Daniels on being named Move of the Month for thr month of November! Keep up the great work, Tre!",
-    user: "Domnic_lakra",
-    time: "15h",
-    like: "31",
-    comment: "8",
-    image: ["assets/images/tre_daniels.jpeg"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "Big shoutout to John Bonebrake for beign named the top Commercial Service Advisor for the month of November! Way to set the standard, Bonebrake!",
-    user: "Domnic_lakra",
-    time: "a day",
-    like: "40",
-    comment: "19",
-    image: ["assets/images/john_bonebrank.jpeg"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "Enrollment for the enterpreneurship has officially closed! Thank you to all who applied! New inductees will be announced on the 20th!",
-    user: "Domnic_lakra",
-    time: "a day",
-    like: "35",
-    comment: "5",
-    image: ["assets/images/enrollment.jpeg"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "Shoutout to Rhonda at MVP for Having another monster month last month! Check out her stats below. Keep up the amazing work, RVA!",
-    user: "Domnic_lakra",
-    time: "2 day",
-    like: "41",
-    comment: "12",
-    image: ["assets/images/rhonda_van.jpeg"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "This week we will be highlighting the top performers from different areas of Southwind! We're staring it off with the You Move Me Call Center, where Johnique wastop in class last month! Keep up the great work, Johnique!",
-    user: "Domnic_lakra",
-    time: "3 day",
-    like: "42",
-    comment: "14",
-    image: ["assets/images/johnique_cherry.jpeg"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "Happy birthday to these Southwinders this week and congrats to those celebrating their anniversary!",
-    user: "Domnic_lakra",
-    time: "3 day",
-    like: "41",
-    comment: "6",
-    image: ["assets/images/celebrations.jpeg"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "On his way into work earlie this week, Gabe saw a billboard for a missing person in the Sallt Lake / Park City area. Using the description of the man and the vehicle, him and Marcus drove out to Park City and they spotted the man that fit the description. They immediately called highway patrol to let them know and a few hours later they called them back to let them know that it was indeed the missing person! \n\n Way to go literally above and beyond to help serve your community, Gabe & Marcus!",
-    user: "Domnic_lakra",
-    time: "5 day",
-    like: "57",
-    comment: "13",
-    image: [
-      "assets/images/got_junk.jpeg",
-      "assets/images/tim_liciaga.jpeg",
-      "assets/images/rankings.jpeg",
-    ],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "Shoutout Tim & Lieth in Connecticut for being the newest CSL in Southwind!",
-    user: "Domnic_lakra",
-    time: "7 day",
-    like: "49",
-    comment: "11",
-    image: ["assets/images/tim_liciaga.jpeg"],
-  ),
-  Post(
-    name: "Southwind Ops ",
-    message:
-        "More great improvement on Google Reviews this past week! Keep pushing this last month, Southwind!",
-    user: "Domnic_lakra",
-    time: "7 day",
-    like: "40",
-    comment: "5",
-    image: ["assets/images/rankings.jpeg"],
-  ),
-];
-
-class NewsScreen extends StatefulWidget {
+class NewsScreen extends StatefulHookWidget {
   const NewsScreen({Key? key}) : super(key: key);
 
   @override
@@ -220,64 +26,101 @@ class NewsScreen extends StatefulWidget {
 
 class _NewsScreenState extends State<NewsScreen> {
   int selectedIndex = 0;
+  bool loading = true;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadData();
+  }
+
+  loadData() async {
+    await context.read(newsNotifierProvider).fetchNews();
+    setState(() {
+      loading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final _newsNotifier = useProvider(newsNotifierProvider);
     // return SingleChildScrollView(child: FeedPost());
     return Scaffold(
-      body: ListView.builder(
-        padding: EdgeInsets.only(top: 3),
-        itemBuilder: (context, index) {
-          return FeedPost(
-            post: posts[index],
-          );
-        },
-        itemCount: posts.length,
-      ),
-      // bottomNavigationBar: FFNavigationBar(
-      //   theme: FFNavigationBarTheme(
-      //     barBackgroundColor: Colors.white,
-      //     selectedItemBackgroundColor: primarySwatch[50]!,
-      //     selectedItemIconColor: Colors.black,
-      //     selectedItemLabelColor: Colors.black,
-      //   ),
-      //   selectedIndex: selectedIndex,
-      //   onSelectTab: (index) {
-      //     setState(() {
-      //       selectedIndex = index;
-      //     });
-      //   },
-      //   items: [
-      //     FFNavigationBarItem(
-      //       iconData: Icons.feed_outlined,
-      //       label: 'News',
-      //     ),
-      //     FFNavigationBarItem(
-      //       iconData: Icons.schedule_outlined,
-      //       label: 'Schedule',
-      //     ),
-      //     FFNavigationBarItem(
-      //       iconData: Icons.school_outlined,
-      //       label: 'Career',
-      //     ),
-      //     FFNavigationBarItem(
-      //       iconData: Icons.groups_outlined,
-      //       label: 'Team',
-      //     ),
-      //     FFNavigationBarItem(
-      //       iconData: Icons.account_circle_outlined,
-      //       label: 'Settings',
-      //     ),
-      //   ],
-      // ),
-    );
+        body: loading
+            ? LoadingWidget()
+            : ListView.builder(
+                padding: EdgeInsets.only(top: 3),
+                itemBuilder: (context, index) {
+                  return FeedPost(
+                    post: _newsNotifier.total_news[index],
+                    index: index,
+                  );
+                },
+                itemCount: _newsNotifier.total_news.length,
+              )
+        // FutureBuilder(
+        //     future: _newsNotifier.fetchNews(),
+        //     builder: (context, AsyncSnapshot snapshot) {
+        //       if (snapshot.connectionState == ConnectionState.done) {
+        //         return ListView.builder(
+        //           padding: EdgeInsets.only(top: 3),
+        //           itemBuilder: (context, index) {
+        //             return FeedPost(post: _newsNotifier.total_news[index]);
+        //           },
+        //           itemCount: _newsNotifier.total_news.length,
+        //         );
+        //       } else {
+        //         return LoadingWidget();
+        //       }
+        //     }),
+        // bottomNavigationBar: FFNavigationBar(
+        //   theme: FFNavigationBarTheme(
+        //     barBackgroundColor: Colors.white,
+        //     selectedItemBackgroundColor: primarySwatch[50]!,
+        //     selectedItemIconColor: Colors.black,
+        //     selectedItemLabelColor: Colors.black,
+        //   ),
+        //   selectedIndex: selectedIndex,
+        //   onSelectTab: (index) {
+        //     setState(() {
+        //       selectedIndex = index;
+        //     });
+        //   },
+        //   items: [
+        //     FFNavigationBarItem(
+        //       iconData: Icons.feed_outlined,
+        //       label: 'News',
+        //     ),
+        //     FFNavigationBarItem(
+        //       iconData: Icons.schedule_outlined,
+        //       label: 'Schedule',
+        //     ),
+        //     FFNavigationBarItem(
+        //       iconData: Icons.school_outlined,
+        //       label: 'Career',
+        //     ),
+        //     FFNavigationBarItem(
+        //       iconData: Icons.groups_outlined,
+        //       label: 'Team',
+        //     ),
+        //     FFNavigationBarItem(
+        //       iconData: Icons.account_circle_outlined,
+        //       label: 'Settings',
+        //     ),
+        //   ],
+        // ),
+        );
   }
 }
 
 class FeedPost extends StatefulWidget {
-  final Post post;
+  SingleNews post;
+  int index;
 
-  const FeedPost({required this.post, Key? key}) : super(key: key);
+  FeedPost({
+    required this.post,
+    required this.index,
+  });
 
   @override
   _FeedPostState createState() => _FeedPostState();
@@ -292,6 +135,7 @@ class _FeedPostState extends State<FeedPost> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final _newsNotifier = context.read(newsNotifierProvider);
 
     return Card(
       elevation: 5,
@@ -305,8 +149,8 @@ class _FeedPostState extends State<FeedPost> {
               child: Row(
                 children: [
                   CircleAvatar(
-                    backgroundImage: AssetImage(
-                      widget.post.profile,
+                    backgroundImage: NetworkImage(
+                      widget.post.userImage!,
                     ),
                     backgroundColor: Colors.white,
                   ),
@@ -317,12 +161,12 @@ class _FeedPostState extends State<FeedPost> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.post.name,
+                        widget.post.firstName!,
                         style: Theme.of(context).textTheme.bodyText1!.copyWith(
                             fontSize: 16, fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        "${widget.post.time} ago",
+                        "${widget.post.timeDifference}",
                         style: Theme.of(context).textTheme.bodyText1!.copyWith(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
@@ -342,7 +186,8 @@ class _FeedPostState extends State<FeedPost> {
               child: ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: MultipleImageView(
-                    images: widget.post.image,
+                    images: [widget.post.mediaUrl!],
+                    mediaType: widget.post.mediaType!,
                     Pagecontroller: controller,
                     onIndexChanged: (a) {
                       currentIndex = a;
@@ -358,11 +203,19 @@ class _FeedPostState extends State<FeedPost> {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.favorite_border),
+                      InkWell(
+                          onTap: () {
+                            !widget.post.liked!
+                                ? _newsNotifier.like(widget.index)
+                                : _newsNotifier.dislike(widget.index);
+                          },
+                          child: Icon(widget.post.liked!
+                              ? Icons.favorite
+                              : Icons.favorite_border)),
                       SizedBox(
                         width: 5,
                       ),
-                      Text("${widget.post.like}"),
+                      Text("${widget.post.likes}"),
                       // SizedBox(
                       //   width: 10,
                       // ),
@@ -376,7 +229,7 @@ class _FeedPostState extends State<FeedPost> {
                       // SizedBox(
                       //   width: 5,
                       // ),
-                      Text("${widget.post.comment}"),
+                      Text("comment"),
                       SizedBox(
                         width: 5,
                       ),
@@ -384,8 +237,7 @@ class _FeedPostState extends State<FeedPost> {
                   ),
                   Expanded(
                     child: ImageIndicator(
-                        pageController: controller,
-                        totalIndex: widget.post.image.length),
+                        pageController: controller, totalIndex: 1),
                   ),
                   Expanded(child: Container()),
                 ],
@@ -400,14 +252,14 @@ class _FeedPostState extends State<FeedPost> {
                         text: TextSpan(
                       children: [
                         TextSpan(
-                            text: "${widget.post.name}  ",
+                            text: "${widget.post.firstName}  ",
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyText1!
                                 .copyWith(
                                     fontWeight: FontWeight.w600, fontSize: 14)),
                         TextSpan(
-                          text: widget.post.message,
+                          text: widget.post.description,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
                             fontSize: 14,
@@ -500,34 +352,67 @@ class _ImageIndicatorState extends State<ImageIndicator> {
   }
 }
 
-class MultipleImageView extends StatelessWidget {
+class MultipleImageView extends StatefulWidget {
   final List<String> images;
+  final MediaType mediaType;
+
   final Function(int) onIndexChanged;
   final PageController Pagecontroller;
   const MultipleImageView(
       {required this.images,
+      required this.mediaType,
       required this.Pagecontroller,
       required this.onIndexChanged,
       Key? key})
       : super(key: key);
 
   @override
+  _MultipleImageViewState createState() => _MultipleImageViewState();
+}
+
+class _MultipleImageViewState extends State<MultipleImageView> {
+  late VideoPlayerController _controller;
+  @override
+  void initState() {
+    // TODO: implement initState
+    if (widget.mediaType == MediaType.VIDEO) {
+      _controller = VideoPlayerController.network(widget.images.first)
+        ..initialize().then((_) {
+          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+          setState(() {});
+          _controller.play();
+        });
+    }
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+
+    super.dispose();
+    if (widget.mediaType == MediaType.VIDEO) _controller.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (images.length == 1) {
-      return Image.asset(
-        images.first,
-        fit: BoxFit.scaleDown,
-      );
+    if (widget.images.length == 1) {
+      return widget.mediaType == MediaType.VIDEO
+          ? VideoPlayer(_controller)
+          : NetworkImagesLoader(
+              url: widget.images.first,
+              fit: BoxFit.cover,
+            );
     }
     return Container(
       child: PageView(
-        controller: Pagecontroller,
-        onPageChanged: onIndexChanged,
+        controller: widget.Pagecontroller,
+        onPageChanged: widget.onIndexChanged,
         children: [
-          ...images
-              .map((e) => Image.asset(
-                    e,
-                    fit: BoxFit.scaleDown,
+          ...widget.images
+              .map((e) => NetworkImagesLoader(
+                    url: e,
+                    fit: BoxFit.cover,
                   ))
               .toList(),
         ],

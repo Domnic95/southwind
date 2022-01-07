@@ -101,8 +101,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
       //   },
       // );
 
-      case DrawerIndex.Incentives:
-        return Incentives();
+      // case DrawerIndex.Incentives:
+      //   return Incentives();
       case DrawerIndex.Library:
         return Library();
         break;

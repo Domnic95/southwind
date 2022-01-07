@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 
 class CommonTextField extends StatelessWidget {
+  final TextEditingController? controller;
   final int? maxlines;
   final TextStyle? style;
   final String? hint;
@@ -9,7 +10,8 @@ class CommonTextField extends StatelessWidget {
   final Color? filledColor;
   final TextStyle? hinstyle;
   const CommonTextField(
-      {this.maxlines,
+      {required this.controller,
+      this.maxlines,
       this.hinstyle,
       this.hint,
       this.filledColor,
@@ -21,6 +23,7 @@ class CommonTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       maxLines: maxlines,
       style: style ??
           TextStyle(

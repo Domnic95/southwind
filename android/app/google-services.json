@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "259479461676",
+    "project_id": "southwind-f5cf9",
+    "storage_bucket": "southwind-f5cf9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259479461676:android:ab7870bf863e2f7a6d1689",
+        "android_client_info": {
+          "package_name": "com.app.southwind"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259479461676-ffgfeeul2r1erg7nbhiqnb7gaedfsbeb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0cy40LsYcdXfHzZhFY-anz5cWoik8mJg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "259479461676-ffgfeeul2r1erg7nbhiqnb7gaedfsbeb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,9 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/all.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
+import 'package:southwind/UI/components/loadingWidget.dart';
+import 'package:southwind/UI/incentives/page/earned_incentive.dart';
+import 'package:southwind/UI/incentives/page/usedIncentive.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/data/providers/providers.dart';
 
-class History extends StatefulWidget {
+class History extends StatefulHookWidget {
   @override
   _HistoryState createState() => _HistoryState();
 }
@@ -16,6 +22,7 @@ class _HistoryState extends State<History> {
   ];
   @override
   Widget build(BuildContext context) {
+    final incentiveProvider = useProvider(incentiveNotifierProvider);
     return SafeArea(
       child: Scaffold(
         appBar: CommonAppbar(),
@@ -144,108 +151,45 @@ class _HistoryState extends State<History> {
             ),
             if (selectedIndex == 0)
               Expanded(
-                  child: ListView.builder(
-                      itemCount: Earneds.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          margin:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          elevation: 3,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: ListTile(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 5),
-                            title: Text(
-                              "${Earneds[index].title}",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 17),
-                            ),
-                            subtitle: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 8,
-                                ),
-                                Text(
-                                  "TOKENS: ${Earneds[index].tokens} \t\t ${Earneds[index].date}",
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
+                  child: FutureBuilder(
+                      future: incentiveProvider.incentiveEarned(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return ListView.builder(
+                              itemCount:
+                                  incentiveProvider.earnedIncentiveList.length,
+                              itemBuilder: (context, index) {
+                                return EarnedIncentive(
+                                  earned: incentiveProvider
+                                      .earnedIncentiveList[index],
+                                );
+                              });
+                        } else {
+                          return LoadingWidget();
+                        }
                       })),
             if (selectedIndex == 1)
               Expanded(
-                child: ListView.builder(
-                  itemCount: 2,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: ListTile(
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                        title: Text(
-                          "${Earneds[index + 5].title}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 17),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                              "TOKENS: ${Earneds[index].tokens} \t\t ${Earneds[index + 5].date}",
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+                  child: FutureBuilder(
+                      future: incentiveProvider.usedIncentive(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          return ListView.builder(
+                            itemCount: 2,
+                            itemBuilder: (context, index) {
+                              return Used_Incentive(
+                                usedIncentive:
+                                    incentiveProvider.usedIncentiveList[index],
+                              );
+                            },
+                          );
+                        } else {
+                          return LoadingWidget();
+                        }
+                      })),
           ],
         ),
       ),
     );
   }
 }
-
-class Earned {
-  String title;
-  int tokens;
-  String date;
-
-  Earned({required this.title, required this.tokens, required this.date});
-}
-
-List<Earned> Earneds = [
-  Earned(
-      title:
-          "Basic Knowledge of city resources, offload sites and restrictions",
-      tokens: 4,
-      date: "21/01/2020"),
-  Earned(title: "test1", tokens: 5, date: "18/12/2019"),
-  Earned(title: "7 september first", tokens: 5, date: "26/11/2019"),
-  Earned(title: "Exercise QFAs routinely", tokens: 2, date: "26/11/2019"),
-  Earned(
-      title: "Understands REEAP and executes consistently",
-      tokens: 11,
-      date: "26/11/2019"),
-  Earned(title: "30 september", tokens: 2, date: "09/10/2019"),
-  Earned(title: "11", tokens: 6, date: "09/10/2019"),
-  Earned(title: "test 2510 - 1", tokens: 17, date: "09/10/2019"),
-  Earned(title: "testing", tokens: 20, date: "09/10/2019"),
-  Earned(title: "300", tokens: 10, date: "009/10/2019"),
-  Earned(title: "Test Career path 2910", tokens: 10, date: "09/10/2019"),
-  Earned(title: "Communicating with Ops", tokens: 17, date: "09/10/201"),
-];

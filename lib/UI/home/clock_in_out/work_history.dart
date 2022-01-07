@@ -2,13 +2,16 @@ import 'dart:developer';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/home/schedule_tab/schedule.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/component/popup.dart';
+import 'package:southwind/data/providers/providers.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class WorkHistory extends StatefulWidget {
+class WorkHistory extends StatefulHookWidget {
   const WorkHistory({Key? key}) : super(key: key);
 
   @override
@@ -25,6 +28,7 @@ class _WorkHistoryState extends State<WorkHistory> {
 
   @override
   Widget build(BuildContext context) {
+    final timerProvider = useProvider(timerNotifierProvider);
     final size = MediaQuery.of(context).size;
     TextStyle defaultTextStyle =
         TextStyle(color: primarySwatch[400]!, fontSize: 14);
@@ -417,7 +421,7 @@ class _WorkHistoryState extends State<WorkHistory> {
               ),
             ),
             if (!isCalenderVisible && !isCheckVisible) ...[
-              ScheduleCard(),
+              // ScheduleCard(),
               ScheduleCard(),
               ScheduleCard(),
             ],

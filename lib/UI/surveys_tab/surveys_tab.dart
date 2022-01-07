@@ -1,12 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:southwind/Models/survey/basic_survey_details.dart';
+import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/career_tab/page/questions_page.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/data/providers/providers.dart';
 import 'package:southwind/routes/routes.dart';
 
 import 'Page/question_tab.dart';
 
-class Surveys_Tab extends StatefulWidget {
+class Surveys_Tab extends StatefulHookWidget {
   @override
   _Surveys_TabState createState() => _Surveys_TabState();
 }
@@ -14,120 +19,132 @@ class Surveys_Tab extends StatefulWidget {
 class _Surveys_TabState extends State<Surveys_Tab> {
   @override
   Widget build(BuildContext context) {
+    final _surveyNotifierProvider = useProvider(surveyNotifierProvider);
+
     return SafeArea(
       child: Scaffold(
-        body: Container(
-          margin: EdgeInsets.symmetric(horizontal: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 30,
-              ),
-              Text(
-                "Interesting Surveys",
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5),
-              ),
-              Text(
-                "6 Surveys",
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              Expanded(
-                child: ListView.builder(
-                  padding: EdgeInsets.only(top: 0, bottom: 60),
-                  itemBuilder: (context, index) {
-                    // if (index == 0) {
-                    //   return Column(
-                    //     mainAxisSize: MainAxisSize.min,
-                    //     children: [
-                    //       Container(
-                    //         decoration: BoxDecoration(
-                    //             color: Color(0xFF53ac54),
-                    //
-                    //             // color: Color(0xFF25AA25),
-                    //             borderRadius: BorderRadius.circular(10)),
-                    //         child: Padding(
-                    //           padding: const EdgeInsets.symmetric(vertical: 10),
-                    //           child: Row(
-                    //             mainAxisAlignment: MainAxisAlignment.start,
-                    //             children: [
-                    //               SizedBox(
-                    //                 width: 20,
-                    //               ),
-                    //               Image.asset(
-                    //                 "assets/images/premiumquality.png",
-                    //                 height: 50,
-                    //               ),
-                    //               SizedBox(
-                    //                 width: 20,
-                    //               ),
-                    //               SizedBox(
-                    //                 width: .5,
-                    //                 height: 55,
-                    //                 child: Container(
-                    //                   color: Colors.white,
-                    //                 ),
-                    //               ),
-                    //               SizedBox(
-                    //                 width: 10,
-                    //               ),
-                    //               Column(
-                    //                 crossAxisAlignment: CrossAxisAlignment.start,
-                    //                 children: [
-                    //                   Text(
-                    //                     "21 STEPS LEFT",
-                    //                     style: TextStyle(
-                    //                         fontSize: 18,
-                    //                         color: Colors.white,
-                    //                         fontWeight: FontWeight.bold),
-                    //                     textAlign: TextAlign.center,
-                    //                   ),
-                    //                   Row(
-                    //                     children: [
-                    //                       Text(
-                    //                         "Certified Sales Leader",
-                    //                         style: TextStyle(color: Colors.white),
-                    //                       ),
-                    //                       Icon(
-                    //                         Icons.arrow_drop_down,
-                    //                         color: Colors.white,
-                    //                       )
-                    //                     ],
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //             ],
-                    //           ),
-                    //         ),
-                    //       ),
-                    //       SizedBox(
-                    //         height: 10,
-                    //       ),
-                    //       SingleCollection(collections[index]),
-                    //     ],
-                    //   );
-                    // }
-                    return SingleCollection(collections[index]);
-                  },
-                  itemCount: collections.length,
-                ),
-              ),
-            ],
-          ),
-        ),
+        body: FutureBuilder(
+            future: _surveyNotifierProvider.getallSurvey(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return Container(
+                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Text(
+                        "Interesting Surveys",
+                        style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5),
+                      ),
+                      Text(
+                        "6 Surveys",
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _surveyNotifierProvider.allSurvey.length,
+                          padding: EdgeInsets.only(top: 0, bottom: 60),
+                          itemBuilder: (context, index) {
+                            // if (index == 0) {
+                            //   return Column(
+                            //     mainAxisSize: MainAxisSize.min,
+                            //     children: [
+                            //       Container(
+                            //         decoration: BoxDecoration(
+                            //             color: Color(0xFF53ac54),
+                            //
+                            //             // color: Color(0xFF25AA25),
+                            //             borderRadius: BorderRadius.circular(10)),
+                            //         child: Padding(
+                            //           padding: const EdgeInsets.symmetric(vertical: 10),
+                            //           child: Row(
+                            //             mainAxisAlignment: MainAxisAlignment.start,
+                            //             children: [
+                            //               SizedBox(
+                            //                 width: 20,
+                            //               ),
+                            //               Image.asset(
+                            //                 "assets/images/premiumquality.png",
+                            //                 height: 50,
+                            //               ),
+                            //               SizedBox(
+                            //                 width: 20,
+                            //               ),
+                            //               SizedBox(
+                            //                 width: .5,
+                            //                 height: 55,
+                            //                 child: Container(
+                            //                   color: Colors.white,
+                            //                 ),
+                            //               ),
+                            //               SizedBox(
+                            //                 width: 10,
+                            //               ),
+                            //               Column(
+                            //                 crossAxisAlignment: CrossAxisAlignment.start,
+                            //                 children: [
+                            //                   Text(
+                            //                     "21 STEPS LEFT",
+                            //                     style: TextStyle(
+                            //                         fontSize: 18,
+                            //                         color: Colors.white,
+                            //                         fontWeight: FontWeight.bold),
+                            //                     textAlign: TextAlign.center,
+                            //                   ),
+                            //                   Row(
+                            //                     children: [
+                            //                       Text(
+                            //                         "Certified Sales Leader",
+                            //                         style: TextStyle(color: Colors.white),
+                            //                       ),
+                            //                       Icon(
+                            //                         Icons.arrow_drop_down,
+                            //                         color: Colors.white,
+                            //                       )
+                            //                     ],
+                            //                   ),
+                            //                 ],
+                            //               ),
+                            //             ],
+                            //           ),
+                            //         ),
+                            //       ),
+                            //       SizedBox(
+                            //         height: 10,
+                            //       ),
+                            //       SingleCollection(collections[index]),
+                            //     ],
+                            //   );
+                            // }
+                            return SingleCollection(
+                                _surveyNotifierProvider.allSurvey[index]);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                return LoadingWidget();
+              }
+            }),
       ),
     );
   }
 }
 
 class SingleCollection extends StatelessWidget {
-  final QuestionCollection collection;
+  final BasicSurveyDetail collection;
 
   const SingleCollection(this.collection, {Key? key}) : super(key: key);
 
@@ -163,7 +180,7 @@ class SingleCollection extends StatelessWidget {
                     child: Icon(Icons.settings),
                   ),
                   title: Text(
-                    collection.title,
+                    collection.title!.toString(),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -177,7 +194,7 @@ class SingleCollection extends StatelessWidget {
                     color: primarySwatch[900],
                   ),
                   subtitle: Text(
-                    "${collection.totalQuestion} Question",
+                    "-${0} Question",
                     style: TextStyle(color: primarySwatch[500], fontSize: 12),
                   ),
                 ),
@@ -189,22 +206,3 @@ class SingleCollection extends StatelessWidget {
     );
   }
 }
-
-class QuestionCollection {
-  final String title;
-  final int totalQuestion;
-
-  QuestionCollection({this.title = "", this.totalQuestion = 0});
-}
-
-final List<QuestionCollection> collections = [
-  QuestionCollection(
-      title: "Being Exceptional at Accountabilty", totalQuestion: 6),
-  QuestionCollection(title: "Cautious Driving", totalQuestion: 11),
-  QuestionCollection(title: "Closing an On Site Estimate", totalQuestion: 4),
-  QuestionCollection(
-      title: "Coaching Relational vs. Transactional", totalQuestion: 20),
-  QuestionCollection(
-      title: "Being Exceptional at Accountabilty", totalQuestion: 12),
-  QuestionCollection(title: "Cautious Driving", totalQuestion: 10),
-];

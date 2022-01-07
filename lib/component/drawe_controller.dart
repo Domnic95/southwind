@@ -10,7 +10,7 @@ enum DrawerIndex {
   Home,
   LeaderBoard,
   // Payment,
-  Incentives,
+  // Incentives,
   Library,
   // Passbook,
   Surveys,
@@ -211,15 +211,22 @@ class _DrawerUserControllerState extends State<DrawerUserController>
                             ),
                             centerTitle: true,
                             actions: [
-                              (widget.screenIndex == DrawerIndex.Incentives)
-                                  ? IconButton(
-                                      icon: Icon(Icons.history),
-                                      onPressed: () {
-                                        Navigator.of(context)
-                                            .pushNamed(Routes.history);
-                                      },
-                                    )
-                                  : Container(),
+                              IconButton(
+                                icon: Icon(Icons.notifications),
+                                onPressed: () {
+                                  Navigator.of(context)
+                                      .pushNamed(Routes.notification);
+                                },
+                              )
+                              // (widget.screenIndex == DrawerIndex.Incentives)
+                              //     ? IconButton(
+                              //         icon: Icon(Icons.history),
+                              //         onPressed: () {
+                              //           Navigator.of(context)
+                              //               .pushNamed(Routes.history);
+                              //         },
+                              //       )
+                              //     : Container(),
                             ]),
                         body: widget.screenView,
                       ),
@@ -385,11 +392,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
         labelName: 'Payment',
         icon: Icon(CupertinoIcons.creditcard),
       ),*/
-      DrawerList(
-        index: DrawerIndex.Incentives,
-        labelName: 'Your Services',
-        icon: Icon(Icons.select_all_rounded),
-      ),
+      // DrawerList(
+      //   index: DrawerIndex.Incentives,
+      //   labelName: 'Your Services',
+      //   icon: Icon(Icons.select_all_rounded),
+      // ),
       DrawerList(
         index: DrawerIndex.Library,
         labelName: 'Wallet',
@@ -420,6 +427,7 @@ class _HomeDrawerState extends State<HomeDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    final _userProvider = context.read(authProvider);
     drawerList = <DrawerList>[
       DrawerList(
         index: DrawerIndex.Home,
@@ -436,11 +444,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
         labelName: 'Payment',
         icon: Icon(CupertinoIcons.creditcard),
       ),*/
-      DrawerList(
-        index: DrawerIndex.Incentives,
-        labelName: 'Incentives',
-        icon: Icon(Icons.paid_outlined),
-      ),
+      // DrawerList(
+      //   index: DrawerIndex.Incentives,
+      //   labelName: 'Incentives',
+      //   icon: Icon(Icons.paid_outlined),
+      // ),
       DrawerList(
         index: DrawerIndex.Library,
         labelName: 'Library',
@@ -538,9 +546,9 @@ class _HomeDrawerState extends State<HomeDrawer> {
                               // mainAxisSize: MainAxisSize.max,
                               children: [
                                 Text(
-                                  "Domnic"
+                                  "${_userProvider.userData!.profileFirstName}"
                                           " " +
-                                      "Lakra",
+                                      "${_userProvider.userData!.profileLastName}",
                                   maxLines: 2,
                                   overflow: TextOverflow.clip,
                                   style: TextStyle(
@@ -550,7 +558,8 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                   ),
                                 ),
                                 Text(
-                                  "domic.skytouch@gmail.com",
+                                  _userProvider.userData!.profileEmail
+                                      .toString(),
                                   maxLines: 1,
                                   style: TextStyle(
                                     fontWeight: FontWeight.w400,

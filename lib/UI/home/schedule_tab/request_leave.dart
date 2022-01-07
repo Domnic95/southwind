@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/components/text_form_field.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/data/providers/providers.dart';
 
-showReuestDialog(BuildContext context) {
+showReuestDialog(BuildContext context, DateTime leaveDateTime) {
   showModalBottomSheet(
     context: context,
     elevation: 10,
@@ -15,16 +18,20 @@ showReuestDialog(BuildContext context) {
     //enableDrag: true,
     // useRootNavigator: true,
     builder: (context) {
-      return RequestLeave();
+      return RequestLeave(
+        leaveDateTime: leaveDateTime,
+      );
     },
   );
 }
 
-class RequestLeave extends StatelessWidget {
-  const RequestLeave({Key? key}) : super(key: key);
-
+class RequestLeave extends HookWidget {
+  DateTime leaveDateTime;
+  RequestLeave({required this.leaveDateTime});
+  TextEditingController controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final _scheduleNotifierProvider = useProvider(scheduleNotifierProvider);
     return Padding(
       padding: MediaQuery.of(context).viewInsets,
       child: Container(
@@ -68,6 +75,7 @@ class RequestLeave extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
                 child: CommonTextField(
+                  controller: controller,
                   maxlines: 6,
                   hinstyle: TextStyle(fontSize: 14, color: Colors.grey),
                   hint: "Enter Reason",
@@ -79,6 +87,14 @@ class RequestLeave extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 child: CommonButton(
+                  ontap: () async {
+                    await _scheduleNotifierProvider.request(
+                        time: leaveDateTime,
+                        reason: controller.text,
+                        context: context);
+                    Navigator.pop(context);
+                    Focus.of(context).dispose();
+                  },
                   lable: "Apply",
                 ),
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:southwind/constant/Global.dart';
 import 'package:southwind/constant/slidedrection.dart';
 
 class Utils {
@@ -32,6 +33,20 @@ class Utils {
       default:
         return Offset(value - 30.0, 0);
     }
+  }
+
+  static setPref(String name, String data) {
+    sharedPreferences.setString(name, data);
+  }
+
+  static String? getPref(
+    String name,
+  ) {
+    return sharedPreferences.getString(name);
+  }
+
+  static removePref() {
+    sharedPreferences.clear();
   }
 }
 

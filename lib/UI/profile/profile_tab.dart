@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:southwind/UI/components/NetworkImageLoader.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/component/dateFormattor.dart';
+import 'package:southwind/data/providers/providers.dart';
 
-class Profile extends StatefulWidget {
+class Profile extends StatefulHookWidget {
   @override
   _ProfileState createState() => _ProfileState();
 }
@@ -13,7 +18,13 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
+    final _userProvider = useProvider(authProvider);
     final size = MediaQuery.of(context).size;
+    DateTime now = DateTime.now();
+    String gap =
+        (now.difference(_userProvider.userData!.startDate).inDays / 365)
+            .toString();
+
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -40,12 +51,15 @@ class _ProfileState extends State<Profile> {
                     // height: size.height * 0.16,
                     child: Padding(
                       padding: EdgeInsets.only(
-                        left: size.width * 0.3,
+                        left: size.width * 0.37,
                       ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Joyce Lathrop",
+                            _userProvider.userData!.profileFirstName +
+                                " " +
+                                _userProvider.userData!.profileLastName,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
@@ -57,36 +71,17 @@ class _ProfileState extends State<Profile> {
                           SizedBox(
                             height: size.height * 0.01,
                           ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    "156",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18),
-                                  ),
-                                  Text(
-                                    "Tokens",
-                                    style: TextStyle(height: 1),
-                                  ),
-                                ],
+                              Text(
+                                gap.split('.')[0],
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 18),
                               ),
-                              Column(
-                                children: [
-                                  Text(
-                                    "5",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18),
-                                  ),
-                                  Text(
-                                    "Y. Service",
-                                    style: TextStyle(height: 1),
-                                  ),
-                                ],
+                              Text(
+                                "Y. Service",
+                                style: TextStyle(height: 1),
                               ),
                             ],
                           ),
@@ -106,13 +101,16 @@ class _ProfileState extends State<Profile> {
                   child: Container(
                     height: size.height * 0.19,
                     width: size.width * 0.3,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
-                          image: NetworkImage(
-                              'https://images.unsplash.com/photo-1638459614085-bdb69b6d3432?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80'),
-                          fit: BoxFit.cover),
-                    ),
+                    // decoration: BoxDecoration(
+                    //   borderRadius: BorderRadius.circular(20),
+                    //   image: DecorationImage(
+                    //       image: NetworkImage(
+                    //           'https://images.unsplash.com/photo-1638459614085-bdb69b6d3432?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80'),
+                    //       fit: BoxFit.cover),
+                    child: NetworkImagesLoader(
+                        url: _userProvider.userData!.userImage,
+                        radius: 20,
+                        fit: BoxFit.cover),
                   ),
                 ),
               ),
@@ -172,7 +170,7 @@ class _ProfileState extends State<Profile> {
                                   color: primarySwatch,
                                   offset: Offset(0, 1.5))
                             ]),
-                        child: Text("27"),
+                        child: Text(_userProvider.userData!.id.toString()),
                       ),
                     ),
                   ),
@@ -195,7 +193,7 @@ class _ProfileState extends State<Profile> {
                             color: primarySwatch[700]),
                       ),
                       subtitle: Text(
-                        "Southwind",
+                        'Southwind',
                         style: TextStyle(
                             // height: 1.5,
                             fontWeight: FontWeight.normal,
@@ -222,7 +220,7 @@ class _ProfileState extends State<Profile> {
                             color: primarySwatch[700]),
                       ),
                       subtitle: Text(
-                        "m@m.com",
+                        _userProvider.userData!.profileEmail,
                         style: TextStyle(
                             // height: 1.5,
                             fontWeight: FontWeight.normal,
@@ -240,7 +238,7 @@ class _ProfileState extends State<Profile> {
                       borderRadius: BorderRadius.circular(12)),
                   child: Padding(
                     padding: EdgeInsets.symmetric(horizontal: 5),
-                    child: ListTile( 
+                    child: ListTile(
                       contentPadding: EdgeInsets.symmetric(horizontal: 18),
                       title: Text(
                         "Start Date",
@@ -249,7 +247,7 @@ class _ProfileState extends State<Profile> {
                             color: primarySwatch[700]),
                       ),
                       subtitle: Text(
-                        "07/12/2021",
+                        dateTime_format(_userProvider.userData!.startDate),
                         style: TextStyle(
                             // height: 1.5,
                             fontWeight: FontWeight.normal,

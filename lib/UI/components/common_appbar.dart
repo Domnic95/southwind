@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 
 class CommonAppbar extends StatelessWidget implements PreferredSizeWidget {
-  final List<Widget>? actions;
-  const CommonAppbar({this.actions, Key? key}) : super(key: key);
+  final Widget actions;
+  const CommonAppbar(
+      {this.actions = const SizedBox(
+        height: 0,
+        width: 0,
+      ),
+      Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +53,14 @@ class CommonAppbar extends StatelessWidget implements PreferredSizeWidget {
         height: 25,
         child: Image.asset("assets/images/southwind_logo.png"),
       ),
-      actions: actions,
+      actions: [
+        IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.notifications,
+            )),
+        actions,
+      ],
       centerTitle: true,
     );
   }

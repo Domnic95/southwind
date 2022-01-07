@@ -1,36 +1,36 @@
 class LibraryModel {
   LibraryModel({
-    required this.id,
-    required this.resourceTitle,
-    required this.resourceDescription,
-    required this.resourceVideoLink,
-    required this.resourceUrl,
-    required this.cloudinaryId,
-    required this.cloudinaryUrl,
-    required this.cloudinarySecureUrl,
-    required this.cloudinaryAudioSecureUrl,
-    required this.resourceType,
-    required this.clientId,
-    required this.resourceStatus,
-    required this.adminUserId,
-    required this.lastModified,
-    required this.cats,
+     this.id,
+     this.resourceTitle,
+     this.resourceDescription,
+     this.resourceVideoLink,
+     this.resourceUrl,
+     this.cloudinaryId,
+     this.cloudinaryUrl,
+     this.cloudinarySecureUrl,
+     this.cloudinaryAudioSecureUrl,
+     this.resourceType,
+     this.clientId,
+     this.resourceStatus,
+     this.adminUserId,
+     this.lastModified,
+     this.cats,
   });
-  late final int id;
-  late final String resourceTitle;
-  late final String resourceDescription;
-  late final String resourceVideoLink;
-  late final String resourceUrl;
-  late final String cloudinaryId;
-  late final String cloudinaryUrl;
-  late final String cloudinarySecureUrl;
-  late final String cloudinaryAudioSecureUrl;
-  late final String resourceType;
-  late final int clientId;
-  late final int resourceStatus;
-  late final int adminUserId;
-  late final String lastModified;
-  late final List<String> cats;
+    int? id;
+    String? resourceTitle;
+    String? resourceDescription;
+   String? resourceVideoLink;
+   String? resourceUrl;
+   String? cloudinaryId;
+   String? cloudinaryUrl;
+   String? cloudinarySecureUrl;
+   String? cloudinaryAudioSecureUrl;
+   String? resourceType;
+   int? clientId;
+   int? resourceStatus;
+   int? adminUserId;
+   String? lastModified;
+   List<String>? cats;
   
   LibraryModel.fromJson(Map<String, dynamic> json){
     id = json['id'];

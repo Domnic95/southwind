@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:southwind/UI/auth_wrapper.dart';
+import 'package:southwind/UI/components/notification.dart';
 import 'package:southwind/UI/home/career_tab/page/questions_page.dart';
 import 'package:southwind/UI/home/chat_tab/group_Info.dart';
 import 'package:southwind/UI/home/chat_tab/group_chat_screen.dart';
@@ -10,6 +11,7 @@ import 'package:southwind/UI/home/home_screen.dart';
 import 'package:southwind/UI/incentives/incentives.dart';
 import 'package:southwind/UI/incentives/page/history.dart';
 import 'package:southwind/UI/login/log_in.dart';
+import 'package:southwind/UI/splash_screen.dart';
 import 'package:southwind/UI/surveys_tab/Page/congratspage.dart';
 import 'package:southwind/UI/surveys_tab/Page/congratspage.dart';
 import 'package:southwind/UI/surveys_tab/Page/question_tab.dart';
@@ -28,15 +30,17 @@ class Routes {
   static const String customDrawer = "/customerDrawer";
   static const String login = "log_in";
   static const String authWrapper = "auth_wrapper";
+  static const String splashScreen = 'splashScrren';
   static const String history = "history";
+  static const String notification = 'notification';
 
   static Route<dynamic> onRouteGenerate(RouteSettings settings) {
     return MaterialPageRoute(builder: (context) {
       Widget page;
       switch (settings.name) {
-        // case Routes.homePage:
-        //   page = HomeScreen();
-        //   break;
+        case Routes.splashScreen:
+          page = SplashScrren();
+          break;
         case Routes.clockInOutScreen:
           page = WorkHistory();
           break;
@@ -74,6 +78,9 @@ class Routes {
           break;
         case Routes.authWrapper:
           page = AuthWrapper();
+          break;
+        case Routes.notification:
+          page = NotificationPage();
           break;
         default:
           page = Container(

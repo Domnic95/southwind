@@ -1,5 +1,5 @@
 class UserData {
-  UserData({ 
+  UserData({
     required this.id,
     this.title,
     required this.profileEmail,
@@ -80,8 +80,8 @@ class UserData {
         profileFirstName: json["profile_first_name"],
         profileLastName: json["profile_last_name"],
         designation: json["designation"],
-        deviceToken: json["device_token"],
-        deviceType: json["device_type"],
+        deviceToken: json["device_token"].toString(),
+        deviceType: json["device_type"].toString(),
         franchiseOwnerId: json["franchise_owner_id"],
         teamId: json["team_id"],
         additionalTeamId: json["additional_team_id"],
@@ -103,7 +103,9 @@ class UserData {
         needAdminRes: json["need_admin_res"],
         adminUserId: json["admin_user_id"],
         lastModified: DateTime.parse(json["last_modified"]),
-        startDate: DateTime.parse(json["start_date"]),
+        startDate: json["start_date"] != null
+            ? DateTime.parse(json["start_date"])
+            : DateTime.now(),
         mobile: json["mobile"],
         securityToken: json["security_token"],
         createdAt: DateTime.parse(json["created_at"]),

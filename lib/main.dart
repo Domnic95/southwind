@@ -1,12 +1,32 @@
+import 'dart:async';
+
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/constant/Global.dart';
 import 'package:southwind/routes/routes.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(ProviderScope(child: const MyApp()));
+  await runZonedGuarded(
+    () async {
+      await Firebase.initializeApp();
+      WidgetsFlutterBinding.ensureInitialized();
+      sharedPreferences = await SharedPreferences.getInstance();
+
+      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+          // systemNavigationBarColor: Colors.white, // navigation bar color
+          statusBarColor: Colors.white,
+          statusBarBrightness: Brightness.dark, // status bar color
+          statusBarIconBrightness: Brightness.dark));
+      runApp(ProviderScope(child: MyApp()));
+    },
+    (error, st) => print(error),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -51,7 +71,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: generateMaterialColor(primaryColor),
       ),
       onGenerateRoute: Routes.onRouteGenerate,
-      initialRoute: Routes.authWrapper,
+      initialRoute: Routes.splashScreen,
     );
   }
 }
