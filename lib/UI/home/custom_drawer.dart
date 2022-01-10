@@ -112,15 +112,15 @@ class _CustomDrawerState extends State<CustomDrawer> {
       // case DrawerIndex.Challenges:
       //   // TODO: Handle this case.
       //   break;
-      case DrawerIndex.Learning:
-        // TODO: Handle this case.
-        break;
+      // case DrawerIndex.Learning:
+      //   // TODO: Handle this case.
+      //   break;
       case DrawerIndex.CardTime:
         return TimeCardScreen();
       // break;
-      case DrawerIndex.Goals:
-        // TODO: Handle this case.
-        break;
+      // case DrawerIndex.Goals:
+      //   // TODO: Handle this case.
+      //   break;
     }
     return HomeScreen(
       onindexChange: (i) {

@@ -15,10 +15,10 @@ enum DrawerIndex {
   // Passbook,
   Surveys,
   // Challenges,
-  Learning,
+  // Learning,
   CardTime,
   // Incentives,
-  Goals,
+  // Goals,
 }
 
 class DrawerUserController extends StatefulWidget {
@@ -407,21 +407,21 @@ class _HomeDrawerState extends State<HomeDrawer> {
         labelName: 'Passbook',
         icon: Icon(CupertinoIcons.book),
       ),*/
-      DrawerList(
-        index: DrawerIndex.Surveys,
-        labelName: 'Settings',
-        icon: Icon(CupertinoIcons.settings),
-      ),
+      // DrawerList(
+      //   index: DrawerIndex.Surveys,
+      //   labelName: 'Settings',
+      //   icon: Icon(CupertinoIcons.settings),
+      // ),
       // DrawerList(
       //   index: DrawerIndex.Challenges,
       //   labelName: 'Help',
       //   icon: Icon(CupertinoIcons.info),
       // ),
-      DrawerList(
-        index: DrawerIndex.Learning,
-        labelName: 'Refer',
-        icon: Icon(CupertinoIcons.share),
-      ),
+      // DrawerList(
+      //   index: DrawerIndex.Learning,
+      //   labelName: 'Refer',
+      //   icon: Icon(CupertinoIcons.share),
+      // ),
     ];
   }
 
@@ -469,21 +469,21 @@ class _HomeDrawerState extends State<HomeDrawer> {
       //   labelName: 'Challenges',
       //   icon: Icon(Icons.flag_outlined),
       // ),
-      DrawerList(
-        index: DrawerIndex.Learning,
-        labelName: 'Learning',
-        icon: Icon(Icons.explore_outlined),
-      ),
+      // DrawerList(
+      //   index: DrawerIndex.Learning,
+      //   labelName: 'Learning',
+      //   icon: Icon(Icons.explore_outlined),
+      // ),
       DrawerList(
         index: DrawerIndex.CardTime,
         labelName: 'Time Card',
         icon: Icon(Icons.timer),
       ),
-      DrawerList(
-        index: DrawerIndex.Goals,
-        labelName: 'Goals',
-        icon: Icon(Icons.manage_accounts_outlined),
-      ),
+      // DrawerList(
+      //   index: DrawerIndex.Goals,
+      //   labelName: 'Goals',
+      //   icon: Icon(Icons.manage_accounts_outlined),
+      // ),
     ];
     return Scaffold(
         backgroundColor: Colors.white,

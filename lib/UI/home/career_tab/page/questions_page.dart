@@ -1,14 +1,17 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/home/career_tab/components/information_dialog.dart';
 import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
 import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/data/providers/providers.dart';
 
-class QuestionsPage extends StatefulWidget {
+class QuestionsPage extends StatefulHookWidget {
   const QuestionsPage({Key? key}) : super(key: key);
 
   @override
@@ -18,12 +21,32 @@ class QuestionsPage extends StatefulWidget {
 class _QuestionsPageState extends State<QuestionsPage> {
   int currentQuestion = 0;
   PageController _pageController = PageController();
-
+  List<int> unAnsweredQuestion = [];
+  int questionLength = 0;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       showInformationDialog(context);
+      loadData();
+    });
+  }
+
+  loadData() async {
+    final _careerProvider = context.read(carerNotifierProvider);
+    setState(() {
+      if (_careerProvider.careerModel
+          .questions![_careerProvider.selectedCareerPath.id.toString()]!
+          .containsKey(_careerProvider.selectedAchievement.id.toString())) {
+        questionLength = _careerProvider
+            .careerModel
+            .questions![_careerProvider.selectedCareerPath.id.toString()]![
+                _careerProvider.selectedAchievement.id.toString()]!
+            .length;
+        for (int i = 0; i < questionLength; i++) {
+          unAnsweredQuestion.add(i + 1);
+        }
+      }
     });
   }
 
@@ -33,8 +56,22 @@ class _QuestionsPageState extends State<QuestionsPage> {
     //     duration: Duration(milliseconds: 400), curve: Curves.linear);
   }
 
+  TextEditingController controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    final careerProvider = useProvider(carerNotifierProvider);
+
+    if (careerProvider.careerModel
+        .questions![careerProvider.selectedCareerPath.id.toString()]!
+        .containsKey(careerProvider.selectedAchievement.id.toString())) {
+      questionLength = careerProvider
+          .careerModel
+          .questions![careerProvider.selectedCareerPath.id.toString()]![
+              careerProvider.selectedAchievement.id.toString()]!
+          .length;
+    }
+
     final size = MediaQuery.of(context).size;
     final double radius = 20;
     return Scaffold(
@@ -93,7 +130,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                       Container(
                         height: 60,
                         child: QuestionsTab(
-                          totalQuestion: Questions.length,
+                          totalQuestion: questionLength,
                           currentQuestion: currentQuestion,
                           onTap: (a) {
                             this.currentQuestion = a;
@@ -115,8 +152,12 @@ class _QuestionsPageState extends State<QuestionsPage> {
                 child: PageView(
               controller: _pageController,
               children: [
-                for (int i = 0; i < Questions.length; i++)
+                for (int i = 0; i < questionLength; i++)
                   QuestionAnswerWidget(
+                    onchnage: (c) {
+                      controller.text = c;
+                      setState(() {});
+                    },
                     i: i,
                   ),
               ],
@@ -168,17 +209,26 @@ class _QuestionsPageState extends State<QuestionsPage> {
                     CommonButton(
                       isExpanded: true,
                       lable: "Next",
-                      ontap: () {
+                      ontap: () async {
+                        if (controller.text.isNotEmpty) {
+                          await careerProvider.updateAnswer(
+                              currentQuestion, controller.text);
+                          controller.clear();
+                          unAnsweredQuestion.remove(currentQuestion + 1);
+                        }
+                        print(unAnsweredQuestion);
                         setState(() {
                           currentQuestion++;
                           animateToQuestion();
                         });
+
                         // animateToQuestion();
-                        if (currentQuestion == Questions.length) {
+                        if (currentQuestion == questionLength) {
                           Navigator.push(context,
                               MaterialPageRoute(builder: (context) {
                             return SummaryScreen(
-                              totalquestion: Questions.length,
+                              unAnsweredQuestion: unAnsweredQuestion,
+                              totalquestion: questionLength,
                             );
                           }));
                         }
@@ -207,12 +257,27 @@ class _QuestionsPageState extends State<QuestionsPage> {
   }
 }
 
-class QuestionAnswerWidget extends StatelessWidget {
+class QuestionAnswerWidget extends StatefulHookWidget {
   int i;
-  QuestionAnswerWidget({Key? key, required this.i}) : super(key: key);
+  ValueChanged<String> onchnage;
+  QuestionAnswerWidget({Key? key, required this.i, required this.onchnage})
+      : super(key: key);
+
+  @override
+  _QuestionAnswerWidgetState createState() => _QuestionAnswerWidgetState();
+}
+
+class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final careerProvider = useProvider(carerNotifierProvider);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: Column(
@@ -223,7 +288,12 @@ class QuestionAnswerWidget extends StatelessWidget {
             height: 20,
           ),
           Text(
-            "${Questions[i]}",
+            careerProvider
+                .careerModel
+                .questions![careerProvider.selectedCareerPath.id.toString()]![
+                    careerProvider.selectedAchievement.id.toString()]![widget.i]
+                .question
+                .toString(),
             style: Theme.of(context).textTheme.bodyText1,
             textAlign: TextAlign.center,
           ),
@@ -238,7 +308,14 @@ class QuestionAnswerWidget extends StatelessWidget {
             height: 2,
           ),
           TextFormField(
+            initialValue: careerProvider
+                .careerModel
+                .questions![careerProvider.selectedCareerPath.id.toString()]![
+                    careerProvider.selectedAchievement.id.toString()]![widget.i]
+                .answer
+                .toString(),
             maxLines: 6,
+            onChanged: widget.onchnage,
             style: TextStyle(
               fontSize: 16,
             ),
@@ -316,12 +393,3 @@ class QuestionsTab extends StatelessWidget {
     );
   }
 }
-
-List Questions = [
-  "What is Accountability?",
-  "Why is it important to be fair and consistent when holding people accountable?",
-  "How can personal accountability affect the way others perceive you as a leader?",
-  "Give me three examples of situation that inaction can discredit your accountability",
-  "Give an example of a time where you had yo hold a teammate accountable?",
-  "Why is it important to address a situation immediately after it occurs rather than later?",
-];

@@ -62,11 +62,11 @@ class Routes {
         case Routes.congrat_Tab:
           page = CongratTab();
           break;
-        case Routes.question_summary:
-          page = SummaryTab(
-            totalquestion: 6,
-          );
-          break;
+        // case Routes.question_summary:
+        //   page = SummaryTab(
+        //     totalquestion: 6,
+        //   );
+        //   break;
         case Routes.customDrawer:
           page = CustomDrawer();
           break;

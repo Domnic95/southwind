@@ -1,8 +1,15 @@
+import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_riverpod/src/provider.dart';
+import 'package:southwind/Models/career/careerModel.dart';
+import 'package:southwind/UI/components/PdfViewer.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/data/providers/providers.dart';
 import 'package:video_player/video_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 showInformationDialog(BuildContext context) {
   showDialog(
@@ -13,7 +20,7 @@ showInformationDialog(BuildContext context) {
       });
 }
 
-class InformationDialog extends StatefulWidget {
+class InformationDialog extends StatefulHookWidget {
   const InformationDialog({Key? key}) : super(key: key);
 
   @override
@@ -21,42 +28,76 @@ class InformationDialog extends StatefulWidget {
 }
 
 class _InformationDialogState extends State<InformationDialog> {
-  late VideoPlayerController _controller;
-  late BetterPlayerController _betterPlayerController;
-  bool isLoading = true;
+  late YoutubePlayerController _controller;
+  Widget? widgets;
+  bool isVideo = false;
   @override
   void dispose() {
-    _controller.dispose();
+    if (isVideo) {
+      _controller.dispose();
+    }
+
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(
-      'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-    )..initialize().then((_) {
-        isLoading = false;
+    loadData();
+  }
 
-        _controller.setLooping(true);
-        _controller.play();
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      });
-    _betterPlayerController = BetterPlayerController(BetterPlayerConfiguration(
-        controlsConfiguration: BetterPlayerControlsConfiguration(
-      backgroundColor: Colors.white,
-      progressBarPlayedColor: primarySwatch[800]!,
-      controlBarHeight: 40,
-      enableProgressText: false,
-      enablePlayPause: false,
-      enablePip: false,
-      enableOverflowMenu: false,
-      enableFullscreen: false,
-      enableSkips: false,
-    )));
-    _betterPlayerController.setupDataSource(BetterPlayerDataSource.network(
-        "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"));
+  loadData() async {
+    CareerAchievement achievement =
+        context.read(carerNotifierProvider).selectedAchievement;
+    if (achievement.resourceVideoLink != null &&
+        achievement.resourceVideoLink != '') {
+      print('youtube');
+      _controller = YoutubePlayerController(
+        initialVideoId: achievement.resourceVideoLink!.split('watch?v=')[1],
+        flags: YoutubePlayerFlags(
+          autoPlay: true,
+          mute: true,
+        ),
+      );
+      isVideo = true;
+      widgets = YoutubePlayer(
+        controller: _controller,
+        showVideoProgressIndicator: true,
+
+        // videoProgressIndicatorColor: Colors.amber,
+        // progressColors: ProgressColors(
+        //     playedColor: Colors.amber,
+        //     handleColor: Colors.amberAccent,
+        // ),
+        // onReady (v) {
+        //     _controller.addListener(listener);
+        // },
+      );
+    } else if (achievement.cloudinarySecureUrl != "" &&
+        achievement.cloudinarySecureUrl != null) {
+      print('pdf');
+      PDFDocument document = await PDFDocument.fromURL(
+        achievement.cloudinarySecureUrl!,
+        /* cacheManager: CacheManager(
+          Config(
+            "customCacheKey",
+            stalePeriod: const Duration(days: 2),
+            maxNrOfCacheObjects: 10,
+          ),
+        ), */
+      );
+      widgets = PdfViwer(
+        height: 200,
+        document: document,
+      );
+    } else if (achievement.cloudinaryAudioSecureUrl != "" &&
+        achievement.cloudinaryAudioSecureUrl != null) {
+      print('audio');
+      widgets = Text('Audio');
+    } else {
+      widgets = Text('No data found');
+    }
+    setState(() {});
   }
 
   @override
@@ -73,91 +114,7 @@ class _InformationDialogState extends State<InformationDialog> {
                     const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                 child: Column(
                   children: [
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "Lorem Ipum",
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Text(
-                      "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum",
-                      maxLines: 4,
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "Lorem Ipum",
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    AspectRatio(
-                      aspectRatio: 16 / 9,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: BetterPlayer(
-                          controller: _betterPlayerController,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Align(
-                      alignment: Alignment.topLeft,
-                      child: Text(
-                        "Lorem Ipum",
-                        maxLines: 1,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Card(
-                      margin: EdgeInsets.zero,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 15,
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.picture_as_pdf,
-                              color: primarySwatch[900],
-                            ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Text(
-                              "Info about question.pdf",
-                              style: TextStyle(
-                                  color: primarySwatch[600],
-                                  fontWeight: FontWeight.w600),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Spacer(),
+                    Expanded(child: Center(child: widgets!)),
                     CommonButton(
                       lable: "Continue",
                       ontap: () {

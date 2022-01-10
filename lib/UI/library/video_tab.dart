@@ -2,6 +2,7 @@ import 'package:better_player/better_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:southwind/Models/library_model.dart';
+import 'package:southwind/UI/components/PdfViewer.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/library_provider.dart';
@@ -35,7 +36,7 @@ class _LibraryResourceState extends State<LibraryResource> {
           mute: true,
         ),
       );
-      ;
+      
     } else if (widget.libraryModel.cloudinarySecureUrl != "") {
       libraryMediaType = LibraryMediaType.pdf;
       url = widget.libraryModel.cloudinarySecureUrl!;
@@ -114,20 +115,9 @@ class _LibraryResourceState extends State<LibraryResource> {
             if (libraryMediaType == LibraryMediaType.pdf)
               isLoading
                   ? LoadingWidget()
-                  : Container(
+                  : PdfViwer(
                       height: size.height * 0.6,
-                      child: PDFViewer(
-                        document: document,
-                        showNavigation: false,
-                        showPicker: false,
-                        navigationBuilder: (context, page, totalPages,
-                            jumpToPage, animateToPage) {
-                          return ButtonBar(
-                            alignment: MainAxisAlignment.spaceEvenly,
-                            children: <Widget>[],
-                          );
-                        },
-                      ),
+                      document: document,
                     ),
             SizedBox(
               height: 20,

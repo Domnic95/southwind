@@ -4,7 +4,10 @@ import 'dart:math' as math;
 import 'package:southwind/UI/theme/apptheme.dart';
 
 class SingleChart extends StatelessWidget {
-  const SingleChart({Key? key}) : super(key: key);
+  double per;
+  SingleChart({
+    required this.per,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +17,7 @@ class SingleChart extends StatelessWidget {
       primarySwatch[100]!,
     ];
     final double width = 70;
-    final double per = 50;
+
     return Padding(
       padding: const EdgeInsets.only(right: 0),
       child: Center(
