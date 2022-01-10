@@ -35,59 +35,61 @@ class Routes {
   static const String notification = 'notification';
 
   static Route<dynamic> onRouteGenerate(RouteSettings settings) {
-    return MaterialPageRoute(builder: (context) {
-      Widget page;
-      switch (settings.name) {
-        case Routes.splashScreen:
-          page = SplashScrren();
-          break;
-        case Routes.clockInOutScreen:
-          page = WorkHistory();
-          break;
-        case Routes.QuestionPage:
-          page = QuestionsPage();
-          break;
-        case Routes.singleChatScreen:
-          page = SingleChatScreen();
-          break;
-        case Routes.groupInfo:
-          page = GroupInfo();
-          break;
-        case Routes.groupChatScreen:
-          page = GroupChatScreen();
-          break;
-        case Routes.question_tab:
-          page = Questions_Tab();
-          break;
-        case Routes.congrat_Tab:
-          page = CongratTab();
-          break;
-        // case Routes.question_summary:
-        //   page = SummaryTab(
-        //     totalquestion: 6,
-        //   );
-        //   break;
-        case Routes.customDrawer:
-          page = CustomDrawer();
-          break;
-        case Routes.login:
-          page = Log_In();
-          break;
-        case Routes.history:
-          page = History();
-          break;
-        case Routes.authWrapper:
-          page = AuthWrapper();
-          break;
-        case Routes.notification:
-          page = NotificationPage();
-          break;
-        default:
-          page = Container(
-            child: Text('no route'),
-          );
-      }
-      return page;
-    });
+    return MaterialPageRoute(
+        builder: (context) {
+          Widget page;
+          switch (settings.name) {
+            case Routes.splashScreen:
+              page = SplashScrren();
+              break;
+            case Routes.clockInOutScreen:
+              page = WorkHistory();
+              break;
+            case Routes.QuestionPage:
+              page = QuestionsPage();
+              break;
+            case Routes.singleChatScreen:
+              page = SingleChatScreen();
+              break;
+            case Routes.groupInfo:
+              page = GroupInfo();
+              break;
+            case Routes.groupChatScreen:
+              page = GroupChatScreen();
+              break;
+            case Routes.question_tab:
+              page = Questions_Tab();
+              break;
+            case Routes.congrat_Tab:
+              page = CongratTab();
+              break;
+            // case Routes.question_summary:
+            //   page = SummaryTab(
+            //     totalquestion: 6,
+            //   );
+            //   break;
+            case Routes.customDrawer:
+              page = CustomDrawer();
+              break;
+            case Routes.login:
+              page = Log_In();
+              break;
+            case Routes.history:
+              page = History();
+              break;
+            case Routes.authWrapper:
+              page = AuthWrapper();
+              break;
+            case Routes.notification:
+              page = NotificationPage();
+              break;
+            default:
+              page = Container(
+                child: Text('no route'),
+              );
+          }
+          return page;
+        },
+        settings: settings);
   }
 }

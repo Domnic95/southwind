@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:southwind/Models/career/careerModel.dart';
 import 'package:southwind/Models/user_data.dart';
 import 'package:southwind/data/providers/ValueFetcher/UserFetch.dart';
@@ -45,15 +48,15 @@ class CareerProvider extends BaseNotifier {
         dropDownCareerPath.add(careerModel.careerPath![i]);
       }
     }
-    if (dropDownCareerPath.length > 0) {
+    if (dropDownCareerPath.isNotEmpty) {
       selectedCareerPath = dropDownCareerPath.first;
       getAchievementWisely();
     }
   }
 
   setIndexAndPath(CareerPath careerPath, int index) {
-    this.selectedCareerPath = careerPath;
-    this.selectedCareerPathIndex = index;
+    selectedCareerPath = careerPath;
+    selectedCareerPathIndex = index;
     getAchievementWisely();
     notifyListeners();
   }
@@ -80,7 +83,7 @@ class CareerProvider extends BaseNotifier {
   }
 
   setAchievement(CareerAchievement careerAchievement) {
-    this.selectedAchievement = careerAchievement;
+    selectedAchievement = careerAchievement;
     notifyListeners();
   }
 
@@ -91,5 +94,31 @@ class CareerProvider extends BaseNotifier {
         .answer = answer;
 
     notifyListeners();
+  }
+
+  Future<bool> submitAnswers() async {
+    final questionAnser = jsonEncode(careerModel
+        .questions![selectedCareerPath.id.toString()]![
+            selectedAchievement.id.toString()]!
+        .map((e) {
+      return e.toJson();
+    }).toList());
+    log(questionAnser.toString());
+    final res = await dioClient
+        .postWithFormData(apiEnd: api_career_submit_answer, data: {
+      "achievement_id": selectedAchievement.id.toString(),
+      "team_id": userData!.teamId.toString(),
+      "client_id": userData!.id.toString(),
+      "is_admin": userData!.isAdmin.toString(),
+      'career_id': selectedCareerPath.id.toString(),
+      'submit_status': '1',
+      'questions': questionAnser
+    });
+    if (res != null) {
+      return true;
+    }
+
+    log("response ====" + res.toString());
+    return false;
   }
 }

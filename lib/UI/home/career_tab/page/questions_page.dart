@@ -1,12 +1,9 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/home/career_tab/components/information_dialog.dart';
-import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
 import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/providers.dart';
@@ -20,7 +17,7 @@ class QuestionsPage extends StatefulHookWidget {
 
 class _QuestionsPageState extends State<QuestionsPage> {
   int currentQuestion = 0;
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
   List<int> unAnsweredQuestion = [];
   int questionLength = 0;
   @override
@@ -73,10 +70,10 @@ class _QuestionsPageState extends State<QuestionsPage> {
     }
 
     final size = MediaQuery.of(context).size;
-    final double radius = 20;
+    const double radius = 20;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: CommonAppbar(),
+      appBar: const CommonAppbar(),
       body: GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -86,22 +83,22 @@ class _QuestionsPageState extends State<QuestionsPage> {
           children: [
             Card(
               color: Colors.transparent,
-              margin: EdgeInsets.all(0),
+              margin: const EdgeInsets.all(0),
               clipBehavior: Clip.antiAliasWithSaveLayer,
               elevation: 10,
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(radius),
                 bottomRight: Radius.circular(radius),
               )),
               child: ClipRRect(
-                borderRadius: BorderRadius.only(
+                borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(radius),
                   bottomRight: Radius.circular(radius),
                 ),
                 child: Container(
                   width: size.width,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(radius),
@@ -110,7 +107,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       Padding(
@@ -124,23 +121,23 @@ class _QuestionsPageState extends State<QuestionsPage> {
                           maxLines: 2,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
-                      Container(
+                      SizedBox(
                         height: 60,
                         child: QuestionsTab(
                           totalQuestion: questionLength,
                           currentQuestion: currentQuestion,
                           onTap: (a) {
-                            this.currentQuestion = a;
+                            currentQuestion = a;
 
                             setState(() {});
                             animateToQuestion();
                           },
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                     ],
@@ -169,14 +166,14 @@ class _QuestionsPageState extends State<QuestionsPage> {
             )),
             // Spacer(),
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
                         color: Colors.grey,
                         offset: Offset(0, -1),
                         blurRadius: 10,
-                        spreadRadius: 0)
+                        spreadRadius: 0),
                   ],
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(radius),
@@ -258,9 +255,10 @@ class _QuestionsPageState extends State<QuestionsPage> {
 }
 
 class QuestionAnswerWidget extends StatefulHookWidget {
-  int i;
-  ValueChanged<String> onchnage;
-  QuestionAnswerWidget({Key? key, required this.i, required this.onchnage})
+  final int i;
+  final ValueChanged<String> onchnage;
+  const QuestionAnswerWidget(
+      {Key? key, required this.i, required this.onchnage})
       : super(key: key);
 
   @override
@@ -270,7 +268,6 @@ class QuestionAnswerWidget extends StatefulHookWidget {
 class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
   }
 
@@ -280,64 +277,69 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            careerProvider
-                .careerModel
-                .questions![careerProvider.selectedCareerPath.id.toString()]![
-                    careerProvider.selectedAchievement.id.toString()]![widget.i]
-                .question
-                .toString(),
-            style: Theme.of(context).textTheme.bodyText1,
-            textAlign: TextAlign.center,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            "Answer :",
-            style: TextStyle(fontSize: 14, color: primarySwatch[700]),
-          ),
-          SizedBox(
-            height: 2,
-          ),
-          TextFormField(
-            initialValue: careerProvider
-                .careerModel
-                .questions![careerProvider.selectedCareerPath.id.toString()]![
-                    careerProvider.selectedAchievement.id.toString()]![widget.i]
-                .answer
-                .toString(),
-            maxLines: 6,
-            onChanged: widget.onchnage,
-            style: TextStyle(
-              fontSize: 16,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(
+              height: 20,
             ),
-            decoration: InputDecoration(
-                hintText: "Enter Your Answer",
-                hintStyle: TextStyle(color: Colors.grey),
-                contentPadding:
-                    EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                isCollapsed: true,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide:
-                        BorderSide(width: .5, color: primarySwatch[700]!)),
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide:
-                        BorderSide(width: .5, color: primarySwatch[700]!)),
-                focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    borderSide: BorderSide(width: 1, color: primaryColor))),
-          )
-        ],
+            Text(
+              careerProvider
+                  .careerModel
+                  .questions![careerProvider.selectedCareerPath.id.toString()]![
+                      careerProvider.selectedAchievement.id
+                          .toString()]![widget.i]
+                  .question
+                  .toString(),
+              style: Theme.of(context).textTheme.bodyText1,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Answer :",
+              style: TextStyle(fontSize: 14, color: primarySwatch[700]),
+            ),
+            const SizedBox(
+              height: 2,
+            ),
+            TextFormField(
+              initialValue: careerProvider
+                  .careerModel
+                  .questions![careerProvider.selectedCareerPath.id.toString()]![
+                      careerProvider.selectedAchievement.id
+                          .toString()]![widget.i]
+                  .answer
+                  .toString(),
+              maxLines: 6,
+              onChanged: widget.onchnage,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+              decoration: InputDecoration(
+                  hintText: "Enter Your Answer",
+                  hintStyle: const TextStyle(color: Colors.grey),
+                  contentPadding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  isCollapsed: true,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide:
+                          BorderSide(width: .5, color: primarySwatch[700]!)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide:
+                          BorderSide(width: .5, color: primarySwatch[700]!)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide:
+                          const BorderSide(width: 1, color: primaryColor))),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -389,7 +391,7 @@ class QuestionsTab extends StatelessWidget {
       },
       scrollDirection: Axis.horizontal,
       itemCount: totalQuestion,
-      padding: EdgeInsets.symmetric(horizontal: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
     );
   }
 }

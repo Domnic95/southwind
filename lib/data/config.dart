@@ -24,6 +24,7 @@ const api_usedIncentive = '/new_used_incentive_details';
 const api_timerHistory = '/get_timecard_history_2021';
 // carrer
 const api_career = '/get_new_career_path';
+const api_career_submit_answer = "/set_achievement_answer";
 //survey
 const api_getSurvey = '/get_new_survey';
 // leaderboard

@@ -3,21 +3,22 @@ import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/home/career_tab/components/chart.dart';
 import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
-import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/data/providers/providers.dart';
 import 'package:southwind/utils/helpers.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SummaryScreen extends StatelessWidget {
-  int totalquestion;
-  List<int> unAnsweredQuestion;
-  SummaryScreen(
+  final int totalquestion;
+  final List<int> unAnsweredQuestion;
+  const SummaryScreen(
       {Key? key, required this.totalquestion, required this.unAnsweredQuestion})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
     int answeredQuestion = totalquestion - unAnsweredQuestion.length;
-    final double radius = 20;
+    const double radius = 20;
     return Scaffold(
-      appBar: CommonAppbar(),
+      appBar: const CommonAppbar(),
       body: WillPopScope(
         onWillPop: () async {
           return true;
@@ -38,7 +39,7 @@ class SummaryScreen extends StatelessWidget {
                               .round()
                               .toDouble(),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 10,
                         ),
                         Column(
@@ -53,14 +54,14 @@ class SummaryScreen extends StatelessWidget {
                                   .copyWith(fontSize: 20),
                             ),
                             Text(
-                              "Total Questions : ${totalquestion}",
+                              "Total Questions : $totalquestion",
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText1!
                                   .copyWith(fontSize: 14),
                             ),
                             Text(
-                              "Answered Questions : ${answeredQuestion}",
+                              "Answered Questions : $answeredQuestion",
                               style: Theme.of(context)
                                   .textTheme
                                   .bodyText1!
@@ -85,9 +86,9 @@ class SummaryScreen extends StatelessWidget {
                 textAlign: TextAlign.justify,
               ),
             ),
-            Spacer(),
+            const Spacer(),
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   color: Colors.white,
                   boxShadow: [
                     BoxShadow(
@@ -107,12 +108,17 @@ class SummaryScreen extends StatelessWidget {
                   children: [
                     CommonButton(
                       isExpanded: true,
-                      ontap: () {
-                        if (unAnsweredQuestion.length == 0) {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return CongratsScreen();
-                          }));
+                      ontap: () async {
+                        if (unAnsweredQuestion.isEmpty) {
+                          final res = await context
+                              .read(carerNotifierProvider)
+                              .submitAnswers();
+                          if (res) {
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return const CongratsScreen();
+                            }));
+                          }
                         } else {
                           showToast('Some questions are not answered');
                         }
@@ -130,5 +136,5 @@ class SummaryScreen extends StatelessWidget {
   }
 }
 
-final data =
+const data =
     '''You have no view on the whole life cycle of your application, only on the value of a variable at a given time or the assurance or not that your code is following its logical flow. It often happens that console.log are forgotten in several places in the code, which besides a hypothetical loss of performance (tiny, but whose size varies according to the data called through the log method), is not very clean.''';

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/routes/routes.dart';
 
 class CongratsScreen extends StatelessWidget {
   const CongratsScreen({Key? key}) : super(key: key);
@@ -105,7 +106,10 @@ class CongratsScreen extends StatelessWidget {
                 Positioned(
                   child: InkWell(
                     onTap: () {
-                      Navigator.pop(context);
+                      Navigator.popUntil(context, (route) {
+                        print(route.settings.name.toString());
+                        return route.settings.name == Routes.splashScreen;
+                      });
                     },
                     child: Container(
                       decoration: BoxDecoration(
