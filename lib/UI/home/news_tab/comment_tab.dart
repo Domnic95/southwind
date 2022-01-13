@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:southwind/Models/news/comment_modal.dart';
+import 'package:southwind/Models/news/postModal.dart';
+import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/data/providers/providers.dart';
 
-class CommentTab extends StatefulWidget {
+class CommentTab extends StatefulHookWidget {
+  final PostModal postModal;
+  const CommentTab(this.postModal, {Key? key}) : super(key: key);
   @override
   _CommentTabState createState() => _CommentTabState();
 }
@@ -9,91 +17,116 @@ class CommentTab extends StatefulWidget {
 class _CommentTabState extends State<CommentTab> {
   @override
   Widget build(BuildContext context) {
+    final commentNotifier =
+        useProvider(commentNotifierProvider(widget.postModal.id.toString()));
+    if (commentNotifier.isLoading) {
+      return const Scaffold(
+        body: LoadingWidget(),
+      );
+    }
     return SafeArea(
         child: Scaffold(
       appBar: AppBar(
         title: Text(
           "Comments",
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold,color: primarySwatch[900]),
+          style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: primarySwatch[900]),
         ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: 15,
-          ),
-          Expanded(
-            child: ListView.builder(
-                itemCount: Comments.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    
-                    children: [
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              //margin: EdgeInsets.symmetric(vertical: 5),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  CircleAvatar(
-                                    radius: 20,
-                                    backgroundColor: Colors.transparent,
-                                    backgroundImage:
-                                        AssetImage("${Comments[index].image}"),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "${Comments[index].name}",
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.6,
-                                        child: Text(
-                                          "\"${Comments[index].mess}\"",
-                                          maxLines: 2,
-                                          style: TextStyle(
-                                              fontSize: 12, color: Colors.grey),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              "${Comments[index].time}",
-                              style: TextStyle(fontSize: 11,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Divider(
-                        thickness: 1,
-                        indent: 60,
-                      ),
-                    ],
-                  );
-                }),
-          ),
-        ],
-      ),
+      body: commentNotifier.comments.isEmpty
+          ? const Center(
+              child: Text("No Comment Found"),
+            )
+          : Column(
+              children: [
+                const SizedBox(
+                  height: 15,
+                ),
+                Expanded(
+                  child: ListView.builder(
+                      itemCount: commentNotifier.comments.length,
+                      itemBuilder: (context, index) {
+                        return CommentWidget(
+                          commentModal: commentNotifier.comments[index],
+                        );
+                      }),
+                ),
+              ],
+            ),
     ));
+  }
+}
+
+class CommentWidget extends StatelessWidget {
+  final CommentModal commentModal;
+  const CommentWidget({required this.commentModal, Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                //margin: EdgeInsets.symmetric(vertical: 5),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 10,
+                    ),
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundColor: Colors.transparent,
+                      backgroundImage:
+                          NetworkImage("${commentModal.profile.userImage}"),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "${commentModal.profile.profileFirstName}",
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: Text(
+                            "\"${commentModal.comment}\"",
+                            maxLines: 2,
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Text(
+                  "${commentModal.timeDifference}",
+                  style: TextStyle(
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const Divider(
+          thickness: 1,
+          indent: 60,
+        ),
+      ],
+    );
   }
 }
 

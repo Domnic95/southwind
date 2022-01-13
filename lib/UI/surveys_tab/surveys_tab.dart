@@ -1,15 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:southwind/Models/survey/basic_survey_details.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
-import 'package:southwind/UI/home/career_tab/page/questions_page.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/providers.dart';
 import 'package:southwind/routes/routes.dart';
-
-import 'Page/question_tab.dart';
 
 class Surveys_Tab extends StatefulHookWidget {
   @override
@@ -28,14 +24,14 @@ class _Surveys_TabState extends State<Surveys_Tab> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 10),
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
+                      const SizedBox(
                         height: 30,
                       ),
-                      Text(
+                      const Text(
                         "Interesting Surveys",
                         style: TextStyle(
                             fontSize: 22,
@@ -43,17 +39,17 @@ class _Surveys_TabState extends State<Surveys_Tab> {
                             letterSpacing: 0.5),
                       ),
                       Text(
-                        "6 Surveys",
-                        style: TextStyle(
+                        "${_surveyNotifierProvider.allSurvey.length} Surveys",
+                        style: const TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w500),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 30,
                       ),
                       Expanded(
                         child: ListView.builder(
                           itemCount: _surveyNotifierProvider.allSurvey.length,
-                          padding: EdgeInsets.only(top: 0, bottom: 60),
+                          padding: const EdgeInsets.only(top: 0, bottom: 60),
                           itemBuilder: (context, index) {
                             // if (index == 0) {
                             //   return Column(
@@ -135,7 +131,7 @@ class _Surveys_TabState extends State<Surveys_Tab> {
                   ),
                 );
               } else {
-                return LoadingWidget();
+                return const LoadingWidget();
               }
             }),
       ),
@@ -150,7 +146,7 @@ class SingleCollection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double radius = 12;
+    const double radius = 12;
     return Container(
       // margin: EdgeInsets.symmetric(horizontal: 10),
       child: Padding(
@@ -172,12 +168,12 @@ class SingleCollection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 0),
                 child: ListTile(
                   leading: Container(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5),
                       color: Colors.pink[200],
                     ),
-                    child: Icon(Icons.settings),
+                    child: const Icon(Icons.settings),
                   ),
                   title: Text(
                     collection.title!.toString(),
@@ -194,7 +190,7 @@ class SingleCollection extends StatelessWidget {
                     color: primarySwatch[900],
                   ),
                   subtitle: Text(
-                    "-${0} Question",
+                    "${0} Question",
                     style: TextStyle(color: primarySwatch[500], fontSize: 12),
                   ),
                 ),

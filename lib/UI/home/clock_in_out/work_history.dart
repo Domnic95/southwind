@@ -64,12 +64,12 @@ class _WorkHistoryState extends State<WorkHistory> {
                               Expanded(
                                 child: Column(
                                   children: [
-                                    Text(
+                                    const Text(
                                       "CHECK IN",
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold),
                                     ),
-                                    Center(
+                                    const Center(
                                       child: Text(
                                         "16 Nov 2018",
                                         style: TextStyle(
@@ -204,7 +204,8 @@ class _WorkHistoryState extends State<WorkHistory> {
                                         ));
                                       },
                                       markerBuilder: (context, d, data) {
-                                        if (data.isEmpty) return SizedBox();
+                                        if (data.isEmpty)
+                                          return const SizedBox();
                                         // return Text(d.day.toString());
                                         // return Center(
                                         //   child: Container(
@@ -225,7 +226,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                         return Align(
                                           alignment: Alignment.bottomCenter,
                                           child: Card(
-                                            margin: EdgeInsets.all(0),
+                                            margin: const EdgeInsets.all(0),
                                             elevation: 2,
                                             shape: RoundedRectangleBorder(
                                               borderRadius:
@@ -289,29 +290,30 @@ class _WorkHistoryState extends State<WorkHistory> {
                                         color: primarySwatch[900],
                                       ),
                                       rightChevronPadding: EdgeInsets.zero,
-                                      headerMargin: EdgeInsets.only(bottom: 10),
+                                      headerMargin:
+                                          const EdgeInsets.only(bottom: 10),
                                     ),
                                     calendarStyle: CalendarStyle(
-                                      todayDecoration: BoxDecoration(
+                                      todayDecoration: const BoxDecoration(
                                           color: Colors.transparent),
                                       todayTextStyle: defaultTextStyle,
                                       rangeHighlightColor: primarySwatch[200]!,
                                       // rowDecoration: Bx,
-                                      rangeStartDecoration: BoxDecoration(
+                                      rangeStartDecoration: const BoxDecoration(
                                           color: primaryColor,
                                           // borderRadius: BorderRadius.only(
                                           //   topLeft: Radius.circular(100),
                                           //   bottomLeft: Radius.circular(100),
                                           // ),
                                           shape: BoxShape.circle),
-                                      rangeEndDecoration: BoxDecoration(
+                                      rangeEndDecoration: const BoxDecoration(
                                           color: primaryColor,
                                           shape: BoxShape.circle),
                                       // withinRangeDecoration:
                                       //     BoxDecoration(color: primaryColor),
 
-                                      markerDecoration:
-                                          BoxDecoration(color: Colors.red),
+                                      markerDecoration: const BoxDecoration(
+                                          color: Colors.red),
                                       markerSize: 4,
                                       cellPadding: EdgeInsets.zero,
                                       markersAutoAligned: true,
@@ -356,7 +358,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                                     firstDay: DateTime.utc(2015),
                                     lastDay: DateTime.utc(2024)),
                               ),
-                              Divider(
+                              const Divider(
                                 height: 30,
                                 thickness: .7,
                               ),
@@ -422,8 +424,8 @@ class _WorkHistoryState extends State<WorkHistory> {
             ),
             if (!isCalenderVisible && !isCheckVisible) ...[
               // ScheduleCard(),
-              ScheduleCard(),
-              ScheduleCard(),
+              const ScheduleCard(),
+              const ScheduleCard(),
             ],
             if (!isCalenderVisible && isCheckVisible) ...[
               Expanded(
@@ -437,10 +439,10 @@ class _WorkHistoryState extends State<WorkHistory> {
                         !isCheckin
                             ? 'Hello Domnic, you are currently not signed in.'
                             : "Hello Domnic, you are currently signed in.",
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w300),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10,
                       ),
                       InkWell(
@@ -454,7 +456,7 @@ class _WorkHistoryState extends State<WorkHistory> {
                             child: Center(
                               child: Text(
                                 !isCheckin ? 'Clock In' : "Clock Out",
-                                style: TextStyle(
+                                style: const TextStyle(
                                     fontSize: 18, color: Colors.white),
                               ),
                             )),
@@ -508,7 +510,7 @@ class _WorkHistoryState extends State<WorkHistory> {
           "assets/images/trophy.png",
           height: 140,
         ),
-        SizedBox(
+        const SizedBox(
           height: 20,
         ),
         Center(
@@ -519,10 +521,10 @@ class _WorkHistoryState extends State<WorkHistory> {
           ),
         ),
 
-        SizedBox(
+        const SizedBox(
           height: 10,
         ),
-        Center(
+        const Center(
           child: Text(
             "Quiz completed sucessfully",
             style:
@@ -541,14 +543,14 @@ class ScheduleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double cardRadius = 10;
+    const double cardRadius = 10;
     return Card(
       shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(cardRadius)),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(cardRadius),
         child: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             border: Border(
               left: BorderSide(color: primaryColor, width: 6),
             ),
@@ -562,7 +564,7 @@ class ScheduleCard extends StatelessWidget {
                 ),
                 Column(
                   children: [
-                    Text(
+                    const Text(
                       "MAY",
                       style: TextStyle(fontSize: 12),
                     ),

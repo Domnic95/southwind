@@ -14,6 +14,10 @@ const api_teamdetail = '/get_teamlist';
 const api_getNews = "/get_comm_notification";
 const api_newsLike = '/set_notification_like';
 const api_newsDislike = '/set_notification_unlike';
+const api_communication_get_notification = "/communication-notification/list";
+const api_communication_like = "/communication-notification/like";
+const apiCommentList = "/communication-notification/comments";
+// const api_communcation_unlike = ""
 // Incentive
 const api_mostPopularIncentive = "/most_popular_incentives_list";
 const api_IncentiveHistory = '/new_incentive_details';

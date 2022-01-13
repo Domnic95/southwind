@@ -113,8 +113,6 @@ class SummaryScreen extends StatelessWidget {
                           final res = await context
                               .read(carerNotifierProvider)
                               .submitAnswers();
-
-                              //// do something
                           if (res) {
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context) {

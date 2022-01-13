@@ -1,7 +1,10 @@
+import 'dart:developer';
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:southwind/Models/news/postModal.dart';
 import 'package:southwind/Models/news/singleNews.dart';
 import 'package:southwind/UI/components/NetworkImageLoader.dart';
 
@@ -29,7 +32,6 @@ class _NewsScreenState extends State<NewsScreen> {
   bool loading = true;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     loadData();
   }
@@ -114,7 +116,7 @@ class _NewsScreenState extends State<NewsScreen> {
 }
 
 class FeedPost extends StatefulWidget {
-  SingleNews post;
+  PostModal post;
   int index;
 
   FeedPost({
@@ -154,7 +156,7 @@ class _FeedPostState extends State<FeedPost> {
                     ),
                     backgroundColor: Colors.white,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 10,
                   ),
                   Column(
@@ -168,34 +170,42 @@ class _FeedPostState extends State<FeedPost> {
                       Text(
                         "${widget.post.timeDifference}",
                         style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                            fontSize: 12,
+                            fontSize: 10,
                             fontWeight: FontWeight.w400,
                             color: Colors.black38),
                       ),
+                      Text(
+                        "${widget.post.title}",
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black),
+                      ),
                     ],
                   ),
-                  Spacer(),
-                  Icon(Icons.more_vert),
+                  const Spacer(),
+                  const Icon(Icons.more_vert),
                   // IconButton(onPressed: () {}, icon: )
                 ],
               ),
             ),
-            Container(
-              width: size.width,
-              constraints: BoxConstraints(maxHeight: size.height * .60),
-              child: ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: MultipleImageView(
-                    images: [widget.post.mediaUrl!],
-                    mediaType: widget.post.mediaType!,
-                    Pagecontroller: controller,
-                    onIndexChanged: (a) {
-                      currentIndex = a;
-                      setScrollController(a);
-                      setState(() {});
-                    },
-                  )),
-            ),
+            if (widget.post.resourceUrl != null)
+              Container(
+                width: size.width,
+                constraints: BoxConstraints(maxHeight: size.height * .60),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: MultipleImageView(
+                      images: [widget.post.resourceUrl],
+                      mediaType: MediaType.IMAGE,
+                      Pagecontroller: controller,
+                      onIndexChanged: (a) {
+                        currentIndex = a;
+                        setScrollController(a);
+                        setState(() {});
+                      },
+                    )),
+              ),
             Padding(
               padding: const EdgeInsets.all(6.0),
               child: Row(
@@ -212,25 +222,44 @@ class _FeedPostState extends State<FeedPost> {
                           child: Icon(widget.post.liked!
                               ? Icons.favorite
                               : Icons.favorite_border)),
-                      SizedBox(
+                      const SizedBox(
                         width: 5,
                       ),
-                      Text("${widget.post.likes}"),
+                      Text("${widget.post.id}"),
                       // SizedBox(
                       //   width: 10,
                       // ),
-                      IconButton(
-                        icon: Icon(FontAwesomeIcons.comment),
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => CommentTab()));
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => CommentTab(widget.post),
+                            ),
+                          );
                         },
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: const Icon(FontAwesomeIcons.comment),
+                              onPressed: () {
+                                log(widget.post.id.toString());
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        CommentTab(widget.post),
+                                  ),
+                                );
+                              },
+                            ),
+                            const Text("comment"),
+                          ],
+                        ),
                       ),
                       // SizedBox(
                       //   width: 5,
                       // ),
-                      Text("comment"),
-                      SizedBox(
+                      // const Text("comment"),
+                      const SizedBox(
                         width: 5,
                       ),
                     ],
@@ -249,30 +278,33 @@ class _FeedPostState extends State<FeedPost> {
                 children: [
                   Expanded(
                     child: RichText(
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                         text: TextSpan(
-                      children: [
-                        TextSpan(
-                            text: "${widget.post.firstName}  ",
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyText1!
-                                .copyWith(
-                                    fontWeight: FontWeight.w600, fontSize: 14)),
-                        TextSpan(
-                          text: widget.post.description,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            color: Colors.black.withOpacity(.8),
-                          ),
-                        ),
-                      ],
-                    )),
+                          children: [
+                            TextSpan(
+                                text: "${widget.post.firstName}  ",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText1!
+                                    .copyWith(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14)),
+                            TextSpan(
+                              text: widget.post.notificationText,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                                color: Colors.black.withOpacity(.8),
+                              ),
+                            ),
+                          ],
+                        )),
                   )
                 ],
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
           ],
@@ -285,7 +317,7 @@ class _FeedPostState extends State<FeedPost> {
 class ImageIndicator extends StatefulWidget {
   final int totalIndex;
   final PageController pageController;
-  ImageIndicator(
+  const ImageIndicator(
       {required this.pageController, required this.totalIndex, Key? key})
       : super(key: key);
 

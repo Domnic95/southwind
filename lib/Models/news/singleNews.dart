@@ -57,8 +57,8 @@ class SingleNews {
   String? timeDifference;
 
   factory SingleNews.fromJson(Map<String, dynamic> json) => SingleNews(
-        id: json["id"] == null ? null : json["id"],
-        title: json["title"],
+        id: json["id"],
+        title: json["title"] ?? "Test Title",
         createdOn: DateTime.parse(json["created_on"]),
         description: json["description"],
         notificationUrl: json["notification_url"],
@@ -137,8 +137,11 @@ class EnumValues<T> {
   }
 }
 
-String dateDifference(DateTime date) {
-  String difference = '';
+String dateDifference(DateTime? date) {
+  if (date == null) {
+    return "";
+  }
+  String difference = 'a';
   DateTime now = DateTime.now();
   int dif = now.difference(date).inSeconds;
 
@@ -154,6 +157,8 @@ String dateDifference(DateTime date) {
       difference = _days.toString() + "day ago";
     } else if (_days < 31) {
       difference = _days.toString() + "days ago";
+    } else {
+      difference = (_days ~/ 31).toString() + " moths ago";
     }
     // else if (_days < 365) {
     //   difference = (_days / 12).abs().toString() + " month ago";
