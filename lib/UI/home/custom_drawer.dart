@@ -3,6 +3,7 @@ import 'package:southwind/UI/home/home_screen.dart';
 import 'package:southwind/UI/home/news_tab/news_screen.dart';
 import 'package:southwind/UI/incentives/incentives.dart';
 import 'package:southwind/UI/leader_board/leader_board.dart';
+import 'package:southwind/UI/learning/learning_screen.dart';
 import 'package:southwind/UI/library/library.dart';
 import 'package:southwind/UI/surveys_tab/surveys_tab.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
@@ -112,9 +113,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
       // case DrawerIndex.Challenges:
       //   // TODO: Handle this case.
       //   break;
-      // case DrawerIndex.Learning:
-      //   // TODO: Handle this case.
-      //   break;
+      case DrawerIndex.Learning:
+       return LearningScreen();
+        // TODO: Handle this case.
+        break;
       case DrawerIndex.CardTime:
         return TimeCardScreen();
       // break;

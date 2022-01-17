@@ -3,6 +3,7 @@ import 'package:southwind/data/providers/auth_provider.dart';
 import 'package:southwind/data/providers/carrer_notifer.dart';
 import 'package:southwind/data/providers/incentive_provider.dart';
 import 'package:southwind/data/providers/leadrboard_provider.dart';
+import 'package:southwind/data/providers/learning_provider.dart';
 import 'package:southwind/data/providers/library_provider.dart';
 import 'package:southwind/data/providers/news_comment_norifier.dart';
 import 'package:southwind/data/providers/news_notifier.dart';
@@ -25,7 +26,7 @@ final leaderBoardNotifierProvider =
     ChangeNotifierProvider((_ref) => LeaderBoardProvider());
 final scheduleNotifierProvider =
     ChangeNotifierProvider((_ref) => ScheduleProvider());
-
+final learningProvider =  ChangeNotifierProvider((_ref) => LearningNotifier());
 final commentNotifierProvider =
     ChangeNotifierProvider.family<NewsCommentNotifier, String>(
         (_ref, id) => NewsCommentNotifier(id));

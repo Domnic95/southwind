@@ -15,7 +15,7 @@ enum DrawerIndex {
   // Passbook,
   Surveys,
   // Challenges,
-  // Learning,
+  Learning,
   CardTime,
   // Incentives,
   // Goals,
@@ -469,11 +469,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
       //   labelName: 'Challenges',
       //   icon: Icon(Icons.flag_outlined),
       // ),
-      // DrawerList(
-      //   index: DrawerIndex.Learning,
-      //   labelName: 'Learning',
-      //   icon: Icon(Icons.explore_outlined),
-      // ),
+      DrawerList(
+        index: DrawerIndex.Learning,
+        labelName: 'Learning',
+        icon: Icon(Icons.explore_outlined),
+      ),
       DrawerList(
         index: DrawerIndex.CardTime,
         labelName: 'Time Card',

@@ -248,6 +248,7 @@ class _CareerPathState extends State<CareerPath> {
                       return SingleCollection(
                         achievement: widget.achievement[index],
                         index: index,
+                        pageIndex: widget.pageIndex,
                       );
                     },
                     itemCount: widget.achievement.length,
@@ -263,9 +264,13 @@ class _CareerPathState extends State<CareerPath> {
 }
 
 class SingleCollection extends HookWidget {
+  int pageIndex;
   CareerAchievement achievement;
   int index;
-  SingleCollection({required this.achievement, required this.index});
+  SingleCollection(
+      {required this.pageIndex,
+      required this.achievement,
+      required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -287,11 +292,13 @@ class SingleCollection extends HookWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
         onTap: () {
-          careerProvider.setAchievement(achievement);
-          Navigator.pushNamed(
-            context,
-            Routes.QuestionPage,
-          );
+          if (pageIndex == 0) {
+            careerProvider.setAchievement(achievement);
+            Navigator.pushNamed(
+              context,
+              Routes.QuestionPage,
+            );
+          }
         },
         child: Material(
           elevation: 3,

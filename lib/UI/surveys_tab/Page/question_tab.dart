@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/services.dart';
+import 'package:southwind/Models/survey/individual_survey.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/home/career_tab/components/information_dialog.dart';
@@ -12,6 +13,8 @@ import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
 import 'package:southwind/UI/surveys_tab/Page/summarypage.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/routes/routes.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:southwind/data/providers/providers.dart';
 
 class Questions_Tab extends StatefulWidget {
   Questions_Tab({
@@ -24,13 +27,28 @@ class Questions_Tab extends StatefulWidget {
 
 class _Questions_TabState extends State<Questions_Tab> {
   int currentQuestion = 0;
+  IndividualSurvey? individualSurvey;
+  bool loading = true;
   PageController _pageController = PageController();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadData();
+  }
 
   @override
   animateToQuestion() {
     _pageController.jumpToPage(currentQuestion);
     // _pageController.animateToPage(currentQuestion,
     //     duration: Duration(milliseconds: 400), curve: Curves.linear);
+  }
+
+  loadData() async {
+    await context.read(surveyNotifierProvider).individualSurvey();
+    setState(() {
+      loading = false;
+    });
   }
 
   @override

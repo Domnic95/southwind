@@ -225,7 +225,7 @@ class _FeedPostState extends State<FeedPost> {
                       const SizedBox(
                         width: 5,
                       ),
-                      Text("${widget.post.id}"),
+                      Text("${widget.post.likesCount}"),
                       // SizedBox(
                       //   width: 10,
                       // ),

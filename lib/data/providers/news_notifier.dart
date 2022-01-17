@@ -70,12 +70,15 @@ class NewsNotifier extends BaseNotifier {
 
   dislike(int index) async {
     final res = await dioClient.postWithFormData(
-        apiEnd: api_newsDislike,
+        apiEnd: api_communication_unlike,
         data: {"notification_id": total_news[index].id});
 
     if (res.data['isSuccess']) {
       total_news[index].liked = false;
       total_news[index].likesCount = total_news[index].likesCount! - 1;
+      if (total_news[index].likesCount! < 0) {
+        total_news[index].likesCount = 0;
+      }
     }
     notifyListeners();
   }

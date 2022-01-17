@@ -12,10 +12,12 @@ const api_teamdetail = '/get_teamlist';
 
 /// News ///
 const api_getNews = "/get_comm_notification";
-const api_newsLike = '/set_notification_like';
-const api_newsDislike = '/set_notification_unlike';
+// const api_newsLike = '/set_notification_like';
+// const api_newsDislike = '/set_notification_unlike';
 const api_communication_get_notification = "/communication-notification/list";
 const api_communication_like = "/communication-notification/like";
+const api_communication_unlike = '/communication-notification/unlike';
+
 const apiCommentList = "/communication-notification/comments";
 // const api_communcation_unlike = ""
 // Incentive
@@ -31,9 +33,14 @@ const api_career = '/get_new_career_path';
 const api_career_submit_answer = "/set_achievement_answer";
 //survey
 const api_getSurvey = '/get_new_survey';
+const api_getSurveyNotification = '/survey-notification/list?limit=20&offset=0';
+const api_getIndividualSurvey =
+    'survey-notification/notification-by-id?notification_id=';
 // leaderboard
 const api_leader_board_all_new = '/get_leader_board_all_new';
 const api_teamLeader = '/get_leader_board_new';
 // schedule
 const api_schedule = '/get_profile_schedule';
 const api_set_time_off_request = '/set_time_off_request';
+// learning
+const api_learning_get = '/learning-notification/list?limit=20&offset=0';

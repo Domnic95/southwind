@@ -54,6 +54,11 @@ class AuthNotifier extends BaseNotifier {
 
         Utils.setPref(key_userinfo, jsonEncode(userData!.toJson()));
         isLogedIn = true;
+      } else {
+        if (response.data['isSuccess'] == false) {
+          String? error = response.data['errors']['email'][0].toString();
+          showToast(error);
+        }
       }
     }
     notifyListeners();
