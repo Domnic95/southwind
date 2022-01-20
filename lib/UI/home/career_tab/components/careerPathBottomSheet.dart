@@ -18,7 +18,7 @@ class _CareerpathBottomSheetState extends State<CareerpathBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final careerProvider = useProvider(carerNotifierProvider);
-
+  
     return Container(
       decoration: BoxDecoration(
           color: Colors.white,
@@ -27,12 +27,13 @@ class _CareerpathBottomSheetState extends State<CareerpathBottomSheet> {
       child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: ListView.builder(
-              itemCount: careerProvider.dropDownCareerPath.length,
+              itemCount: careerProvider.careerModel.careerPath!.length,
               itemBuilder: (context, index) {
+                
                 return InkWell(
                   onTap: () {
                     careerProvider.setIndexAndPath(
-                        careerProvider.dropDownCareerPath[index], index);
+                        careerProvider.careerModel.careerPath![index], index);
                   },
                   child: Row(
                     children: [
@@ -63,7 +64,7 @@ class _CareerpathBottomSheetState extends State<CareerpathBottomSheet> {
                           ),
                         ),
                       ),
-                      Text(careerProvider.dropDownCareerPath[index].careerPath!)
+                      Text(careerProvider.careerModel.careerPath![index].name!)
                     ],
                   ),
                 );

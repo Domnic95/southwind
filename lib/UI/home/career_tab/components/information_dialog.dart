@@ -49,31 +49,32 @@ class _InformationDialogState extends State<InformationDialog> {
   loadData() async {
     CareerAchievement achievement =
         context.read(carerNotifierProvider).selectedAchievement;
-    if (achievement.resourceVideoLink != null &&
-        achievement.resourceVideoLink != '') {
-      print('youtube');
-      _controller = YoutubePlayerController(
-        initialVideoId: achievement.resourceVideoLink!.split('watch?v=')[1],
-        flags: YoutubePlayerFlags(
-          autoPlay: true,
-          mute: true,
-        ),
-      );
-      isVideo = true;
-      widgets = YoutubePlayer(
-        controller: _controller,
-        showVideoProgressIndicator: true,
+    // if (achievement.resourceVideoLink != null &&
+    //     achievement.resourceVideoLink != '') {
+    //   print('youtube');
+    //   _controller = YoutubePlayerController(
+    //     initialVideoId: achievement.resourceVideoLink!.split('watch?v=')[1],
+    //     flags: YoutubePlayerFlags(
+    //       autoPlay: true,
+    //       mute: true,
+    //     ),
+    //   );
+    //   isVideo = true;
+    //   widgets = YoutubePlayer(
+    //     controller: _controller,
+    //     showVideoProgressIndicator: true,
 
-        // videoProgressIndicatorColor: Colors.amber,
-        // progressColors: ProgressColors(
-        //     playedColor: Colors.amber,
-        //     handleColor: Colors.amberAccent,
-        // ),
-        // onReady (v) {
-        //     _controller.addListener(listener);
-        // },
-      );
-    } else if (achievement.cloudinarySecureUrl != "" &&
+    //     // videoProgressIndicatorColor: Colors.amber,
+    //     // progressColors: ProgressColors(
+    //     //     playedColor: Colors.amber,
+    //     //     handleColor: Colors.amberAccent,
+    //     // ),
+    //     // onReady (v) {
+    //     //     _controller.addListener(listener);
+    //     // },
+    //   );
+    // } else
+    if (achievement.cloudinarySecureUrl != "" &&
         achievement.cloudinarySecureUrl != null) {
       print('pdf');
       PDFDocument document = await PDFDocument.fromURL(
@@ -90,11 +91,13 @@ class _InformationDialogState extends State<InformationDialog> {
         height: 200,
         document: document,
       );
-    } else if (achievement.cloudinaryAudioSecureUrl != "" &&
-        achievement.cloudinaryAudioSecureUrl != null) {
-      print('audio');
-      widgets = Text('Audio');
-    } else {
+    }
+    // else if (achievement.cloudinaryAudioSecureUrl != "" &&
+    //     achievement.cloudinaryAudioSecureUrl != null) {
+    //   print('audio');
+    //   widgets = Text('Audio');
+    // }
+    else {
       widgets = Text('No data found');
     }
     setState(() {});

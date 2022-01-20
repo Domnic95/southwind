@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:southwind/UI/components/NetworkImageLoader.dart';
 import 'package:southwind/data/providers/providers.dart';
 import '../UI/login/log_in.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
@@ -524,13 +525,18 @@ class _HomeDrawerState extends State<HomeDrawer> {
                                                 curve: Curves.fastOutSlowIn))
                                             .value /
                                         360),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(100),
-                                      child: Image.asset(
-                                        'assets/images/image2.jpg',
-                                        height: 50,
-                                        width: 50,
-                                        fit: BoxFit.cover,
+                                    child: Container(
+                                      height: 50,
+                                      width: 50,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        child: NetworkImagesLoader(
+                                          url:
+                                              _userProvider.userData!.userImage,
+                                          radius: 1,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                   ));

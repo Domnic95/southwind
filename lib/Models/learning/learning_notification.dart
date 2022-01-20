@@ -23,6 +23,7 @@ class LearningNotification {
     this.createdAt,
     this.updatedAt,
     this.commentCount,
+    this.question_count,
     this.unseenCount,
     this.likesCount,
     this.firstName,
@@ -49,6 +50,7 @@ class LearningNotification {
   DateTime? createdAt;
   DateTime? updatedAt;
   int? commentCount;
+  int? question_count;
   int? unseenCount;
   int? likesCount;
   String? firstName;
@@ -76,6 +78,7 @@ class LearningNotification {
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
         commentCount: json["comment_count"],
+        question_count: json["question_count"],
         unseenCount: json["unseen_count"],
         likesCount: json["likes_count"],
         firstName: json["first_name"],
@@ -105,6 +108,7 @@ class LearningNotification {
         "created_at": createdAt!.toIso8601String(),
         "updated_at": updatedAt!.toIso8601String(),
         "comment_count": commentCount,
+        "question_count": question_count,
         "unseen_count": unseenCount,
         "likes_count": likesCount,
         "first_name": firstName,

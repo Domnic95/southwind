@@ -10,8 +10,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 class SummaryScreen extends StatelessWidget {
   final int totalquestion;
   final List<int> unAnsweredQuestion;
+  final VoidCallback? onTaps;
   const SummaryScreen(
-      {Key? key, required this.totalquestion, required this.unAnsweredQuestion})
+      {Key? key,
+      required this.totalquestion,
+      required this.onTaps,
+      required this.unAnsweredQuestion})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -108,21 +112,22 @@ class SummaryScreen extends StatelessWidget {
                   children: [
                     CommonButton(
                       isExpanded: true,
-                      ontap: () async {
-                        if (unAnsweredQuestion.isEmpty) {
-                          final res = await context
-                              .read(carerNotifierProvider)
-                              .submitAnswers();
-                          if (res) {
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return const CongratsScreen();
-                            }));
-                          }
-                        } else {
-                          showToast('Some questions are not answered');
-                        }
-                      },
+                      ontap: onTaps,
+                      // ontap: () async {
+                      //   if (unAnsweredQuestion.isEmpty) {
+                      //     final res = await context
+                      //         .read(carerNotifierProvider)
+                      //         .submitAnswers();
+                      //     if (res) {
+                      //       Navigator.push(context,
+                      //           MaterialPageRoute(builder: (context) {
+                      //         return const CongratsScreen();
+                      //       }));
+                      //     }
+                      //   } else {
+                      //     showToast('Some questions are not answered');
+                      //   }
+                      // },
                       lable: "Submit",
                     ),
                   ],

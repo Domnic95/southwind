@@ -29,13 +29,16 @@ const api_usedIncentive = '/new_used_incentive_details';
 // timer card
 const api_timerHistory = '/get_timecard_history_2021';
 // carrer
-const api_career = '/get_new_career_path';
-const api_career_submit_answer = "/set_achievement_answer";
+const api_career = '/career-path/get-career-path-by-team';
+const api_career_submit_answer = "/career-path/submit-answer";
+const api_career_single_career =
+    '/career-path/career-path-by-id?career_path_id=';
 //survey
 const api_getSurvey = '/get_new_survey';
 const api_getSurveyNotification = '/survey-notification/list?limit=20&offset=0';
 const api_getIndividualSurvey =
-    'survey-notification/notification-by-id?notification_id=';
+    '/survey-notification/notification-by-id?notification_id=';
+const api_submitSurveyAnswer = '/survey-notification/submit-answer';
 // leaderboard
 const api_leader_board_all_new = '/get_leader_board_all_new';
 const api_teamLeader = '/get_leader_board_new';
@@ -44,3 +47,6 @@ const api_schedule = '/get_profile_schedule';
 const api_set_time_off_request = '/set_time_off_request';
 // learning
 const api_learning_get = '/learning-notification/list?limit=20&offset=0';
+const api_getIndividual_learning =
+    '/learning-notification/notification-by-id?notification_id=';
+const api_learning_submit_answer = "/learning-notification/submit-answer";

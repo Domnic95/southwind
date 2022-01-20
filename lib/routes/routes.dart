@@ -10,6 +10,7 @@ import 'package:southwind/UI/home/custom_drawer.dart';
 import 'package:southwind/UI/home/home_screen.dart';
 import 'package:southwind/UI/incentives/incentives.dart';
 import 'package:southwind/UI/incentives/page/history.dart';
+import 'package:southwind/UI/learning/components/learning_question.dart';
 import 'package:southwind/UI/login/log_in.dart';
 import 'package:southwind/UI/splash_screen.dart';
 import 'package:southwind/UI/surveys_tab/Page/congratspage.dart';
@@ -25,6 +26,7 @@ class Routes {
   static const String groupInfo = "/GroupInfo";
   static const String clockInOutScreen = "/clockInOutScreen";
   static const String question_tab = "/Question_tab";
+  static const String learning_question_tab = '/Leaning_tab';
   static const String question_summary = "/Question_summary";
   static const String congrat_Tab = "/CongratTab";
   static const String customDrawer = "/customerDrawer";
@@ -47,6 +49,9 @@ class Routes {
               break;
             case Routes.QuestionPage:
               page = QuestionsPage();
+              break;
+            case Routes.learning_question_tab:
+              page = LearningQuestiontab();
               break;
             case Routes.singleChatScreen:
               page = SingleChatScreen();

@@ -4,9 +4,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/home/career_tab/components/information_dialog.dart';
+import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
 import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/providers.dart';
+import 'package:southwind/utils/helpers.dart';
 
 class QuestionsPage extends StatefulHookWidget {
   const QuestionsPage({Key? key}) : super(key: key);
@@ -31,20 +33,20 @@ class _QuestionsPageState extends State<QuestionsPage> {
 
   loadData() async {
     final _careerProvider = context.read(carerNotifierProvider);
-    setState(() {
-      if (_careerProvider.careerModel
-          .questions![_careerProvider.selectedCareerPath.id.toString()]!
-          .containsKey(_careerProvider.selectedAchievement.id.toString())) {
-        questionLength = _careerProvider
-            .careerModel
-            .questions![_careerProvider.selectedCareerPath.id.toString()]![
-                _careerProvider.selectedAchievement.id.toString()]!
-            .length;
-        for (int i = 0; i < questionLength; i++) {
-          unAnsweredQuestion.add(i + 1);
-        }
-      }
-    });
+    // setState(() {
+    //   if (_careerProvider.careerModel
+    //       .questions![_careerProvider.selectedCareerPath.id.toString()]!
+    //       .containsKey(_careerProvider.selectedAchievement.id.toString())) {
+    //     questionLength = _careerProvider
+    //         .careerModel
+    //         .questions![_careerProvider.selectedCareerPath.id.toString()]![
+    //             _careerProvider.selectedAchievement.id.toString()]!
+    //         .length;
+    //     for (int i = 0; i < questionLength; i++) {
+    //       unAnsweredQuestion.add(i + 1);
+    //     }
+    //   }
+    // });
   }
 
   animateToQuestion() {
@@ -59,15 +61,8 @@ class _QuestionsPageState extends State<QuestionsPage> {
   Widget build(BuildContext context) {
     final careerProvider = useProvider(carerNotifierProvider);
 
-    if (careerProvider.careerModel
-        .questions![careerProvider.selectedCareerPath.id.toString()]!
-        .containsKey(careerProvider.selectedAchievement.id.toString())) {
-      questionLength = careerProvider
-          .careerModel
-          .questions![careerProvider.selectedCareerPath.id.toString()]![
-              careerProvider.selectedAchievement.id.toString()]!
-          .length;
-    }
+    questionLength = careerProvider
+        .selectedAchievement.careerPathNotificationAchievementQuestion!.length;
 
     final size = MediaQuery.of(context).size;
     const double radius = 20;
@@ -184,25 +179,27 @@ class _QuestionsPageState extends State<QuestionsPage> {
                     const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
                 child: Row(
                   children: [
-                    CommonButton(
-                      isExpanded: true,
-                      lable: "Previous",
-                      isLeading: true,
-                      ontap: () {
-                        if (currentQuestion != 0) currentQuestion--;
+                    currentQuestion > 0
+                        ? CommonButton(
+                            isExpanded: true,
+                            lable: "Previous",
+                            isLeading: true,
+                            ontap: () {
+                              if (currentQuestion != 0) currentQuestion--;
 
-                        setState(() {});
-                        animateToQuestion();
-                      },
-                      icon: Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Icon(
-                          Icons.west,
-                          size: 25,
-                          color: primarySwatch[900],
-                        ),
-                      ),
-                    ),
+                              setState(() {});
+                              animateToQuestion();
+                            },
+                            icon: Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: Icon(
+                                Icons.west,
+                                size: 25,
+                                color: primarySwatch[900],
+                              ),
+                            ),
+                          )
+                        : Expanded(child: Container()),
                     CommonButton(
                       isExpanded: true,
                       lable: "Next",
@@ -213,7 +210,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                           controller.clear();
                           unAnsweredQuestion.remove(currentQuestion + 1);
                         }
-                        print(unAnsweredQuestion);
+
                         setState(() {
                           currentQuestion++;
                           animateToQuestion();
@@ -226,6 +223,22 @@ class _QuestionsPageState extends State<QuestionsPage> {
                             return SummaryScreen(
                               unAnsweredQuestion: unAnsweredQuestion,
                               totalquestion: questionLength,
+                              onTaps: () async {
+                                if (unAnsweredQuestion.isEmpty) {
+                                  final res = await context
+                                      .read(carerNotifierProvider)
+                                      .submitAnswers();
+
+                                  if (res) {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return const CongratsScreen();
+                                    }));
+                                  }
+                                } else {
+                                  showToast('Some questions are not answered');
+                                }
+                              },
                             );
                           }));
                         }
@@ -286,12 +299,8 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
               height: 20,
             ),
             Text(
-              careerProvider
-                  .careerModel
-                  .questions![careerProvider.selectedCareerPath.id.toString()]![
-                      careerProvider.selectedAchievement.id
-                          .toString()]![widget.i]
-                  .question
+              careerProvider.selectedAchievement
+                  .careerPathNotificationAchievementQuestion![widget.i].question
                   .toString(),
               style: Theme.of(context).textTheme.bodyText1,
               textAlign: TextAlign.center,
@@ -307,12 +316,8 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
               height: 2,
             ),
             TextFormField(
-              initialValue: careerProvider
-                  .careerModel
-                  .questions![careerProvider.selectedCareerPath.id.toString()]![
-                      careerProvider.selectedAchievement.id
-                          .toString()]![widget.i]
-                  .answer
+              initialValue: careerProvider.selectedAchievement
+                  .careerPathNotificationAchievementQuestion![widget.i].answer
                   .toString(),
               maxLines: 6,
               onChanged: widget.onchnage,

@@ -36,7 +36,7 @@ class _LearningScreenState extends State<LearningScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final careerProvider = context.read(learningProvider);
+    final _learningProvider = context.read(learningProvider);
     return loading
         ? LoadingWidget()
         : Column(
@@ -92,28 +92,24 @@ class _LearningScreenState extends State<LearningScreen> {
                     ),
                 ],
               ),
-              Expanded(
-                child: LeaningCategories(
-                    learnings: careerProvider.learnings, pageIndex: 0),
-              )
-              // if (selectedIndex == 0)
-              //   Expanded(
-              //       child: LeaningCategories(
-              //     achievement: careerProvider.newAchievement,
-              //     pageIndex: selectedIndex,
-              //   )),
-              // if (selectedIndex == 1)
-              //   Expanded(
-              //       child: LeaningCategories(
-              //     achievement: careerProvider.submittedAchievement,
-              //     pageIndex: selectedIndex,
-              //   )),
-              // if (selectedIndex == 2)
-              //   Expanded(
-              //       child: LeaningCategories(
-              //     achievement: careerProvider.completedAchievement,
-              //     pageIndex: selectedIndex,
-              //   )),
+              if (selectedIndex == 0)
+                Expanded(
+                    child: LeaningCategories(
+                  learnings: _learningProvider.newLearnings,
+                  pageIndex: selectedIndex,
+                )),
+              if (selectedIndex == 1)
+                Expanded(
+                    child: LeaningCategories(
+                  learnings: _learningProvider.submittedLearning,
+                  pageIndex: selectedIndex,
+                )),
+              if (selectedIndex == 2)
+                Expanded(
+                    child: LeaningCategories(
+                  learnings: _learningProvider.compeletedLearning,
+                  pageIndex: selectedIndex,
+                )),
             ],
           );
   }
@@ -147,96 +143,6 @@ class _LeaningCategoriesState extends State<LeaningCategories> {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // InkWell(
-              //   onTap: () {
-              //     showModalBottomSheet(
-              //         context: context,
-              //         backgroundColor: Colors.transparent,
-              //         builder: (context) => Text('Ui is not avalible')
-              //         //CareerpathBottomSheet()
-              //         );
-              //   },
-              //   child: Container(
-              //     decoration: BoxDecoration(
-              //         color: Color(0xFF53ac54),
-
-              //         // color: Color(0xFF25AA25),
-              //         borderRadius: BorderRadius.circular(10)),
-              //     child: Padding(
-              //       padding: const EdgeInsets.symmetric(vertical: 10),
-              //       child: Row(
-              //         mainAxisAlignment: MainAxisAlignment.start,
-              //         children: [
-              //           SizedBox(
-              //             width: 20,
-              //           ),
-              //           Image.asset(
-              //             "assets/images/premiumquality.png",
-              //             height: 50,
-              //           ),
-              //           SizedBox(
-              //             width: 20,
-              //           ),
-              //           SizedBox(
-              //             width: .5,
-              //             height: 55,
-              //             child: Container(
-              //               color: Colors.white,
-              //             ),
-              //           ),
-              //           SizedBox(
-              //             width: 10,
-              //           ),
-              //           Column(
-              //             crossAxisAlignment: CrossAxisAlignment.start,
-              //             children: [
-              //               if (widget.pageIndex == 0)
-              //                 Text(
-              //                   "${careerProvider.newAchievement.length} STEPS LEFT",
-              //                   style: TextStyle(
-              //                       fontSize: 18,
-              //                       color: Colors.white,
-              //                       fontWeight: FontWeight.bold),
-              //                   textAlign: TextAlign.center,
-              //                 ),
-              //               if (widget.pageIndex == 1)
-              //                 Text(
-              //                   "${careerProvider.submittedAchievement.length} / ${careerProvider.careerModel.careerAchievements![careerProvider.selectedCareerPath.id.toString()]!.length} Reviewd",
-              //                   style: TextStyle(
-              //                       fontSize: 18,
-              //                       color: Colors.white,
-              //                       fontWeight: FontWeight.bold),
-              //                   textAlign: TextAlign.center,
-              //                 ),
-              //               if (widget.pageIndex == 2)
-              //                 Text(
-              //                   "${careerProvider.completedAchievement.length} / ${careerProvider.careerModel.careerAchievements![careerProvider.selectedCareerPath.id.toString()]!.length} Reviewd",
-              //                   style: TextStyle(
-              //                       fontSize: 18,
-              //                       color: Colors.white,
-              //                       fontWeight: FontWeight.bold),
-              //                   textAlign: TextAlign.center,
-              //                 ),
-              //               Row(
-              //                 children: [
-              //                   Text(
-              //                     careerProvider.selectedCareerPath.careerPath!,
-              //                     style: TextStyle(color: Colors.white),
-              //                   ),
-              //                   Icon(
-              //                     Icons.arrow_drop_down,
-              //                     color: Colors.white,
-              //                   )
-              //                 ],
-              //               ),
-              //             ],
-              //           ),
-              //         ],
-              //       ),
-              //     ),
-              //   ),
-              // ),
-
               SizedBox(
                 height: 10,
               ),
@@ -275,8 +181,8 @@ class LearningSingleCollection extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    int length = 0;
-    // final careerProvider = useProvider(carerNotifierProvider);
+    int length = learning.question_count!;
+    final _learningProvider = useProvider(learningProvider);
     // if (careerProvider.careerModel
     //     .questions![careerProvider.selectedCareerPath.id.toString()]!
     //     .containsKey(achievement.id.toString())) {
@@ -293,10 +199,10 @@ class LearningSingleCollection extends HookWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
         onTap: () {
-          // careerProvider.setAchievement(achievement);
+          _learningProvider.setLearning(learning.id!);
           Navigator.pushNamed(
             context,
-            Routes.QuestionPage,
+            Routes.learning_question_tab,
           );
         },
         child: Material(

@@ -7,14 +7,17 @@ import 'package:flutter/services.dart';
 import 'package:southwind/Models/survey/individual_survey.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/common_button.dart';
+import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/career_tab/components/information_dialog.dart';
 import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
 import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
 import 'package:southwind/UI/surveys_tab/Page/summarypage.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/data/providers/survey_provider.dart';
 import 'package:southwind/routes/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:southwind/data/providers/providers.dart';
+import 'package:southwind/utils/helpers.dart';
 
 class Questions_Tab extends StatefulWidget {
   Questions_Tab({
@@ -27,7 +30,9 @@ class Questions_Tab extends StatefulWidget {
 
 class _Questions_TabState extends State<Questions_Tab> {
   int currentQuestion = 0;
+  TextEditingController textEditingController = TextEditingController();
   IndividualSurvey? individualSurvey;
+  List<int> unAnsweredQuestion = [];
   bool loading = true;
   PageController _pageController = PageController();
   @override
@@ -45,7 +50,13 @@ class _Questions_TabState extends State<Questions_Tab> {
   }
 
   loadData() async {
-    await context.read(surveyNotifierProvider).individualSurvey();
+    final _provider = await context.read(surveyNotifierProvider);
+    await _provider.individualSurvey();
+    for (int i = 0;
+        i < _provider.selectedSurvey!.surveyNotificationQuestion!.length;
+        i++) {
+      unAnsweredQuestion.add(i + 1);
+    }
     setState(() {
       loading = false;
     });
@@ -53,235 +64,265 @@ class _Questions_TabState extends State<Questions_Tab> {
 
   @override
   Widget build(BuildContext context) {
+    final surveyProvider = context.read(surveyNotifierProvider);
     final size = MediaQuery.of(context).size;
     final double radius = 20;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: CommonAppbar(),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            // Card(
-            //   color: Colors.transparent,
-            //   margin: EdgeInsets.all(0),
-            //   clipBehavior: Clip.antiAliasWithSaveLayer,
-            //   elevation: 10,
-            //   shape: RoundedRectangleBorder(
-            //       borderRadius: BorderRadius.only(
-            //     bottomLeft: Radius.circular(radius),
-            //     bottomRight: Radius.circular(radius),
-            //   )),
-            //   child: ClipRRect(
-            //     borderRadius: BorderRadius.only(
-            //       bottomLeft: Radius.circular(radius),
-            //       bottomRight: Radius.circular(radius),
-            //     ),
-            //     child: Container(
-            //       width: size.width,
-            //       decoration: BoxDecoration(
-            //           color: Colors.white,
-            //           borderRadius: BorderRadius.only(
-            //             bottomLeft: Radius.circular(radius),
-            //             bottomRight: Radius.circular(radius),
-            //           )),
-            //       child: Column(
-            //         mainAxisSize: MainAxisSize.min,
-            //         children: [
-            //           SizedBox(
-            //             height: 10,
-            //           ),
-            //           Padding(
-            //             padding: const EdgeInsets.symmetric(horizontal: 18),
-            //             child: Text(
-            //               "Being Exceptional at Accountabilty",
-            //               style: TextStyle(
-            //                   color: primarySwatch[700],
-            //                   fontWeight: FontWeight.bold,
-            //                   fontSize: 16),
-            //               maxLines: 2,
-            //             ),
-            //           ),
-            //           SizedBox(
-            //             height: 10,
-            //           ),
-            //           // Container(
-            //           //   height: 60,
-            //           //   child: QuestionsTab(
-            //           //     totalQuestion: Questions.length,
-            //           //     currentQuestion: currentQuestion,
-            //           //     onTap: (a) {
-            //           //       this.currentQuestion = a;
-            //           //
-            //           //       setState(() {});
-            //           //       animateToQuestion();
-            //           //     },
-            //           //   ),
-            //           // ),
-            //           SizedBox(
-            //             height: 10,
-            //           ),
-            //         ],
-            //       ),
-            //     ),
-            //   ),
-            // ),
-            SizedBox(
-              height: 20,
-            ),
-            Stack(
-              children: [
-                Container(
-                  margin: EdgeInsets.symmetric(horizontal: 40),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: primarySwatch.shade300),
-                  height: 20,
-                ),
-                Container(
-                  width: currentQuestion / Questions.length * size.width,
-                  margin: EdgeInsets.symmetric(horizontal: 40),
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: primarySwatch.shade900),
-                  height: 20,
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 15),
-              child: Align(
-                alignment: Alignment.center,
-                child: Text(
-                  "Question : ${currentQuestion + 1} / ${Questions.length}",
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: primarySwatch.shade900),
-                ),
-              ),
-            ),
-            Expanded(
-                child: PageView(
-              controller: _pageController,
-              children: [
-                for (int i = 0; i < Questions.length; i++)
-                  QuestionAnswerWidget(
-                    i: i,
-                  ),
-              ],
-              onPageChanged: (a) {
-                currentQuestion = a;
-
-                setState(() {});
+      body: loading
+          ? LoadingWidget()
+          : GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
               },
-            )),
-            // Spacer(),
-            Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0, -1),
-                        blurRadius: 10,
-                        spreadRadius: 0)
-                  ],
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(radius),
-                    topRight: Radius.circular(radius),
-                  )),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
-                child: CommonButton(
-                  isExpanded: true,
-                  lable: "Answer it",
-                  isLeading: true,
-                  ontap: () {
-                    setState(() {
-                      if (currentQuestion < Questions.length) {
-                        currentQuestion++;
-                      }
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                 
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Stack(
+                    children: [
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 40),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: primarySwatch.shade300),
+                        height: 20,
+                      ),
+                      Container(
+                        width: currentQuestion /
+                            surveyProvider.selectedSurvey!
+                                .surveyNotificationQuestion!.length *
+                            size.width,
+                        margin: EdgeInsets.symmetric(horizontal: 40),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: primarySwatch.shade900),
+                        height: 20,
+                      ),
+                    ],
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 15),
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        "Question : ${currentQuestion + 1} / ${surveyProvider.selectedSurvey!.surveyNotificationQuestion!.length}",
+                        style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: primarySwatch.shade900),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                      child: PageView(
+                    controller: _pageController,
+                    children: [
+                      for (int i = 0;
+                          i <
+                              surveyProvider.selectedSurvey!
+                                  .surveyNotificationQuestion!.length;
+                          i++)
+                        QuestionAnswerWidget(
+                          textEditingController: textEditingController,
+                          onChange: (i) {
+                            print(i);
+                            setState(() {
+                              unAnsweredQuestion.remove(i + 1);
+                            });
+                          },
+                          i: i,
+                        ),
+                    ],
+                    onPageChanged: (a) {
+                      currentQuestion = a;
 
-                      animateToQuestion();
-                      if (currentQuestion == Questions.length) {
-                        Navigator.pushNamed(context, Routes.question_summary);
-                        // Navigator.push(context,
-                        //     MaterialPageRoute(builder: (context) {
-                        //   return SummaryTab(
-                        //     totalquestion: Questions.length,
-                        //   );
-                        // }));
-                      }
-                    });
-                    // animateToQuestion();
-                  },
-                ),
-                // Row(
-                //   children: [
-                //     CommonButton(
-                //       isExpanded: true,
-                //       lable: "Answer it",
-                //       isLeading: true,
-                //       ontap: () {
-                //         if (currentQuestion != 0) currentQuestion++;
-                //
-                //         setState(() {});
-                //         animateToQuestion();
-                //       },
-                //     ),
-                //     // CommonButton(
-                //     //   isExpanded: true,
-                //     //   lable: "Next",
-                //     //   ontap: () {
-                //     //     setState(() {
-                //     //       currentQuestion++;
-                //     //       animateToQuestion();
-                //     //     });
-                //     //     // animateToQuestion();
-                //     //     if (currentQuestion == Questions.length) {
-                //     //       Navigator.push(context,
-                //     //           MaterialPageRoute(builder: (context) {
-                //     //         return SummaryScreen(
-                //     //           totalquestion: Questions.length,
-                //     //         );
-                //     //       }));
-                //     //     }
-                //     //   },
-                //     //   isLeading: false,
-                //     //   icon: Padding(
-                //     //     padding: const EdgeInsets.only(right: 8),
-                //     //     child: Icon(
-                //     //       Icons.east,
-                //     //       size: 25,
-                //     //       color: primarySwatch[900],
-                //     //     ),
-                //     //   ),
-                //     // ),
-                //   ],
-                // ),
+                      setState(() {});
+                    },
+                  )),
+                  // Spacer(),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0, -1),
+                              blurRadius: 10,
+                              spreadRadius: 0)
+                        ],
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(radius),
+                          topRight: Radius.circular(radius),
+                        )),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 18),
+                      child:
+                          //  Row(
+                          //   children: [
+                          //     CommonButton(
+                          //       isExpanded: true,
+                          //       lable: "Answer it",
+                          //       isLeading: true,
+                          //       ontap: () {
+                          //         setState(() {
+                          //           if (currentQuestion <
+                          //               surveyProvider.selectedSurvey!
+                          //                   .surveyNotificationQuestion!.length) {
+                          //             currentQuestion++;
+                          //           }
+
+                          //           animateToQuestion();
+                          //           if (currentQuestion ==
+                          //               surveyProvider.selectedSurvey!
+                          //                   .surveyNotificationQuestion!.length) {
+                          //             Navigator.pushNamed(
+                          //                 context, Routes.question_summary);
+                          //             // Navigator.push(context,
+                          //             //     MaterialPageRoute(builder: (context) {
+                          //             //   return SummaryTab(
+                          //             //     totalquestion: Questions.length,
+                          //             //   );
+                          //             // }));
+                          //           }
+                          //         });
+                          //         // animateToQuestion();
+                          //       },
+                          //     ),
+
+                          //   ],
+                          // )
+                          Row(
+                        children: [
+                        currentQuestion>0?  CommonButton(
+                            isExpanded: true,
+                            lable: "Previous",
+                            ontap: () {
+                              if (currentQuestion + 1 > 1) {
+                                setState(() {
+                                  currentQuestion--;
+                                  animateToQuestion();
+                                });
+                              }
+
+                              // animateToQuestion();
+                              // if (currentQuestion == Questions.length) {
+                              //   Navigator.push(context,
+                              //       MaterialPageRoute(builder: (context) {
+                              //     // return SummaryScreen(
+                              //     //   totalquestion: Questions.length,
+                              //     // );
+                              //   }));
+                              // }
+                            },
+                            isLeading: true,
+                            icon: Padding(
+                              padding: const EdgeInsets.only(left: 8),
+                              child: Icon(
+                                Icons.west,
+                                size: 25,
+                                color: primarySwatch[900],
+                              ),
+                            ),
+                          ):Expanded(child: Container()),
+                          CommonButton(
+                            isExpanded: true,
+                            lable: currentQuestion + 1 <
+                                    surveyProvider.selectedSurvey!
+                                        .surveyNotificationQuestion!.length
+                                ? "Next"
+                                : "Submit",
+                            ontap: () {
+                              print(unAnsweredQuestion);
+                              if (currentQuestion + 1 <
+                                  surveyProvider.selectedSurvey!
+                                      .surveyNotificationQuestion!.length) {
+                                setState(() {
+                                  currentQuestion++;
+
+                                  animateToQuestion();
+                                });
+                              } else {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return SummaryScreen(
+                                    unAnsweredQuestion: unAnsweredQuestion,
+                                    totalquestion: surveyProvider
+                                        .selectedSurvey!
+                                        .surveyNotificationQuestion!
+                                        .length,
+                                    onTaps: () async {
+                                      if (unAnsweredQuestion.isEmpty) {
+                                        final res = await surveyProvider
+                                            .submitAnswers();
+                                        if (res) {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) {
+                                            return const CongratsScreen();
+                                          }));
+                                        }
+                                      } else {
+                                        showToast(
+                                            'Some questions are not answered');
+                                      }
+                                    },
+                                  );
+                                }));
+                              }
+
+                              // animateToQuestion();
+                              // if (currentQuestion == Questions.length) {
+                              //   Navigator.push(context,
+                              //       MaterialPageRoute(builder: (context) {
+                              //     // return SummaryScreen(
+                              //     //   totalquestion: Questions.length,
+                              //     // );
+                              //   }));
+                              // }
+                            },
+                            isLeading: false,
+                            icon: Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Icon(
+                                Icons.east,
+                                size: 25,
+                                color: primarySwatch[900],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 2,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(
-              height: 2,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
 
 class QuestionAnswerWidget extends StatefulWidget {
   int i;
-  QuestionAnswerWidget({Key? key, required this.i}) : super(key: key);
+  TextEditingController textEditingController;
+  ValueChanged<int>? onChange;
+  QuestionAnswerWidget(
+      {Key? key,
+      required this.i,
+      required this.textEditingController,
+      this.onChange})
+      : super(key: key);
 
   @override
   State<QuestionAnswerWidget> createState() => _QuestionAnswerWidgetState();
@@ -293,176 +334,86 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
   int currentindex = -1;
   bool vlaue = false;
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final surveyProvider = context.read(surveyNotifierProvider);
+    // if (surveyProvider.selectedSurvey!.surveyAnswer![widget.i].other != null) {
+    //   widget.textEditingController.text =
+    //       surveyProvider.selectedSurvey!.surveyAnswer![widget.i].other;
+    // } else {
+    //   widget.textEditingController.text = "";
+    // }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final surveyProvider = context.read(surveyNotifierProvider);
     final size = MediaQuery.of(context).size;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          Text(
-            "${Questions[widget.i]}",
-            style: Theme.of(context).textTheme.bodyText1,
-            textAlign: TextAlign.left,
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            "Answer :",
-            style: TextStyle(fontSize: 14, color: primarySwatch[700]),
-          ),
-          SizedBox(
-            height: 2,
-          ),
-          if (widget.i == 0 || widget.i == 3)
-            TextFormField(
-              textInputAction: TextInputAction.done,
-              maxLines: 6,
-              style: TextStyle(
-                fontSize: 16,
-              ),
-              decoration: InputDecoration(
-                  hintText: "Enter Your Answer",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  isCollapsed: true,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide:
-                          BorderSide(width: .5, color: primarySwatch[700]!)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide:
-                          BorderSide(width: .5, color: primarySwatch[700]!)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(width: 1, color: primaryColor))),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox(
+              height: 20,
             ),
-          if (widget.i == 1 || widget.i == 4)
-            Expanded(
+            Text(
+              "${surveyProvider.selectedSurvey!.surveyNotificationQuestion![widget.i].question}",
+              style: Theme.of(context).textTheme.bodyText1,
+              textAlign: TextAlign.left,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Answer :",
+              style: TextStyle(fontSize: 14, color: primarySwatch[700]),
+            ),
+            SizedBox(
+              height: 2,
+            ),
+           
+            Container(
+              height: 68 *
+                  surveyProvider
+                      .selectedSurvey!
+                      .surveyNotificationQuestion![widget.i]
+                      .surveyNotificationOption!
+                      .length
+                      .toDouble(),
               child: ListView.builder(
-                itemCount: Chose.length,
+                itemCount: surveyProvider
+                    .selectedSurvey!
+                    .surveyNotificationQuestion![widget.i]
+                    .surveyNotificationOption!
+                    .length,
+                physics: NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
                   return Stack(
                     children: [
                       Column(
                         children: [
-                          SizedBox(
-                            height: size.height * 0.005,
-                          ),
                           GestureDetector(
                             onTap: () {
                               setState(() {
-                                selected.contains(index)
-                                    ? selected.remove(index)
-                                    : selected.add(index);
-                                currentindex = index;
-                                currentindex = -1;
-                              });
-                            },
-                            onDoubleTap: () {
-                              if (selected.contains(index)) {
-                                selected.remove(index);
-                                print(selected.toString());
-                                currentindex = -1;
-                                setState(() {});
-                              }
-                            },
-                            child: Card(
-                              // elevation: currentindex == index ? 5 : 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 10),
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: selected.contains(index)
-                                          ? primarySwatch.shade900
-                                          : Colors.white,
-                                      width: 2),
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    // Container(
-                                    //   margin: EdgeInsets.only(left: 10),
-                                    //   child: Text(
-                                    //     "${Chose[index].char}",
-                                    //     style: TextStyle(
-                                    //       fontWeight: FontWeight.bold,
-                                    //       fontSize: 30,
-                                    //       color: selected.contains(index)
-                                    //           ? primarySwatch.shade900
-                                    //           : Colors.grey[700],
-                                    //     ),
-                                    //   ),
-                                    // ),
-                                    // SizedBox(
-                                    //   width: size.width * 0.00,
-                                    // ),
-                                    Container(
-                                        margin: EdgeInsets.only(left: 15),
-                                        child: Text(
-                                          "${Chose[index].Opstion}",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: selected.contains(index)
-                                                ? primarySwatch.shade900
-                                                : Colors.grey[700],
-                                          ),
-                                        )),
-                                    Checkbox(
-                                      value: selected.contains(index),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          selected.contains(index)
-                                              ? selected.remove(index)
-                                              : selected.add(index);
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ),
-          if (widget.i == 2 || widget.i == 5)
-            Expanded(
-              child: ListView.builder(
-                itemCount: Chose1.length,
-                itemBuilder: (context, index) {
-                  return Stack(
-                    children: [
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: size.height * 0.005,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
+                                widget.onChange!(widget.i);
                                 selected1.contains(index)
                                     ? selected1.remove(index)
                                     : selected1.add(index);
-                                currentindex = -1;
+
                                 currentindex = index;
+                                surveyProvider.updateAnswer(
+                                    widget.i,
+                                    widget.textEditingController.text,
+                                    surveyProvider
+                                        .selectedSurvey!
+                                        .surveyNotificationQuestion![widget.i]
+                                        .surveyNotificationOption![index]
+                                        .id!);
                               });
                             },
                             child: Card(
@@ -471,7 +422,7 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Container(
-                                padding: EdgeInsets.symmetric(vertical: 10),
+                                padding: EdgeInsets.symmetric(vertical: 3),
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                       color: currentindex == index
@@ -504,8 +455,9 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
                                     Container(
                                       margin: EdgeInsets.only(left: 15),
                                       child: Text(
-                                        "${Chose1[index].Opstion}",
+                                        "${surveyProvider.selectedSurvey!.surveyNotificationQuestion![widget.i].surveyNotificationOption![index].optionName}",
                                         style: TextStyle(
+                                          fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           color: currentindex == index
                                               ? primarySwatch.shade900
@@ -518,9 +470,23 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
                                       value: currentindex,
                                       onChanged: (val) {
                                         setState(() {
+                                          print("id:" + index.toString());
+                                          widget.onChange!(widget.i);
                                           selected1.contains(index)
                                               ? selected1.remove(index)
                                               : selected1.add(index);
+                                          currentindex = -1;
+                                          currentindex = index;
+                                          surveyProvider.updateAnswer(
+                                              widget.i,
+                                              widget.textEditingController.text,
+                                              surveyProvider
+                                                  .selectedSurvey!
+                                                  .surveyNotificationQuestion![
+                                                      widget.i]
+                                                  .surveyNotificationOption![
+                                                      index]
+                                                  .id!);
                                         });
                                       },
                                     ),
@@ -536,7 +502,39 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
                 },
               ),
             ),
-        ],
+            SizedBox(
+              height: 10,
+            ),
+            TextFormField(
+              controller: widget.textEditingController,
+              textInputAction: TextInputAction.done,
+              maxLines: 3,
+              style: TextStyle(
+                fontSize: 16,
+              ),
+              decoration: InputDecoration(
+                  hintText: "Enter Your Answer",
+                  hintStyle: TextStyle(color: Colors.grey),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  isCollapsed: true,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide:
+                          BorderSide(width: .5, color: primarySwatch[700]!)),
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide:
+                          BorderSide(width: .5, color: primarySwatch[700]!)),
+                  focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5),
+                      borderSide: BorderSide(width: 1, color: primaryColor))),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -592,38 +590,3 @@ class QuestionsTab extends StatelessWidget {
     );
   }
 }
-
-List Questions = [
-  "What is Accountability?",
-  "Why is it important to be fair and consistent when holding people accountable?",
-  "How can personal accountability affect the way others perceive you as a leader?",
-  "Give me three examples of situation that inaction can discredit your accountability",
-  "Give me three examples of situation that inaction can discredit your accountability",
-  "Why is it important to address a situation immediately after it occurs rather than later?",
-];
-
-class chose {
-  String char;
-  String Opstion;
-  chose({required this.char, required this.Opstion});
-}
-
-List<chose> Chose = [
-  chose(char: "A", Opstion: "Give me three examples of "),
-  chose(char: "B", Opstion: "Give me three examples of "),
-  chose(char: "C", Opstion: "Give me three examples of "),
-  chose(char: "D", Opstion: "Give me three examples of "),
-];
-
-class chose1 {
-  int char;
-  String Opstion;
-  chose1({required this.char, required this.Opstion});
-}
-
-List<chose1> Chose1 = [
-  chose1(char: 1, Opstion: "Why is it important to address?"),
-  chose1(char: 2, Opstion: "Give me three examples of "),
-  chose1(char: 3, Opstion: "Why is it important to address?"),
-  chose1(char: 4, Opstion: "Give me three examples of "),
-];

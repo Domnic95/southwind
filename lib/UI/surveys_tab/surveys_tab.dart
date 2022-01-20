@@ -201,7 +201,7 @@ class SingleCollection extends HookWidget {
                     color: primarySwatch[900],
                   ),
                   subtitle: Text(
-                    "${0} Question",
+                    "${collection.questionCount} Question",
                     style: TextStyle(color: primarySwatch[500], fontSize: 12),
                   ),
                 ),

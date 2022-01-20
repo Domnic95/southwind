@@ -38,7 +38,7 @@ class _CareerTabState extends State<CareerTab> {
 
   @override
   Widget build(BuildContext context) {
-    final careerProvider = context.read(carerNotifierProvider);
+    final careerProvider = useProvider(carerNotifierProvider);
     return loading
         ? LoadingWidget()
         : Column(
@@ -136,6 +136,8 @@ class _CareerPathState extends State<CareerPath> {
     //     careerProvider.careerModel
     //         .careerAchievements![careerProvider.selectedCareerPath.id]!.length
     //         .toString());
+    print(careerProvider.selectedCareerPathIndex);
+    int totalQuestion = careerProvider.allSelectedCareerPath.length;
     final size = MediaQuery.of(context).size;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -196,7 +198,7 @@ class _CareerPathState extends State<CareerPath> {
                               ),
                             if (widget.pageIndex == 1)
                               Text(
-                                "${careerProvider.submittedAchievement.length} / ${careerProvider.careerModel.careerAchievements![careerProvider.selectedCareerPath.id.toString()]!.length} Reviewd",
+                                "${careerProvider.submittedAchievement.length} / ${totalQuestion} Reviewd",
                                 style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.white,
@@ -205,7 +207,7 @@ class _CareerPathState extends State<CareerPath> {
                               ),
                             if (widget.pageIndex == 2)
                               Text(
-                                "${careerProvider.completedAchievement.length} / ${careerProvider.careerModel.careerAchievements![careerProvider.selectedCareerPath.id.toString()]!.length} Reviewd",
+                                "${careerProvider.completedAchievement.length} / ${totalQuestion} Reviewd",
                                 style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.white,
@@ -215,7 +217,8 @@ class _CareerPathState extends State<CareerPath> {
                             Row(
                               children: [
                                 Text(
-                                  careerProvider.selectedCareerPath.careerPath!,
+                                  careerProvider.selectedCareerPath.name!
+                                      .toString(),
                                   style: TextStyle(color: Colors.white),
                                 ),
                                 Icon(
@@ -274,17 +277,11 @@ class SingleCollection extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    int length = 0;
-    final careerProvider = useProvider(carerNotifierProvider);
-    if (careerProvider.careerModel
-        .questions![careerProvider.selectedCareerPath.id.toString()]!
-        .containsKey(achievement.id.toString())) {
-      length = careerProvider
-          .careerModel
-          .questions![careerProvider.selectedCareerPath.id.toString()]![
-              achievement.id.toString()]!
-          .length;
-    }
+    final careerProvider = context.read(carerNotifierProvider);
+
+    // length = careerProvider
+    //     .selectedAchievement.careerPathNotificationAchievementQuestion!.length;
+
     // careerProvider.careerModel.questions![careerProvider.selectedCareerPath.id.toString()]![achievement.id.toString()]!.length
     final double radius = 12;
 
@@ -312,7 +309,7 @@ class SingleCollection extends HookWidget {
               padding: const EdgeInsets.symmetric(vertical: 0),
               child: ListTile(
                 title: Text(
-                  achievement.achievements.toString(),
+                  achievement.name.toString(),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
@@ -331,7 +328,7 @@ class SingleCollection extends HookWidget {
                   //             careerModel.careerPath![index].id.toString()]!
                   //         .length
                   //         .toString() +
-                  " ${length} Question",
+                  " ${achievement.careerPathNotificationAchievementQuestion!.length} Question",
                   style: TextStyle(color: primarySwatch[500]),
                 ),
               ),

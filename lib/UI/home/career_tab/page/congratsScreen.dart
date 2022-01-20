@@ -107,7 +107,7 @@ class CongratsScreen extends StatelessWidget {
                   child: InkWell(
                     onTap: () {
                       Navigator.popUntil(context, (route) {
-                        print(route.settings.name.toString());
+                      
                         return route.settings.name == Routes.splashScreen;
                       });
                     },
