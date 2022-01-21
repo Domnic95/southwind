@@ -107,10 +107,14 @@ class _ProfileState extends State<Profile> {
                     //       image: NetworkImage(
                     //           'https://images.unsplash.com/photo-1638459614085-bdb69b6d3432?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80'),
                     //       fit: BoxFit.cover),
-                    child: NetworkImagesLoader(
-                        url: _userProvider.userData!.userImage,
-                        radius: 20,
-                        fit: BoxFit.cover),
+                    child: Stack(
+                      children: [
+                        NetworkImagesLoader(
+                            url: _userProvider.userData!.userImage,
+                            radius: 20,
+                            fit: BoxFit.cover),
+                      ],
+                    ),
                   ),
                 ),
               ),

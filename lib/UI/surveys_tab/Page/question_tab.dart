@@ -13,7 +13,7 @@ import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
 import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
 import 'package:southwind/UI/surveys_tab/Page/summarypage.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
-import 'package:southwind/data/providers/survey_provider.dart';
+
 import 'package:southwind/routes/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:southwind/data/providers/providers.dart';
@@ -79,7 +79,6 @@ class _Questions_TabState extends State<Questions_Tab> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                 
                   SizedBox(
                     height: 20,
                   ),
@@ -202,37 +201,39 @@ class _Questions_TabState extends State<Questions_Tab> {
                           // )
                           Row(
                         children: [
-                        currentQuestion>0?  CommonButton(
-                            isExpanded: true,
-                            lable: "Previous",
-                            ontap: () {
-                              if (currentQuestion + 1 > 1) {
-                                setState(() {
-                                  currentQuestion--;
-                                  animateToQuestion();
-                                });
-                              }
+                          currentQuestion > 0
+                              ? CommonButton(
+                                  isExpanded: true,
+                                  lable: "Previous",
+                                  ontap: () {
+                                    if (currentQuestion + 1 > 1) {
+                                      setState(() {
+                                        currentQuestion--;
+                                        animateToQuestion();
+                                      });
+                                    }
 
-                              // animateToQuestion();
-                              // if (currentQuestion == Questions.length) {
-                              //   Navigator.push(context,
-                              //       MaterialPageRoute(builder: (context) {
-                              //     // return SummaryScreen(
-                              //     //   totalquestion: Questions.length,
-                              //     // );
-                              //   }));
-                              // }
-                            },
-                            isLeading: true,
-                            icon: Padding(
-                              padding: const EdgeInsets.only(left: 8),
-                              child: Icon(
-                                Icons.west,
-                                size: 25,
-                                color: primarySwatch[900],
-                              ),
-                            ),
-                          ):Expanded(child: Container()),
+                                    // animateToQuestion();
+                                    // if (currentQuestion == Questions.length) {
+                                    //   Navigator.push(context,
+                                    //       MaterialPageRoute(builder: (context) {
+                                    //     // return SummaryScreen(
+                                    //     //   totalquestion: Questions.length,
+                                    //     // );
+                                    //   }));
+                                    // }
+                                  },
+                                  isLeading: true,
+                                  icon: Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Icon(
+                                      Icons.west,
+                                      size: 25,
+                                      color: primarySwatch[900],
+                                    ),
+                                  ),
+                                )
+                              : Expanded(child: Container()),
                           CommonButton(
                             isExpanded: true,
                             lable: currentQuestion + 1 <
@@ -376,7 +377,6 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
             SizedBox(
               height: 2,
             ),
-           
             Container(
               height: 68 *
                   surveyProvider

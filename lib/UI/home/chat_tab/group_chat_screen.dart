@@ -1,10 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_riverpod/src/provider.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:southwind/Models/MessageModel.dart';
 import 'package:southwind/UI/home/chat_tab/single_chat_screen.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/data/providers/providers.dart';
 import 'package:southwind/routes/routes.dart';
 
-class GroupChatScreen extends StatefulWidget {
+class GroupChatScreen extends StatefulHookWidget {
   GroupChatScreen({Key? key}) : super(key: key);
 
   @override
@@ -12,8 +18,32 @@ class GroupChatScreen extends StatefulWidget {
 }
 
 class _GroupChatScreenState extends State<GroupChatScreen> {
+  bool loading = true;
+  Timer? timer;
+  TextEditingController textController = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  loadData() async {
+    // periodic
+    timer = Timer.periodic(Duration(seconds: 1), (c) async {
+      await context.read(groupProvider).getIndividualGroupMessages();
+    });
+  }
+
+  @override
+  void dispose() {
+    timer!.cancel();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final _groupProvider = useProvider(groupProvider);
     return Scaffold(
       appBar: AppBar(
         leadingWidth: 50,
@@ -30,9 +60,10 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                 padding: const EdgeInsets.all(4.0),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(1000),
-                  child: Image.network(
-                    "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80",
-                  ),
+                  child: Image.asset('assets/images/southwind_logo_single.png'),
+                  //  Image.network(
+                  //   "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80",
+                  // ),
                 ),
               ),
             ),
@@ -41,7 +72,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
             ),
             Center(
               child: Text(
-                "Group Name",
+                _groupProvider.listGroup[_groupProvider.selectedGroupIndex!]
+                    .group!.groupName!,
                 style: TextStyle(fontSize: 18, color: primarySwatch[900]),
               ),
             ),
@@ -76,14 +108,15 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               child: ListView.builder(
                 reverse: true,
                 itemBuilder: (context, index) {
-                  bool isLeft = index.isEven;
+                  bool isLeft = _groupProvider.listOfMessage[index].profileId ==
+                      _groupProvider.userData!.id;
                   return SingleMessage(
                     isGroup: true,
                     index: index,
-                    messageModel: messages[index],
+                    messageModel: _groupProvider.listOfMessage[index],
                   );
                 },
-                itemCount: messages.length,
+                itemCount: _groupProvider.listOfMessage.length,
               ),
             ),
             // Expanded(child: ListView.builder(itemBuilder: (context, index) {
@@ -106,6 +139,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                     children: [
                       Expanded(
                         child: TextFormField(
+                          controller: textController,
                           maxLines: 4,
                           minLines: 1,
                           decoration: InputDecoration(
@@ -123,10 +157,18 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
                                     width: 15,
                                   ),
                                   // Icon(Icons.send_outlined),
-                                  Image.asset(
-                                    "assets/images/send.png",
-                                    color: primarySwatch[900],
-                                    width: 25,
+                                  InkWell(
+                                    onTap: () async {
+                                      print('heelo');
+                                      await _groupProvider
+                                          .sendMessage(textController.text);
+                                      textController.clear();
+                                    },
+                                    child: Image.asset(
+                                      "assets/images/send.png",
+                                      color: primarySwatch[900],
+                                      width: 25,
+                                    ),
                                   ),
                                   SizedBox(
                                     width: 10,

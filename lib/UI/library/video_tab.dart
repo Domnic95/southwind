@@ -5,7 +5,7 @@ import 'package:southwind/Models/library_model.dart';
 import 'package:southwind/UI/components/PdfViewer.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
-import 'package:southwind/data/providers/library_provider.dart';
+import 'package:southwind/data/providers/library__notifier.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';

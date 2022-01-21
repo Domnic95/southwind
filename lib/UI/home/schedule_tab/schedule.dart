@@ -8,7 +8,7 @@ import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/schedule_tab/request_leave.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/providers.dart';
-import 'package:southwind/data/providers/schedule_provider.dart';
+import 'package:southwind/data/providers/schedule__notifier.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 // final List<int> scheduleDays = [15];

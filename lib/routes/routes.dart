@@ -53,9 +53,9 @@ class Routes {
             case Routes.learning_question_tab:
               page = LearningQuestiontab();
               break;
-            case Routes.singleChatScreen:
-              page = SingleChatScreen();
-              break;
+            // case Routes.singleChatScreen:
+            //   page = SingleChatScreen();
+            //   break;
             case Routes.groupInfo:
               page = GroupInfo();
               break;

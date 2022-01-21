@@ -1,177 +1,191 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/src/provider.dart';
+import 'package:southwind/Models/Group/GroupMessages.dart';
 import 'package:southwind/Models/MessageModel.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/text_form_field.dart';
+import 'package:southwind/UI/home/chat_tab/components/FullScreenImage.dart';
+import 'package:southwind/UI/home/chat_tab/components/FullscreenVideo.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/constant/Global.dart';
+import 'package:southwind/data/providers/providers.dart';
+import 'package:video_player/video_player.dart';
 
-class SingleChatScreen extends StatelessWidget {
-  const SingleChatScreen({Key? key}) : super(key: key);
+double videoHeightAspect = 0.25;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leadingWidth: 50,
-        titleSpacing: 0,
-        iconTheme: IconThemeData(color: primarySwatch[900]),
-        backgroundColor: Colors.white,
-        title: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              // color: Co,
-              width: 50,
-              child: Padding(
-                padding: const EdgeInsets.all(4.0),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(1000),
-                  child: Image.network(
-                    "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80",
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 5,
-            ),
-            Center(
-              child: Text(
-                "Domic lakra",
-                style: TextStyle(fontSize: 18, color: primarySwatch[900]),
-              ),
-            ),
-            // Column(
-            //   mainAxisSize: MainAxisSize.max,
-            //   mainAxisAlignment: MainAxisAlignment.center,
-            //   children: [
-            //     const SizedBox(
-            //       height: 5,
-            //     ),
-            //   ],
-            // )
-          ],
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: InkWell(
-                onTap: () {
-                  // Navigator.pushNamed(context, '/ProfileInfo');
-                },
-                child: Icon(Icons.more_vert_outlined)),
-          )
-        ],
-      ),
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: Column(
-          children: [
-            Expanded(
-              child: ListView.builder(
-                reverse: true,
-                itemBuilder: (context, index) {
-                  return SingleMessage(
-                    index: index,
-                    messageModel: messages[index],
-                  );
-                },
-                itemCount: messages.length,
-              ),
-            ),
-            // Expanded(child: ListView.builder(itemBuilder: (context, index) {
-            //   return Container();
-            // })),
-            Container(
-              // height: 60,
-              // constraints: BoxConstraints(maxHeight: 100),
-              // decoration: BoxDecoration(
-              //   color: primarySwatch[100],
-              //   borderRadius: BorderRadius.only(
-              //       topLeft: Radius.circular(20),
-              //       topRight: Radius.circular(20)),
-              // ),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                    left: 10, right: 10, bottom: 10, top: 18),
-                child: Center(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          maxLines: 4,
-                          minLines: 1,
-                          decoration: InputDecoration(
-                              filled: true,
-                              suffixIcon: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // Icon(Icons.file_copy),
-                                  Image.asset(
-                                    "assets/images/attachments.png",
-                                    color: primarySwatch[900],
-                                    width: 25,
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  // Icon(Icons.send_outlined),
-                                  Image.asset(
-                                    "assets/images/send.png",
-                                    color: primarySwatch[900],
-                                    width: 25,
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                ],
-                              ),
-                              fillColor: Colors.white,
-                              hintText: "Send Message",
-                              hintStyle: TextStyle(color: Colors.grey),
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 10),
-                              isCollapsed: true,
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(
-                                      width: .5, color: primarySwatch[900]!)),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(
-                                      width: .5, color: primarySwatch[900]!)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(
-                                      width: 1, color: primaryColor))),
-                        ),
-                      ),
-                      // SizedBox(
-                      //   width: 10,
-                      // ),
-                    ],
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
+double videoWidthAspect = 0.5;
+// class SingleChatScreen extends StatelessWidget {
+//   const SingleChatScreen({Key? key}) : super(key: key);
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         leadingWidth: 50,
+//         titleSpacing: 0,
+//         iconTheme: IconThemeData(color: primarySwatch[900]),
+//         backgroundColor: Colors.white,
+//         title: Row(
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           children: [
+//             Container(
+//               // color: Co,
+//               width: 50,
+//               child: Padding(
+//                 padding: const EdgeInsets.all(4.0),
+//                 child: ClipRRect(
+//                   borderRadius: BorderRadius.circular(1000),
+//                   child: Image.network(
+//                     "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=880&q=80",
+//                   ),
+//                 ),
+//               ),
+//             ),
+//             SizedBox(
+//               width: 5,
+//             ),
+//             Center(
+//               child: Text(
+//                 "Domic lakra",
+//                 style: TextStyle(fontSize: 18, color: primarySwatch[900]),
+//               ),
+//             ),
+//             // Column(
+//             //   mainAxisSize: MainAxisSize.max,
+//             //   mainAxisAlignment: MainAxisAlignment.center,
+//             //   children: [
+//             //     const SizedBox(
+//             //       height: 5,
+//             //     ),
+//             //   ],
+//             // )
+//           ],
+//         ),
+//         actions: [
+//           Padding(
+//             padding: const EdgeInsets.symmetric(horizontal: 20),
+//             child: InkWell(
+//                 onTap: () {
+//                   // Navigator.pushNamed(context, '/ProfileInfo');
+//                 },
+//                 child: Icon(Icons.more_vert_outlined)),
+//           )
+//         ],
+//       ),
+//       body: Container(
+//         height: MediaQuery.of(context).size.height,
+//         width: MediaQuery.of(context).size.width,
+//         child: Column(
+//           children: [
+//             Expanded(
+//               child: ListView.builder(
+//                 reverse: true,
+//                 itemBuilder: (context, index) {
+//                   return SingleMessage(
+//                     index: index,
+//                     messageModel: _g[index],
+//                   );
+//                 },
+//                 itemCount: messages.length,
+//               ),
+//             ),
+//             // Expanded(child: ListView.builder(itemBuilder: (context, index) {
+//             //   return Container();
+//             // })),
+//             Container(
+//               // height: 60,
+//               // constraints: BoxConstraints(maxHeight: 100),
+//               // decoration: BoxDecoration(
+//               //   color: primarySwatch[100],
+//               //   borderRadius: BorderRadius.only(
+//               //       topLeft: Radius.circular(20),
+//               //       topRight: Radius.circular(20)),
+//               // ),
+//               child: Padding(
+//                 padding: const EdgeInsets.only(
+//                     left: 10, right: 10, bottom: 10, top: 18),
+//                 child: Center(
+//                   child: Row(
+//                     children: [
+//                       Expanded(
+//                         child: TextFormField(
+//                           maxLines: 4,
+//                           minLines: 1,
+//                           decoration: InputDecoration(
+//                               filled: true,
+//                               suffixIcon: Row(
+//                                 mainAxisSize: MainAxisSize.min,
+//                                 children: [
+//                                   // Icon(Icons.file_copy),
+//                                   Image.asset(
+//                                     "assets/images/attachments.png",
+//                                     color: primarySwatch[900],
+//                                     width: 25,
+//                                   ),
+//                                   SizedBox(
+//                                     width: 15,
+//                                   ),
+//                                   // Icon(Icons.send_outlined),
+//                                   Image.asset(
+//                                     "assets/images/send.png",
+//                                     color: primarySwatch[900],
+//                                     width: 25,
+//                                   ),
+//                                   SizedBox(
+//                                     width: 10,
+//                                   ),
+//                                 ],
+//                               ),
+//                               fillColor: Colors.white,
+//                               hintText: "Send Message",
+//                               hintStyle: TextStyle(color: Colors.grey),
+//                               contentPadding: EdgeInsets.symmetric(
+//                                   horizontal: 8, vertical: 10),
+//                               isCollapsed: true,
+//                               border: OutlineInputBorder(
+//                                   borderRadius: BorderRadius.circular(5),
+//                                   borderSide: BorderSide(
+//                                       width: .5, color: primarySwatch[900]!)),
+//                               enabledBorder: OutlineInputBorder(
+//                                   borderRadius: BorderRadius.circular(5),
+//                                   borderSide: BorderSide(
+//                                       width: .5, color: primarySwatch[900]!)),
+//                               focusedBorder: OutlineInputBorder(
+//                                   borderRadius: BorderRadius.circular(5),
+//                                   borderSide: BorderSide(
+//                                       width: 1, color: primaryColor))),
+//                         ),
+//                       ),
+//                       // SizedBox(
+//                       //   width: 10,
+//                       // ),
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//             )
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class SingleMessage extends StatelessWidget {
   final int index;
   bool? isGroup;
-  final MessageModel messageModel;
+  final GroupMessage messageModel;
   SingleMessage(
       {required this.index, required this.messageModel, this.isGroup = false});
 
   @override
   Widget build(BuildContext context) {
-    final double radius = 20;
-    bool isLeft = index.isEven;
+    final _groupProvider = context.read(groupProvider);
+
+    bool isLeft = _groupProvider.listOfMessage[index].profileId !=
+            _groupProvider.userData!.id
+        ? true
+        : false;
     // BorderRadius borderRadius = BorderRadius.circular(radius);
     BorderRadius borderRadius = BorderRadius.only(
       topLeft: Radius.circular(radius),
@@ -179,7 +193,7 @@ class SingleMessage extends StatelessWidget {
       bottomLeft: Radius.circular(isLeft ? 0 : radius),
       bottomRight: Radius.circular(isLeft ? radius : 0),
     );
-    final String message = messageModel.content;
+    final String message = messageModel.message!;
     // "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets conta";
     return Align(
       alignment: isLeft ? Alignment.centerLeft : Alignment.centerRight,
@@ -193,7 +207,8 @@ class SingleMessage extends StatelessWidget {
             if (isLeft) _getProfile,
             Container(
               constraints: BoxConstraints(
-                  maxWidth: MediaQuery.of(context).size.width * .8),
+                  maxWidth:
+                      MediaQuery.of(context).size.width * videoWidthAspect),
               child: Card(
                 shape: RoundedRectangleBorder(borderRadius: borderRadius),
                 child: Padding(
@@ -211,24 +226,30 @@ class SingleMessage extends StatelessWidget {
                             Padding(
                               padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
                               child: Text(
-                                messageModel.sender,
+                                messageModel.fullName!,
                                 style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
                         ),
                       Builder(builder: (context) {
-                        switch (messageModel.messageType) {
-                          case MessageType.TEXT:
+                        switch (messageModel.mediaType!) {
+                          case MediaType.message:
                             return TextMessage(
+                                isLeft: isLeft,
                                 messageModel: messageModel,
                                 borderRadius: borderRadius);
 
-                          case MessageType.IMAGE:
+                          case MediaType.Image:
                             return ImageMessage(
                               messageModel: messageModel,
+                              isLeft: isLeft,
                             );
-                          case MessageType.FILE:
+                          case MediaType.Video:
+                            return VideoApp(
+                              isLeft: isLeft,
+                              groupMessage: messageModel,
+                            );
                             return FileMessage(
                               radius: borderRadius,
                             );
@@ -251,22 +272,25 @@ class SingleMessage extends StatelessWidget {
       height: 20,
       width: 20,
       child: CircleAvatar(
-        backgroundImage: NetworkImage(messageModel.profile),
+        backgroundImage: NetworkImage(messageModel.userImage!),
       ),
     );
   }
 }
 
 class TextMessage extends StatelessWidget {
-  final MessageModel messageModel;
+  final GroupMessage messageModel;
   final BorderRadius borderRadius;
+  final bool isLeft;
   const TextMessage(
-      {required this.messageModel, required this.borderRadius, Key? key})
+      {required this.messageModel,
+      required this.borderRadius,
+      required this.isLeft,
+      Key? key})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    bool isLeft = messages.indexOf(messageModel).isEven;
     return Container(
       decoration: BoxDecoration(
         borderRadius: borderRadius,
@@ -281,9 +305,9 @@ class TextMessage extends StatelessWidget {
             SizedBox(
               height: 0,
             ),
-            Text(messageModel.content),
+            Text(messageModel.message!),
             Text(
-              "10:11 am",
+              messageModel.displayTime!,
               style: TextStyle(fontSize: 10, color: Colors.grey),
             ),
           ],
@@ -294,13 +318,16 @@ class TextMessage extends StatelessWidget {
 }
 
 class ImageMessage extends StatelessWidget {
-  final MessageModel messageModel;
-  const ImageMessage({required this.messageModel, Key? key}) : super(key: key);
+  final GroupMessage messageModel;
+  final bool isLeft;
+  const ImageMessage(
+      {required this.messageModel, required this.isLeft, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final double radius = 20;
-    bool isLeft = messages.indexOf(messageModel).isEven;
+    final size = MediaQuery.of(context).size;
+
     // BorderRadius borderRadius = BorderRadius.circular(radius);
     BorderRadius borderRadius = BorderRadius.only(
       topLeft: Radius.circular(radius),
@@ -311,13 +338,22 @@ class ImageMessage extends StatelessWidget {
     return InkWell(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return ShowImageScreen(messageModel: messageModel);
+          return ShowImageScreen(
+            messageModel: messageModel,
+            isLeft: isLeft,
+          );
         }));
       },
-      child: Container(
-        child: ClipRRect(
-          borderRadius: borderRadius,
-          child: Image.network(messageModel.profile),
+      child: ClipRRect(
+        borderRadius: borderRadius,
+        child: Container(
+          decoration: BoxDecoration(borderRadius: borderRadius),
+          height: size.height * videoHeightAspect,
+          width: size.width * videoWidthAspect,
+          child: Image.network(
+            messageModel.mediaUrl!,
+            fit: BoxFit.fill,
+          ),
         ),
       ),
     );
@@ -386,20 +422,69 @@ class FileMessage extends StatelessWidget {
   }
 }
 
-class ShowImageScreen extends StatelessWidget {
-  final MessageModel messageModel;
-  const ShowImageScreen({required this.messageModel, Key? key})
-      : super(key: key);
+class VideoApp extends StatefulWidget {
+  final bool isLeft;
+  final GroupMessage groupMessage;
+  const VideoApp({required this.isLeft, required this.groupMessage});
+  @override
+  _VideoAppState createState() => _VideoAppState();
+}
+
+class _VideoAppState extends State<VideoApp> {
+  late VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.network(widget.groupMessage.mediaUrl!)
+      ..initialize().then((_) {
+        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+        setState(() {});
+      });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      appBar: AppBar(
-        backgroundColor: primaryColor,
-        elevation: 20,
-      ),
-      body: Center(child: Image.network(messageModel.profile)),
+    final size = MediaQuery.of(context).size;
+    BorderRadius borderRadius = BorderRadius.only(
+      topLeft: Radius.circular(radius),
+      topRight: Radius.circular(radius),
+      bottomLeft: Radius.circular(widget.isLeft ? 0 : radius),
+      bottomRight: Radius.circular(widget.isLeft ? radius : 0),
     );
+    return InkWell(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          return FullScreenVideoApp(
+            url: widget.groupMessage.mediaUrl!,
+          );
+        }));
+      },
+      child: Container(
+        decoration: BoxDecoration(borderRadius: borderRadius),
+        height: size.height * videoHeightAspect,
+        width: size.width * videoWidthAspect,
+        child: Stack(
+          children: [
+            ClipRRect(
+                borderRadius: borderRadius, child: VideoPlayer(_controller)),
+            Center(
+                child: Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.circle, color: primarySwatch.shade300),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Icons.play_arrow),
+                    ))),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _controller.dispose();
   }
 }

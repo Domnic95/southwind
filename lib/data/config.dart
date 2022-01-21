@@ -50,3 +50,8 @@ const api_learning_get = '/learning-notification/list?limit=20&offset=0';
 const api_getIndividual_learning =
     '/learning-notification/notification-by-id?notification_id=';
 const api_learning_submit_answer = "/learning-notification/submit-answer";
+// group
+const api_group_list = '/get_groups';
+const api_get_group_msgs = '/get_group_msgs';
+const api_getGroup_participates = '/get_group_members';
+const api_sendMessage = '/set_group_msgs';
