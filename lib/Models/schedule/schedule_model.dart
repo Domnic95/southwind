@@ -110,14 +110,14 @@ class Schedule {
 
   int? id;
   String? name;
-  DateTime? start;
-  DateTime? end;
+  String? start;
+  String? end;
 
   factory Schedule.fromJson(Map<String, dynamic> json) => Schedule(
         id: json["id"],
         name: json["name"],
-        start: convertStringIntoDate(json["start"]),
-        end: convertStringIntoDate(json["end"]),
+        start: json["start"],
+        end: json["end"],
       );
 
   Map<String, dynamic> toJson() => {
