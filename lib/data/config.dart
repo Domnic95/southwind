@@ -7,6 +7,7 @@ const api_loginApiEnd = "/login";
 const api_getUserData = "/user";
 const api_libraryDataEnd = "/get_resource_library";
 const api_resetToken = '/reset_push_token';
+const api_forgetPassword = '/forgot_password';
 // team
 const api_teamdetail = '/get_teamlist';
 
@@ -28,6 +29,8 @@ const api_newIncentive = '/get_incentive_list_new';
 const api_usedIncentive = '/new_used_incentive_details';
 // timer card
 const api_timerHistory = '/get_timecard_history_2021';
+const api_timerHistoryDate = '/get_timecard_history_2021_dates';
+const api_punchInAndOut = '/timecard';
 // carrer
 const api_career = '/career-path/get-career-path-by-team';
 const api_career_submit_answer = "/career-path/submit-answer";

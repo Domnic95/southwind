@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/src/provider.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:southwind/Models/MessageModel.dart';
 import 'package:southwind/UI/home/chat_tab/single_chat_screen.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
@@ -29,6 +30,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
   loadData() async {
     // periodic
+
     timer = Timer.periodic(Duration(seconds: 1), (c) async {
       await context.read(groupProvider).getIndividualGroupMessages();
     });
@@ -43,6 +45,7 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     final _groupProvider = useProvider(groupProvider);
     return Scaffold(
       appBar: AppBar(
@@ -100,8 +103,8 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
         ],
       ),
       body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
+        height: size.height,
+        width: size.width,
         child: Column(
           children: [
             Expanded(
@@ -134,76 +137,136 @@ class _GroupChatScreenState extends State<GroupChatScreen> {
               child: Padding(
                 padding: const EdgeInsets.only(
                     left: 10, right: 10, bottom: 10, top: 18),
-                child: Center(
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: TextFormField(
-                          controller: textController,
-                          maxLines: 4,
-                          minLines: 1,
-                          decoration: InputDecoration(
-                              filled: true,
-                              suffixIcon: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  // Icon(Icons.file_copy),
-                                  Image.asset(
-                                    "assets/images/attachments.png",
-                                    color: primarySwatch[900],
-                                    width: 25,
-                                  ),
-                                  SizedBox(
-                                    width: 15,
-                                  ),
-                                  // Icon(Icons.send_outlined),
-                                  InkWell(
-                                    onTap: () async {
-                                      print('heelo');
-                                      await _groupProvider
-                                          .sendMessage(textController.text);
-                                      textController.clear();
-                                    },
-                                    child: Image.asset(
-                                      "assets/images/send.png",
-                                      color: primarySwatch[900],
-                                      width: 25,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: primarySwatch.shade900),
+                      borderRadius: BorderRadius.circular(5)),
+                  child: Center(
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: textController,
+                            maxLines: 4,
+                            minLines: 1,
+                            decoration: InputDecoration(
+                                filled: true,
+                                suffixIcon: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    // Icon(Icons.file_copy),
+
+                                    SizedBox(
+                                      width: 10,
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                ],
-                              ),
-                              fillColor: Colors.white,
-                              hintText: "Send Message",
-                              hintStyle: TextStyle(color: Colors.grey),
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 10),
-                              isCollapsed: true,
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(
-                                      width: .5, color: primarySwatch[900]!)),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(
-                                      width: .5, color: primarySwatch[900]!)),
-                              focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(5),
-                                  borderSide: BorderSide(
-                                      width: 1, color: primaryColor))),
+                                  ],
+                                ),
+                                fillColor: Colors.transparent,
+                                hintText: "Send Message",
+                                hintStyle: TextStyle(color: Colors.grey),
+                                contentPadding: EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 10),
+                                isCollapsed: true,
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                    borderSide: BorderSide(
+                                        width: .5, color: Colors.transparent)),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                    borderSide: BorderSide(
+                                        width: .5, color: Colors.transparent)),
+                                focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5),
+                                    borderSide: BorderSide(
+                                        width: 1, color: Colors.transparent))),
+                          ),
                         ),
-                      ),
-                      // SizedBox(
-                      //   width: 10,
-                      // ),
-                    ],
+                        // SizedBox(
+                        //   width: 10,
+                        // ),
+                        InkWell(
+                          onTap: () {
+                            showModalBottomSheet(
+                                context: context,
+                                // backgroundColor: Colors.transparent,
+                                builder: (context) {
+                                  return Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      bottomSheetWidget(() async {
+                                        await _groupProvider
+                                            .imageUpload(ImageSource.gallery);
+                                      }, "Gallery"),
+                                      Divider(
+                                        color: primarySwatch.shade800,
+                                      ),
+                                      bottomSheetWidget(() async {
+                                        await _groupProvider
+                                            .imageUpload(ImageSource.camera);
+                                      }, "Camera"),
+                                      Divider(
+                                        color: primarySwatch.shade800,
+                                      ),
+                                      bottomSheetWidget(() async {
+                                        await _groupProvider
+                                            .videoUpload(ImageSource.camera);
+                                      }, "Video")
+                                    ],
+                                  );
+                                });
+                          },
+                          child: Image.asset(
+                            "assets/images/attachments.png",
+                            color: primarySwatch[900],
+                            width: 25,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                        // Icon(Icons.send_outlined),
+                        InkWell(
+                          onTap: () async {
+                            print('heelo');
+                            await _groupProvider
+                                .sendMessage(textController.text);
+                            textController.clear();
+                          },
+                          child: Image.asset(
+                            "assets/images/send.png",
+                            color: primarySwatch[900],
+                            width: 25,
+                          ),
+                        ),
+                        SizedBox(
+                          width: 15,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget bottomSheetWidget(VoidCallback voidCallback, String title) {
+    final size = MediaQuery.of(context).size;
+    return InkWell(
+      onTap: () {
+        Navigator.pop(context);
+        voidCallback();
+      },
+      child: Container(
+        decoration: BoxDecoration(),
+        width: size.width,
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(title),
         ),
       ),
     );

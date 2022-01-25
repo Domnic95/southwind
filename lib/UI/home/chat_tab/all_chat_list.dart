@@ -39,33 +39,37 @@ class _AllChatListState extends State<AllChatList> {
         ? LoadingWidget()
         : Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-            child: ListView.builder(
-              padding: EdgeInsets.symmetric(vertical: 10),
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 15),
-                  child: GroupChatCard(
-                    index: index,
+            child: _groupProvider.listGroup.length > 0
+                ? ListView.builder(
+                    padding: EdgeInsets.symmetric(vertical: 10),
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 15),
+                        child: GroupChatCard(
+                          index: index,
+                        ),
+                      );
+                      return Column(
+                        children: [
+                          // index % 2 == 0
+                          //     ? SingleChatCard(index: index):
+                          GroupChatCard(
+                            index: index,
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          // Divider(
+                          //   height: 10,
+                          // ),
+                        ],
+                      );
+                    },
+                    itemCount: _groupProvider.listGroup.length,
+                  )
+                : Center(
+                    child: Text('No group found'),
                   ),
-                );
-                return Column(
-                  children: [
-                    // index % 2 == 0
-                    //     ? SingleChatCard(index: index):
-                    GroupChatCard(
-                      index: index,
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    // Divider(
-                    //   height: 10,
-                    // ),
-                  ],
-                );
-              },
-              itemCount: _groupProvider.listGroup.length,
-            ),
           );
   }
 }

@@ -1,11 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/component/popup.dart';
+import 'package:southwind/constant/Global.dart';
+import 'package:southwind/data/providers/providers.dart';
 import 'package:southwind/utils/helpers.dart';
+import 'package:southwind/utils/utilsContstant.dart';
 
-class FlutterStopWatch extends StatefulWidget {
+class FlutterStopWatch extends StatefulHookWidget {
   @override
   _FlutterStopWatchState createState() => _FlutterStopWatchState();
 }
@@ -17,13 +22,37 @@ class _FlutterStopWatchState extends State<FlutterStopWatch> {
   String hoursStr = '00';
   String minutesStr = '00';
   String secondsStr = '00';
+  int counter = 0;
   bool isClockOn = false;
+  late Timer timer;
+  @override
+  void dispose() {
+    if (timer != null) timer.cancel();
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadData();
+  }
+
+  loadData() async {
+    if (sharedPreferences.containsKey(key_punchInDate)) {
+      DateTime now = DateTime.now();
+      DateTime setedTime = DateTime.parse(Utils.getPref(key_punchInDate)!);
+      counter = now.difference(setedTime).inSeconds;
+      isClockOn = true;
+      timerStream = stopWatchStream();
+      clockCounter();
+    }
+  }
 
   Stream<int> stopWatchStream() {
     late StreamController<int> streamController;
-    late Timer timer;
+
     Duration timerInterval = Duration(seconds: 1);
-    int counter = 0;
 
     void stopTimer() {
       if (timer != null) {
@@ -56,8 +85,21 @@ class _FlutterStopWatchState extends State<FlutterStopWatch> {
     return streamController.stream;
   }
 
+  void clockCounter() {
+    timerSubscription = timerStream.listen((int newTick) {
+      setState(() {
+        hoursStr =
+            ((newTick / (60 * 60)) % 60).floor().toString().padLeft(2, '0');
+        minutesStr = ((newTick / 60) % 60).floor().toString().padLeft(2, '0');
+        secondsStr = (newTick % 60).floor().toString().padLeft(2, '0');
+        isClockOn = true;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final timerProvider = useProvider(timerNotifierProvider);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
@@ -90,7 +132,8 @@ class _FlutterStopWatchState extends State<FlutterStopWatch> {
                 CommonButton(
                   lable: isClockOn ? "Clock Out" : "Clock In",
                   ontap: isClockOn
-                      ? () {
+                      ? () async {
+                          await timerProvider.punchOut();
                           timerSubscription.pause();
                           timerStream;
                           isClockOn = false;
@@ -105,25 +148,11 @@ class _FlutterStopWatchState extends State<FlutterStopWatch> {
                                 );
                               });
                         }
-                      : () {
+                      : () async {
+                          await timerProvider.punchIn();
                           timerStream = stopWatchStream();
-                          timerSubscription = timerStream.listen((int newTick) {
-                            setState(() {
-                              hoursStr = ((newTick / (60 * 60)) % 60)
-                                  .floor()
-                                  .toString()
-                                  .padLeft(2, '0');
-                              minutesStr = ((newTick / 60) % 60)
-                                  .floor()
-                                  .toString()
-                                  .padLeft(2, '0');
-                              secondsStr = (newTick % 60)
-                                  .floor()
-                                  .toString()
-                                  .padLeft(2, '0');
-                              isClockOn = true;
-                            });
-                          });
+                          clockCounter();
+
                           showToast("You have succesfully clocked in.");
                         },
                 ),

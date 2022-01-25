@@ -42,13 +42,13 @@ class GroupMessage {
         id: json["id"],
         groupId: json["group_id"],
         profileId: json["profile_id"],
-        message: json["message"],
-        mediaUrl: json["media_url"],
+        message: json["message"].toString(),
+        mediaUrl: json["media_url"].toString(),
         mediaType: media(json["media_type"].toString()),
         createdOn: DateTime.parse(json["created_on"]),
-        userImage: json["user_image"],
-        fullName: json["fullName"],
-        today: json["today"],
+        userImage: json["user_image"].toString(),
+        fullName: json["fullName"].toString(),
+        today: json["today"].toString(),
         displayTime: timeDifference(date));
   }
   Map<String, dynamic> toJson() => {

@@ -51,10 +51,11 @@ dependencies:
   shared_preferences: ^2.0.7
   youtube_player_flutter: ^8.0.0
   advance_pdf_viewer: ^2.0.0
-  cloudinary_public: ^0.11.0
+  # cloudinary_public: ^0.11.0
   # fluttertoast: ^8.0.8
   firebase_messaging: ^11.2.4
   firebase_core: ^1.10.6
+  image_picker: ^0.8.4+4
 dev_dependencies:
   flutter_test:
     sdk: flutter

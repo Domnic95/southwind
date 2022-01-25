@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:southwind/UI/components/common_button.dart';
+import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/providers.dart';
 import 'package:southwind/utils/helpers.dart';
@@ -132,12 +133,18 @@ class _Log_InState extends State<Log_In> {
                                     fontWeight: FontWeight.bold),
                               ),
                               CommonButton(
-                                ontap: () {
+                                ontap: () async {
+                                  String res = await context
+                                      .read(authProvider)
+                                      .forgetPassword(
+                                          _forgotPasswordcontroller.text);
                                   Navigator.of(context).pop();
+                                  _forgotPasswordcontroller.clear();
+                                  showToast(res);
                                 },
                                 bgColor: primarySwatch.shade900,
                                 isExpanded: true,
-                                lable: "Reset",
+                                lable: "Send",
                                 textStyle: TextStyle(
                                     letterSpacing: 0.5,
                                     color: Colors.white,
@@ -168,24 +175,29 @@ class _Log_InState extends State<Log_In> {
     );
   }
 
-  _loginMethod() {
+  _loginMethod() async {
     // _emailcontroller.text = "m@m.com";
     // _passwordcontroller.text = "123456";
     if (_emailcontroller.text.isEmpty) {
       showToast("Enter Email");
       return;
-    }
-    if (!emailValidator(_emailcontroller.text)) {
+    } else if (!emailValidator(_emailcontroller.text)) {
       showToast("Invalid Email");
       return;
-    }
-    if (_passwordcontroller.text.isEmpty) {
+    } else if (_passwordcontroller.text.isEmpty) {
       showToast("Enter Password");
       return;
+    } else {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return LoadingWidget();
+          });
+      await context
+          .read(authProvider)
+          .login(_emailcontroller.text, _passwordcontroller.text);
+      Navigator.pop(context);
     }
-    context
-        .read(authProvider)
-        .login(_emailcontroller.text, _passwordcontroller.text);
   }
 }
 

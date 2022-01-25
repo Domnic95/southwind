@@ -50,16 +50,20 @@ class _NewsScreenState extends State<NewsScreen> {
     return Scaffold(
         body: loading
             ? LoadingWidget()
-            : ListView.builder(
-                padding: EdgeInsets.only(top: 3),
-                itemBuilder: (context, index) {
-                  return FeedPost(
-                    post: _newsNotifier.total_news[index],
-                    index: index,
-                  );
-                },
-                itemCount: _newsNotifier.total_news.length,
-              )
+            : _newsNotifier.total_news.length > 0
+                ? ListView.builder(
+                    padding: EdgeInsets.only(top: 3),
+                    itemBuilder: (context, index) {
+                      return FeedPost(
+                        post: _newsNotifier.total_news[index],
+                        index: index,
+                      );
+                    },
+                    itemCount: _newsNotifier.total_news.length,
+                  )
+                : Center(
+                    child: Text('No news found'),
+                  )
         // FutureBuilder(
         //     future: _newsNotifier.fetchNews(),
         //     builder: (context, AsyncSnapshot snapshot) {

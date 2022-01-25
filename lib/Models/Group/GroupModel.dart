@@ -48,7 +48,7 @@ class Group {
       messageCreatedAt: DateTime.parse(json["message_created_at"]),
       userImage: json["user_image"],
       group: GroupClass.fromJson(json["group"]),
-      lastMessage: json["last_message"],
+      lastMessage: json["last_message"] ?? "Media",
       displayFormat:
           DateFormat.jm().format(DateTime.parse(json["message_created_at"])),
     );

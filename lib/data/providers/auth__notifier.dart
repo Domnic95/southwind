@@ -70,7 +70,10 @@ class AuthNotifier extends BaseNotifier {
     notifyListeners();
   }
 
-  // Future<bool> forgetPassword() async {
-  //   final res = await dioClient.postWithFormData(apiEnd: apiEnd,);
-  // }
+  Future<String> forgetPassword(String email) async {
+    final res = await dioClient.postWithFormData(
+        apiEnd: api_forgetPassword, data: {"profile_email": email});
+
+    return res.data['message'];
+  }
 }

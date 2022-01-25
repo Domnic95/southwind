@@ -48,6 +48,10 @@ class Utils {
   static removePref() {
     sharedPreferences.clear();
   }
+
+  static removeSingleKey(String key) {
+    sharedPreferences.remove(key);
+  }
 }
 
 showToast(String s) {

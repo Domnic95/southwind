@@ -32,31 +32,31 @@ class TimerCard {
   int? id;
   int? profileId;
   DateTime? timeIn;
-  dynamic? timeOut; // 
+  DateTime? timeOut; //
   String? latIn;
-  dynamic latOut;
+  String? latOut;
   String? longIn;
-  dynamic? longOut;
-  dynamic? totHours;
+  String? longOut;
+  String? totHours;
   DateTime? createdAt;
   int? clientId;
   int? notificationSent;
   int? inOut;
   int? cronInsert;
   int? gpsIn;
-  dynamic gpsOut;
+  int? gpsOut;
   int? kiosk;
 
   factory TimerCard.fromJson(Map<String, dynamic> json) => TimerCard(
         id: json["id"],
         profileId: json["profile_id"],
         timeIn: DateTime.parse(json["time_in"]),
-        timeOut: json["time_out"],
-        latIn: json["lat_in"],
-        latOut: json["lat_out"],
-        longIn: json["long_in"],
-        longOut: json["long_out"],
-        totHours: json["tot_hours"],
+        timeOut: DateTime.parse(json["time_out"]),
+        latIn: json["lat_in"].toString(),
+        latOut: json["lat_out"].toString(),
+        longIn: json["long_in"].toString(),
+        longOut: json["long_out"].toString(),
+        totHours: json["tot_hours"].toString(),
         createdAt: DateTime.parse(json["created_at"]),
         clientId: json["client_id"],
         notificationSent: json["notification_sent"],
