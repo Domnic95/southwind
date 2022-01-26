@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:southwind/UI/home/career_tab/career_tab.dart';
 import 'package:southwind/UI/home/chat_tab/all_chat_list.dart';
@@ -19,6 +20,26 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    notification();
+  }
+
+  notification() async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    print("FCM" + token!);
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      RemoteNotification? notification = message.notification;
+      AndroidNotification? android = message.notification?.android;
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('A new onMessageOpenedApp event was published!');
+    });
+    FirebaseMessaging.onBackgroundMessage((message) async {});
+  }
+
   int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {

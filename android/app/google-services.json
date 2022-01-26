@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "227290708104-2c9dvj2rdsn0qr75ljd1gi81ao9nr8h9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.app.southwind",
+            "certificate_hash": "089620e5600cfd127a10ce4ff8c46496e70c3e9d"
+          }
+        },
+        {
           "client_id": "227290708104-rlqmmoms589rc60c0emjg6j3bim3s1sb.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,6 +37,13 @@
             {
               "client_id": "227290708104-rlqmmoms589rc60c0emjg6j3bim3s1sb.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "227290708104-5jdk3dv5clh4l5ammu42s8871jpie1vs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.pande.southwind"
+              }
             }
           ]
         }
