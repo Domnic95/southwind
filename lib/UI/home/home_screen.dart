@@ -33,6 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
     });
+    
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('A new onMessageOpenedApp event was published!');

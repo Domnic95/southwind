@@ -142,6 +142,10 @@ class _GroupInfoState extends State<GroupInfo> {
                         itemCount: __groupProvider.listOfMembers.length,
                         itemBuilder: (context, index) {
                           return Container(
+
+
+
+                            
                             // height: 50,
                             child: Padding(
                               padding: const EdgeInsets.symmetric(

@@ -7,10 +7,15 @@ import 'package:southwind/data/providers/providers.dart';
 
 class LibraryNotifier extends BaseNotifier {
   List<LibraryModel> libraries = [];
-
+  List<LibraryModel> filteredLibraires = [];
+  String libraryFilter = '';
   late AuthNotifier authNotifier;
   LibraryNotifier(ProviderReference _ref) {
     authNotifier = _ref.read(authProvider);
+  }
+  setFilter(String filter) {
+    libraryFilter = filter;
+    notifyListeners();
   }
 
   Future loadLibrayData() async {
@@ -26,24 +31,32 @@ class LibraryNotifier extends BaseNotifier {
   }
 
   Future<List<LibraryModel>> searchlibraries(
-      String name, bool isSearchbyText) async {
+    String name,
+  ) async {
     List<LibraryModel> item = [];
 
-    for (int i = 0; i < libraries.length; i++) {
-      if (isSearchbyText) {
-        if (libraries[i]
-            .resourceTitle!
-            .toLowerCase()
-            .contains(name.toLowerCase())) {
-          item.add(libraries[i]);
-        }
-      } else {
-        if (libraries[i].cats![0].toLowerCase().contains(name.toLowerCase())) {
-          item.add(libraries[i]);
-        }
+    for (int i = 0; i < filteredLibraires.length; i++) {
+      if (filteredLibraires[i]
+          .resourceTitle!
+          .toLowerCase()
+          .contains(name.toLowerCase())) {
+        item.add(filteredLibraires[i]);
       }
     }
     return item;
+  }
+
+  Future filteredlibraries() async {
+    filteredLibraires = [];
+
+    for (int i = 0; i < libraries.length; i++) {
+      if (libraries[i]
+          .cats![0]
+          .toLowerCase()
+          .contains(libraryFilter.toLowerCase())) {
+        filteredLibraires.add(libraries[i]);
+      }
+    }
   }
 }
 

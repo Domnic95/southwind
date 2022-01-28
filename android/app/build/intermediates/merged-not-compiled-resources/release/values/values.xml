@@ -534,7 +534,7 @@
     <string name="action_share">Share</string>
     <string name="common_google_play_services_unknown_issue"><ns1:g id="app_name">%1$s</ns1:g> is having trouble with Google Play services. Please try again.</string>
     <string name="copy_toast_msg">Link copied to clipboard</string>
-    <string name="default_web_client_id" translatable="false">259479461676-ffgfeeul2r1erg7nbhiqnb7gaedfsbeb.apps.googleusercontent.com</string>
+    <string name="default_web_client_id" translatable="false">227290708104-rlqmmoms589rc60c0emjg6j3bim3s1sb.apps.googleusercontent.com</string>
     <string name="exo_controls_cc_disabled_description">Enable subtitles</string>
     <string name="exo_controls_cc_enabled_description">Disable subtitles</string>
     <string name="exo_controls_custom_playback_speed" translatable="false"><ns1:g example="1.05" id="playback_speed">%1$.2f</ns1:g>x</string>
@@ -593,13 +593,13 @@
     <string name="fallback_menu_item_open_in_browser">Open in browser</string>
     <string name="fallback_menu_item_share_link">Share link</string>
     <string name="fcm_fallback_notification_channel_label">Miscellaneous</string>
-    <string name="gcm_defaultSenderId" translatable="false">259479461676</string>
-    <string name="google_api_key" translatable="false">AIzaSyB0cy40LsYcdXfHzZhFY-anz5cWoik8mJg</string>
-    <string name="google_app_id" translatable="false">1:259479461676:android:ab7870bf863e2f7a6d1689</string>
-    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyB0cy40LsYcdXfHzZhFY-anz5cWoik8mJg</string>
-    <string name="google_storage_bucket" translatable="false">southwind-f5cf9.appspot.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">227290708104</string>
+    <string name="google_api_key" translatable="false">AIzaSyBifcPJcfvR56iRirxkNP1iG1BKG27rGU0</string>
+    <string name="google_app_id" translatable="false">1:227290708104:android:f11521eaa030e0b8da473d</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBifcPJcfvR56iRirxkNP1iG1BKG27rGU0</string>
+    <string name="google_storage_bucket" translatable="false">southwind-app-b05ba.appspot.com</string>
     <string name="menu_search">Search</string>
-    <string name="project_id" translatable="false">southwind-f5cf9</string>
+    <string name="project_id" translatable="false">southwind-app-b05ba</string>
     <string name="search_menu_title">Search</string>
     <string name="status_bar_notification_info_overflow">999+</string>
     <style name="AlertDialog.AppCompat" parent="Base.AlertDialog.AppCompat"/>

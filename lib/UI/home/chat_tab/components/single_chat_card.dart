@@ -50,7 +50,7 @@ class SingleChatCard extends StatelessWidget {
                         fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "Hi",
+                               "Hi",
                     style: TextStyle(
                         fontWeight: FontWeight.normal,
                         fontSize: 14,

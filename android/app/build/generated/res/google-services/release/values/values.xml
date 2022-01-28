@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="default_web_client_id" translatable="false">259479461676-ffgfeeul2r1erg7nbhiqnb7gaedfsbeb.apps.googleusercontent.com</string>
-    <string name="gcm_defaultSenderId" translatable="false">259479461676</string>
-    <string name="google_api_key" translatable="false">AIzaSyB0cy40LsYcdXfHzZhFY-anz5cWoik8mJg</string>
-    <string name="google_app_id" translatable="false">1:259479461676:android:ab7870bf863e2f7a6d1689</string>
-    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyB0cy40LsYcdXfHzZhFY-anz5cWoik8mJg</string>
-    <string name="google_storage_bucket" translatable="false">southwind-f5cf9.appspot.com</string>
-    <string name="project_id" translatable="false">southwind-f5cf9</string>
+    <string name="default_web_client_id" translatable="false">227290708104-rlqmmoms589rc60c0emjg6j3bim3s1sb.apps.googleusercontent.com</string>
+    <string name="gcm_defaultSenderId" translatable="false">227290708104</string>
+    <string name="google_api_key" translatable="false">AIzaSyBifcPJcfvR56iRirxkNP1iG1BKG27rGU0</string>
+    <string name="google_app_id" translatable="false">1:227290708104:android:f11521eaa030e0b8da473d</string>
+    <string name="google_crash_reporting_api_key" translatable="false">AIzaSyBifcPJcfvR56iRirxkNP1iG1BKG27rGU0</string>
+    <string name="google_storage_bucket" translatable="false">southwind-app-b05ba.appspot.com</string>
+    <string name="project_id" translatable="false">southwind-app-b05ba</string>
 </resources>
