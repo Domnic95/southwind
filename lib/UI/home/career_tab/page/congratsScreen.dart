@@ -1,11 +1,14 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
+import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/routes/routes.dart';
 
 class CongratsScreen extends StatelessWidget {
-  const CongratsScreen({Key? key}) : super(key: key);
+  final int totalquestion;
+  final List<int> unAnsweredQuestion;
+  const CongratsScreen(
+      {required this.totalquestion, required this.unAnsweredQuestion, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -106,10 +109,17 @@ class CongratsScreen extends StatelessWidget {
                 Positioned(
                   child: InkWell(
                     onTap: () {
-                      Navigator.popUntil(context, (route) {
-                      
-                        return route.settings.name == Routes.splashScreen;
-                      });
+                      // Navigator.popUntil(context, (route) {
+                      //   return route.settings.name == Routes.splashScreen;
+                      // });
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return SummaryScreen(
+                          unAnsweredQuestion: unAnsweredQuestion,
+                          totalquestion: totalquestion,
+                          // onTaps: () async {},
+                        );
+                      }));
                     },
                     child: Container(
                       decoration: BoxDecoration(

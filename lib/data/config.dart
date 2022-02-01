@@ -18,6 +18,7 @@ const api_getNews = "/get_comm_notification";
 const api_communication_get_notification = "/communication-notification/list";
 const api_communication_like = "/communication-notification/like";
 const api_communication_unlike = '/communication-notification/unlike';
+const api_communication_comment = '/communication-notification/comment-add';
 
 const apiCommentList = "/communication-notification/comments";
 // const api_communcation_unlike = ""

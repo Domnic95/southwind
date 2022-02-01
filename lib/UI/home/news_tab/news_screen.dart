@@ -136,8 +136,6 @@ class _FeedPostState extends State<FeedPost> {
   int currentIndex = 0;
   PageController controller = PageController();
 
-  void setScrollController(int) {}
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -188,7 +186,7 @@ class _FeedPostState extends State<FeedPost> {
                     ],
                   ),
                   const Spacer(),
-                  const Icon(Icons.more_vert),
+                  // const Icon(Icons.more_vert),
                   // IconButton(onPressed: () {}, icon: )
                 ],
               ),
@@ -205,7 +203,7 @@ class _FeedPostState extends State<FeedPost> {
                       Pagecontroller: controller,
                       onIndexChanged: (a) {
                         currentIndex = a;
-                        setScrollController(a);
+
                         setState(() {});
                       },
                     )),
@@ -276,38 +274,49 @@ class _FeedPostState extends State<FeedPost> {
                 ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: RichText(
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                                text: "${widget.post.firstName}  ",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .copyWith(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 14)),
-                            TextSpan(
-                              text: widget.post.notificationText,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
-                                color: Colors.black.withOpacity(.8),
-                              ),
-                            ),
-                          ],
-                        )),
-                  )
-                ],
-              ),
+            DescriptionTextWidget(
+              sender: widget.post.firstName,
+              text: widget.post.notificationText!,
             ),
+            // Padding(
+            //   padding: const EdgeInsets.symmetric(horizontal: 8),
+            //   child: Row(
+            //     children: [
+            //       Expanded(
+            //         child: RichText(
+            //             maxLines: 3,
+            //             overflow: TextOverflow.ellipsis,
+            //             text: TextSpan(
+            //               children: [
+            //                 TextSpan(
+            //                     text: "${widget.post.firstName}  ",
+            //                     style: Theme.of(context)
+            //                         .textTheme
+            //                         .bodyText1!
+            //                         .copyWith(
+            //                             fontWeight: FontWeight.w600,
+            //                             fontSize: 14)),
+            //                 WidgetSpan(
+            //                     alignment: PlaceholderAlignment.baseline,
+            //                     baseline: TextBaseline.alphabetic,
+            //                     child: DescriptionTextWidget(
+            //                       text: widget.post.notificationText!,
+            //                     )),
+            //                 // TextSpan(ss
+            //                 //   text: widget.post.notificationText!.length
+            //                 //       .toString(),
+            //                 //   style: TextStyle(
+            //                 //     fontWeight: FontWeight.w600,
+            //                 //     fontSize: 14,
+            //                 //     color: Colors.black.withOpacity(.8),
+            //                 //   ),
+            //                 // ),
+            //               ],
+            //             )),
+            //       )
+            //     ],
+            //   ),
+            // ),
             const SizedBox(
               height: 10,
             ),
@@ -466,5 +475,139 @@ class _MultipleImageViewState extends State<MultipleImageView> {
     //       viewportFraction: 1,
     //       enlargeCenterPage: false,
     //     ));
+  }
+}
+
+class DescriptionTextWidget extends StatefulWidget {
+  final String? sender;
+  String? text;
+
+  DescriptionTextWidget({required this.sender, required this.text});
+
+  @override
+  _DescriptionTextWidgetState createState() =>
+      new _DescriptionTextWidgetState();
+}
+
+class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
+  String? firstHalf;
+  String? secondHalf;
+
+  bool flag = true;
+  bool isLink = false;
+  List listString = [];
+  @override
+  void initState() {
+    super.initState();
+    int firstTagstartIndex = widget.text!.indexOf("<br><a");
+    if (firstTagstartIndex != -1) {
+      // int firstTagstartIndex = widget.text!.indexOf("<br><a");
+      int linkedStartIndex = widget.text!.indexOf("href='");
+      int firstTagEndIndex = widget.text!.indexOf("'>", firstTagstartIndex + 1);
+      int tagEndIndex = widget.text!.indexOf("</a>", firstTagEndIndex);
+      String showTitle =
+          widget.text!.substring(firstTagEndIndex + 2, tagEndIndex);
+      String link =
+          widget.text!.substring(linkedStartIndex + 6, firstTagEndIndex);
+      int urlEnd = widget.text!.indexOf("</a>", firstTagEndIndex);
+      String removeString =
+          widget.text!.substring(firstTagstartIndex, urlEnd + 4);
+      listString = widget.text!.split(removeString);
+      // String remove = widget.text.split(pattern)
+
+      widget.text = listString[0] + " ${showTitle} " + listString[1];
+      isLink = true;
+    }
+
+    if (widget.text!.length > 50) {
+      firstHalf = widget.text!.substring(0, 50);
+      secondHalf = widget.text!.substring(50, widget.text!.length);
+    } else {
+      firstHalf = widget.text;
+      secondHalf = "";
+    }
+  }
+
+  final style = TextStyle(
+    fontWeight: FontWeight.w600,
+    fontSize: 14,
+    color: Colors.black.withOpacity(.8),
+  );
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+      child: secondHalf!.isEmpty
+          ? RichText(
+              maxLines: 5,
+              overflow: TextOverflow.ellipsis,
+              text: TextSpan(
+                children: [
+                  TextSpan(
+                      text: widget.sender.toString(),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1!
+                          .copyWith(fontWeight: FontWeight.w600, fontSize: 14)),
+                  TextSpan(
+                    text: firstHalf.toString(),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                      color: Colors.black.withOpacity(.8),
+                    ),
+                  ),
+                ],
+              ))
+          : new Column(
+              children: <Widget>[
+                RichText(
+                    // overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                  children: [
+                    TextSpan(
+                        text: widget.sender.toString() + " ",
+                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                            fontWeight: FontWeight.w600, fontSize: 14)),
+                    TextSpan(
+                      text: flag
+                          ? (firstHalf.toString() + "...")
+                          : (firstHalf.toString() + secondHalf!).toString(),
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: Colors.black.withOpacity(.8),
+                      ),
+                    ),
+                    WidgetSpan(
+                      alignment: PlaceholderAlignment.baseline,
+                      baseline: TextBaseline.alphabetic,
+                      child: InkWell(
+                        child: Text(
+                          flag ? "  more" : "  less",
+                          style: TextStyle(
+                            color: Colors.blue.shade500,
+                            // fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                        ),
+                        onTap: () {
+                          setState(() {
+                            flag = !flag;
+                          });
+                        },
+                      ),
+                    ),
+                  ],
+                )),
+                // Text(
+                //   flag
+                //       ? (firstHalf.toString() + "...")
+                //       : (firstHalf.toString() + secondHalf!),
+                //   style: style,
+                // ),
+              ],
+            ),
+    );
   }
 }

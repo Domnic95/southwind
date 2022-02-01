@@ -241,8 +241,7 @@ class _Questions_TabState extends State<Questions_Tab> {
                                         .surveyNotificationQuestion!.length
                                 ? "Next"
                                 : "Submit",
-                            ontap: () {
-                              print(unAnsweredQuestion);
+                            ontap: () async {
                               if (currentQuestion + 1 <
                                   surveyProvider.selectedSurvey!
                                       .surveyNotificationQuestion!.length) {
@@ -252,32 +251,44 @@ class _Questions_TabState extends State<Questions_Tab> {
                                   animateToQuestion();
                                 });
                               } else {
-                                Navigator.push(context,
-                                    MaterialPageRoute(builder: (context) {
-                                  return SummaryScreen(
-                                    unAnsweredQuestion: unAnsweredQuestion,
-                                    totalquestion: surveyProvider
-                                        .selectedSurvey!
-                                        .surveyNotificationQuestion!
-                                        .length,
-                                    onTaps: () async {
-                                      if (unAnsweredQuestion.isEmpty) {
-                                        final res = await surveyProvider
-                                            .submitAnswers();
-                                        if (res) {
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                  builder: (context) {
-                                            return const CongratsScreen();
-                                          }));
-                                        }
-                                      } else {
-                                        showToast(
-                                            'Some questions are not answered');
-                                      }
-                                    },
-                                  );
-                                }));
+                                if (unAnsweredQuestion.isEmpty) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return LoadingWidget();
+                                      });
+                                  final res =
+                                      await surveyProvider.submitAnswers();
+                                  Navigator.pop(context);
+                                  if (res) {
+                                    Navigator.push(context,
+                                        MaterialPageRoute(builder: (context) {
+                                      return CongratsScreen(
+                                        unAnsweredQuestion: unAnsweredQuestion,
+                                        totalquestion: surveyProvider
+                                            .selectedSurvey!
+                                            .surveyNotificationQuestion!
+                                            .length,
+                                      );
+                                    }));
+                                  }
+                                } else {
+                                  showToast('Some questions are not answered');
+                                }
+
+                                // Navigator.push(context,
+                                //     MaterialPageRoute(builder: (context) {
+                                //   return SummaryScreen(
+                                //     unAnsweredQuestion: unAnsweredQuestion,
+                                //     totalquestion: surveyProvider
+                                //         .selectedSurvey!
+                                //         .surveyNotificationQuestion!
+                                //         .length,
+                                //     onTaps: () async {
+
+                                //     },
+                                //   );
+                                // }));
                               }
 
                               // animateToQuestion();

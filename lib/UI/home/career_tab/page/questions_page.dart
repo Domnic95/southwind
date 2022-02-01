@@ -1,8 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/common_button.dart';
+import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/career_tab/components/information_dialog.dart';
 import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
 import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
@@ -33,20 +36,14 @@ class _QuestionsPageState extends State<QuestionsPage> {
 
   loadData() async {
     final _careerProvider = context.read(carerNotifierProvider);
-    // setState(() {
-    //   if (_careerProvider.careerModel
-    //       .questions![_careerProvider.selectedCareerPath.id.toString()]!
-    //       .containsKey(_careerProvider.selectedAchievement.id.toString())) {
-    //     questionLength = _careerProvider
-    //         .careerModel
-    //         .questions![_careerProvider.selectedCareerPath.id.toString()]![
-    //             _careerProvider.selectedAchievement.id.toString()]!
-    //         .length;
-    //     for (int i = 0; i < questionLength; i++) {
-    //       unAnsweredQuestion.add(i + 1);
-    //     }
-    //   }
-    // });
+    setState(() {
+      questionLength = _careerProvider.selectedAchievement
+          .careerPathNotificationAchievementQuestion!.length;
+
+      for (int i = 0; i < questionLength; i++) {
+        unAnsweredQuestion.add(i + 1);
+      }
+    });
   }
 
   animateToQuestion() {
@@ -63,11 +60,11 @@ class _QuestionsPageState extends State<QuestionsPage> {
 
     questionLength = careerProvider
         .selectedAchievement.careerPathNotificationAchievementQuestion!.length;
-
+    bool readibility = careerProvider.textReadibility;
     final size = MediaQuery.of(context).size;
     const double radius = 20;
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: const CommonAppbar(),
       body: GestureDetector(
         onTap: () {
@@ -117,10 +114,10 @@ class _QuestionsPageState extends State<QuestionsPage> {
                         ),
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       SizedBox(
-                        height: 60,
+                        height: 50,
                         child: QuestionsTab(
                           totalQuestion: questionLength,
                           currentQuestion: currentQuestion,
@@ -133,7 +130,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                         ),
                       ),
                       const SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                     ],
                   ),
@@ -200,59 +197,75 @@ class _QuestionsPageState extends State<QuestionsPage> {
                             ),
                           )
                         : Expanded(child: Container()),
-                    CommonButton(
-                      isExpanded: true,
-                      lable: "Next",
-                      ontap: () async {
-                        if (controller.text.isNotEmpty) {
-                          await careerProvider.updateAnswer(
-                              currentQuestion, controller.text);
-                          controller.clear();
-                          unAnsweredQuestion.remove(currentQuestion + 1);
-                        }
+                    currentQuestion == questionLength - 1 && readibility
+                        ? Expanded(
+                            child: Container(),
+                          )
+                        : CommonButton(
+                            isExpanded: true,
+                            lable: currentQuestion == questionLength - 1
+                                ? "Submit"
+                                : "Next",
+                            ontap: () async {
+                              if (controller.text.isNotEmpty) {
+                                await careerProvider.updateAnswer(
+                                    currentQuestion, controller.text);
+                                controller.clear();
+                                unAnsweredQuestion.remove(currentQuestion + 1);
+                              }
 
-                        setState(() {
-                          currentQuestion++;
-                          animateToQuestion();
-                        });
+                              setState(() {
+                                currentQuestion++;
+                                animateToQuestion();
+                              });
 
-                        // animateToQuestion();
-                        if (currentQuestion == questionLength) {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return SummaryScreen(
-                              unAnsweredQuestion: unAnsweredQuestion,
-                              totalquestion: questionLength,
-                              onTaps: () async {
+                              // animateToQuestion();
+                              if (currentQuestion == questionLength) {
                                 if (unAnsweredQuestion.isEmpty) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return LoadingWidget();
+                                      });
                                   final res = await context
                                       .read(carerNotifierProvider)
                                       .submitAnswers();
-
+                                  Navigator.pop(context);
                                   if (res) {
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
-                                      return const CongratsScreen();
+                                      return CongratsScreen(
+                                        unAnsweredQuestion: unAnsweredQuestion,
+                                        totalquestion: questionLength,
+                                      );
                                     }));
                                   }
                                 } else {
                                   showToast('Some questions are not answered');
                                 }
-                              },
-                            );
-                          }));
-                        }
-                      },
-                      isLeading: false,
-                      icon: Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Icon(
-                          Icons.east,
-                          size: 25,
-                          color: primarySwatch[900],
-                        ),
-                      ),
-                    ),
+
+                                // Navigator.push(context,
+                                //     MaterialPageRoute(builder: (context) {
+                                //   return SummaryScreen(
+                                //     unAnsweredQuestion: unAnsweredQuestion,
+                                //     totalquestion: questionLength,
+                                //     onTaps: () async {
+
+                                //     },
+                                //   );
+                                // }));
+                              }
+                            },
+                            isLeading: false,
+                            icon: Padding(
+                              padding: const EdgeInsets.only(right: 8),
+                              child: Icon(
+                                Icons.east,
+                                size: 25,
+                                color: primarySwatch[900],
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               ),
@@ -287,7 +300,18 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
   @override
   Widget build(BuildContext context) {
     final careerProvider = useProvider(carerNotifierProvider);
-
+    bool readibility = careerProvider.textReadibility;
+    String answer = readibility
+        ? careerProvider
+            .selectedAchievement
+            .careerPathNotificationAchievementQuestion![widget.i]
+            .careerPathNotificationAchievementAnswer!
+            .first
+            .answer
+            .toString()
+        : careerProvider.selectedAchievement
+            .careerPathNotificationAchievementQuestion![widget.i].answer
+            .toString();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: SingleChildScrollView(
@@ -316,9 +340,8 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
               height: 2,
             ),
             TextFormField(
-              initialValue: careerProvider.selectedAchievement
-                  .careerPathNotificationAchievementQuestion![widget.i].answer
-                  .toString(),
+              readOnly: readibility,
+              initialValue: answer,
               maxLines: 6,
               onChanged: widget.onchnage,
               style: const TextStyle(
@@ -353,6 +376,7 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
 class QuestionsTab extends StatelessWidget {
   final int totalQuestion;
   final int currentQuestion;
+
   final Function(int) onTap;
 
   const QuestionsTab(

@@ -59,204 +59,226 @@ class _LearningQuestiontabState extends State<LearningQuestiontab> {
     final _learningProvider = useProvider(learningProvider);
 
     final size = MediaQuery.of(context).size;
+    bool readibility = _learningProvider.textReadibility;
     const double radius = 20;
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: const CommonAppbar(),
-      body:
-      loading?LoadingWidget():
-       GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Card(
-              color: Colors.transparent,
-              margin: const EdgeInsets.all(0),
-              clipBehavior: Clip.antiAliasWithSaveLayer,
-              elevation: 10,
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(radius),
-                bottomRight: Radius.circular(radius),
-              )),
-              child: ClipRRect(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(radius),
-                  bottomRight: Radius.circular(radius),
-                ),
-                child: Container(
-                  width: size.width,
-                  decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
+      body: loading
+          ? LoadingWidget()
+          : GestureDetector(
+              onTap: () {
+                FocusScope.of(context).unfocus();
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Card(
+                    color: Colors.transparent,
+                    margin: const EdgeInsets.all(0),
+                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                    elevation: 10,
+                    shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(radius),
+                      bottomRight: Radius.circular(radius),
+                    )),
+                    child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(radius),
                         bottomRight: Radius.circular(radius),
-                      )),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const SizedBox(
-                        height: 10,
                       ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 18),
-                        child: Text(
-                          "Being Exceptional at Accountabilty",
-                          style: TextStyle(
-                              color: primarySwatch[700],
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16),
-                          maxLines: 2,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      SizedBox(
-                        height: 60,
-                        child: LearningQuestionTab(
-                          totalQuestion: questionLength,
-                          currentQuestion: currentQuestion,
-                          onTap: (a) {
-                            currentQuestion = a;
-
-                            setState(() {});
-                            animateToQuestion();
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Expanded(
-                child: PageView(
-              controller: _pageController,
-              children: [
-                for (int i = 0; i < questionLength; i++)
-                  LearningQuestionWidget(
-                    onchnage: (c) {
-                      controller.text = c;
-                      setState(() {});
-                    },
-                    i: i,
-                  ),
-              ],
-              onPageChanged: (a) {
-                currentQuestion = a;
-
-                setState(() {});
-              },
-            )),
-            // Spacer(),
-            Container(
-              decoration: const BoxDecoration(
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                        color: Colors.grey,
-                        offset: Offset(0, -1),
-                        blurRadius: 10,
-                        spreadRadius: 0),
-                  ],
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(radius),
-                    topRight: Radius.circular(radius),
-                  )),
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8, vertical: 18),
-                child: Row(
-                  children: [
-                    currentQuestion > 0
-                        ? CommonButton(
-                            isExpanded: true,
-                            lable: "Previous",
-                            isLeading: true,
-                            ontap: () {
-                              if (currentQuestion != 0) currentQuestion--;
-
-                              setState(() {});
-                              animateToQuestion();
-                            },
-                            icon: Padding(
-                              padding: const EdgeInsets.only(left: 8),
-                              child: Icon(
-                                Icons.west,
-                                size: 25,
-                                color: primarySwatch[900],
+                      child: Container(
+                        width: size.width,
+                        decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(radius),
+                              bottomRight: Radius.circular(radius),
+                            )),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 18),
+                              child: Text(
+                                "Being Exceptional at Accountabilty",
+                                style: TextStyle(
+                                    color: primarySwatch[700],
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16),
+                                maxLines: 2,
                               ),
                             ),
-                          )
-                        : Expanded(child: Container()),
-                    CommonButton(
-                      isExpanded: true,
-                      lable: "Next",
-                      ontap: () async {
-                        if (controller.text.isNotEmpty) {
-                          await _learningProvider.updateAnswer(
-                              currentQuestion, controller.text);
-                          controller.clear();
-                          unAnsweredQuestion.remove(currentQuestion + 1);
-                        }
-                        if (currentQuestion != questionLength)
-                          setState(() {
-                            currentQuestion++;
-                            animateToQuestion();
-                          });
+                            const SizedBox(
+                              height: 10,
+                            ),
+                            SizedBox(
+                              height: 60,
+                              child: LearningQuestionTab(
+                                totalQuestion: questionLength,
+                                currentQuestion: currentQuestion,
+                                onTap: (a) {
+                                  currentQuestion = a;
 
-                        // animateToQuestion();
-                        if (currentQuestion == questionLength) {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return SummaryScreen(
-                              unAnsweredQuestion: unAnsweredQuestion,
-                              totalquestion: questionLength,
-                              onTaps: () async {
-                                if (unAnsweredQuestion.isEmpty) {
-                                  final res =
-                                      await _learningProvider.submitAnswers();
-                                  if (res) {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) {
-                                      return const CongratsScreen();
-                                    }));
-                                  }
-                                } else {
-                                  showToast('Some questions are not answered');
-                                }
-                              },
-                            );
-                          }));
-                        }
-                      },
-                      isLeading: false,
-                      icon: Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Icon(
-                          Icons.east,
-                          size: 25,
-                          color: primarySwatch[900],
+                                  setState(() {});
+                                  animateToQuestion();
+                                },
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10,
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  Expanded(
+                      child: PageView(
+                    controller: _pageController,
+                    children: [
+                      for (int i = 0; i < questionLength; i++)
+                        LearningQuestionWidget(
+                          onchnage: (c) {
+                            controller.text = c;
+                            setState(() {});
+                          },
+                          i: i,
+                        ),
+                    ],
+                    onPageChanged: (a) {
+                      currentQuestion = a;
+
+                      setState(() {});
+                    },
+                  )),
+                  // Spacer(),
+                  Container(
+                    decoration: const BoxDecoration(
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                              color: Colors.grey,
+                              offset: Offset(0, -1),
+                              blurRadius: 10,
+                              spreadRadius: 0),
+                        ],
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(radius),
+                          topRight: Radius.circular(radius),
+                        )),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 18),
+                      child: Row(
+                        children: [
+                          currentQuestion > 0
+                              ? CommonButton(
+                                  isExpanded: true,
+                                  lable: "Previous",
+                                  isLeading: true,
+                                  ontap: () {
+                                    if (currentQuestion != 0) currentQuestion--;
+
+                                    setState(() {});
+                                    animateToQuestion();
+                                  },
+                                  icon: Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Icon(
+                                      Icons.west,
+                                      size: 25,
+                                      color: primarySwatch[900],
+                                    ),
+                                  ),
+                                )
+                              : Expanded(child: Container()),
+                          currentQuestion == questionLength - 1 && readibility
+                              ? Expanded(
+                                  child: Container(),
+                                )
+                              : CommonButton(
+                                  isExpanded: true,
+                                  lable: "Next",
+                                  ontap: () async {
+                                    if (controller.text.isNotEmpty) {
+                                      await _learningProvider.updateAnswer(
+                                          currentQuestion, controller.text);
+                                      controller.clear();
+                                      unAnsweredQuestion
+                                          .remove(currentQuestion + 1);
+                                    }
+                                    if (currentQuestion != questionLength)
+                                      setState(() {
+                                        currentQuestion++;
+                                        animateToQuestion();
+                                      });
+
+                                    // animateToQuestion();
+                                    if (currentQuestion == questionLength) {
+                                      if (unAnsweredQuestion.isEmpty) {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return LoadingWidget();
+                                            });
+
+                                        final res = await _learningProvider
+                                            .submitAnswers();
+                                        Navigator.pop(context);
+                                        if (res) {
+                                          Navigator.push(context,
+                                              MaterialPageRoute(
+                                                  builder: (context) {
+                                            return CongratsScreen(
+                                              unAnsweredQuestion:
+                                                  unAnsweredQuestion,
+                                              totalquestion: questionLength,
+                                            );
+                                          }));
+                                        }
+                                      } else {
+                                        showToast(
+                                            'Some questions are not answered');
+                                      }
+
+                                      // Navigator.push(context,
+                                      //     MaterialPageRoute(builder: (context) {
+                                      //   return SummaryScreen(
+                                      //     unAnsweredQuestion: unAnsweredQuestion,
+                                      //     totalquestion: questionLength,
+                                      //     onTaps: () async {
+
+                                      //     },
+                                      //   );
+                                      // }));
+                                    }
+                                  },
+                                  isLeading: false,
+                                  icon: Padding(
+                                    padding: const EdgeInsets.only(right: 8),
+                                    child: Icon(
+                                      Icons.east,
+                                      size: 25,
+                                      color: primarySwatch[900],
+                                    ),
+                                  ),
+                                ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 2,
+                  ),
+                ],
               ),
             ),
-            const SizedBox(
-              height: 2,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
@@ -281,7 +303,25 @@ class _LearningQuestionWidgetState extends State<LearningQuestionWidget> {
   @override
   Widget build(BuildContext context) {
     final _learningProvider = useProvider(learningProvider);
-
+    bool readibility = _learningProvider.textReadibility;
+    String answer = readibility
+        ? _learningProvider
+                    .selectedLearning!
+                    .learningNotificationQuestion![widget.i]
+                    .learningNotificationAnswer!
+                    .length >
+                0
+            ? _learningProvider
+                .selectedLearning!
+                .learningNotificationQuestion![widget.i]
+                .learningNotificationAnswer!
+                .first
+                .answer
+                .toString()
+            : "".toString()
+        : _learningProvider
+            .selectedLearning!.learningNotificationQuestion![widget.i].answer
+            .toString();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: SingleChildScrollView(

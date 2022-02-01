@@ -51,7 +51,12 @@ class _LearningScreenState extends State<LearningScreen> {
                             horizontal: 4, vertical: 10),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(1000),
-                          onTap: () {
+                          onTap: () async {
+                            if (i == 0) {
+                              await _learningProvider.setReadibility(false);
+                            } else {
+                              await _learningProvider.setReadibility(true);
+                            }
                             setState(() {
                               selectedIndex = i;
                             });

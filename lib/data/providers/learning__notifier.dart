@@ -15,17 +15,21 @@ class LearningNotifier extends BaseNotifier {
   List<LearningNotification> newLearnings = [];
   List<LearningNotification> submittedLearning = [];
   List<LearningNotification> compeletedLearning = [];
-
+  bool textReadibility = false;
   LearningNotifier() {
     userData = UserFetch().fetchUserData();
 
     notifyListeners();
-  }
+  } 
   setLearning(int index) {
     selectedLearningIndex = index;
     notifyListeners();
   }
-
+ setReadibility(bool va) {
+    textReadibility = va;
+    
+    notifyListeners();
+  }
   Future getLearning() async {
     learningsList = [];
     newLearnings = [];

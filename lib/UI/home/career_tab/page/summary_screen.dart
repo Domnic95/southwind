@@ -4,17 +4,18 @@ import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/home/career_tab/components/chart.dart';
 import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
 import 'package:southwind/data/providers/providers.dart';
+import 'package:southwind/routes/routes.dart';
 import 'package:southwind/utils/helpers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class SummaryScreen extends StatelessWidget {
   final int totalquestion;
   final List<int> unAnsweredQuestion;
-  final VoidCallback? onTaps;
+  // final VoidCallback? onTaps;
   const SummaryScreen(
       {Key? key,
       required this.totalquestion,
-      required this.onTaps,
+      // required this.onTaps,
       required this.unAnsweredQuestion})
       : super(key: key);
   @override
@@ -22,7 +23,56 @@ class SummaryScreen extends StatelessWidget {
     int answeredQuestion = totalquestion - unAnsweredQuestion.length;
     const double radius = 20;
     return Scaffold(
-      appBar: const CommonAppbar(),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        iconTheme: IconThemeData(color: Colors.black),
+        // leading: SizedBox(
+        //   width: AppBar().preferredSize.height - 8,
+        //   height: AppBar().preferredSize.height - 8,
+        //   child: Material(
+        //     borderRadius: BorderRadius.only(
+        //         topRight: Radius.circular(20),
+        //         bottomRight: Radius.circular(20)),
+        //     color: Colors.transparent,
+        //     child: InkWell(
+        //       borderRadius: BorderRadius.circular(
+        //           AppBar().preferredSize.height),
+        //       child: Center(
+        //         // if you use your own menu view UI you add form initialization
+        //         child: widget.menuView != null
+        //             ? widget.menuView
+        //             : AnimatedIcon(
+        //                 icon: widget.animatedIconData != null
+        //                     ? widget.animatedIconData
+        //                     : AnimatedIcons.close_menu,
+        //                 color: Colors.black,
+        //                 size: 30,
+        //                 progress: iconAnimationController),
+        //       ),
+        //       onTap: () {
+        //         FocusScope.of(context)
+        //             .requestFocus(FocusNode());
+        //         onDrawerClick();
+        //       },
+        //     ),
+        //   ),
+        // ),
+        // shadowColor: Colors.red,
+        backgroundColor: Colors.white,
+        title: Container(
+          // color: Colors.teal,
+          height: 25,
+          child: Image.asset("assets/images/southwind_logo.png"),
+        ),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.notifications,
+              )),
+        ],
+        centerTitle: true,
+      ),
       body: WillPopScope(
         onWillPop: () async {
           return true;
@@ -112,7 +162,11 @@ class SummaryScreen extends StatelessWidget {
                   children: [
                     CommonButton(
                       isExpanded: true,
-                      ontap: onTaps,
+                      ontap: () {
+                        Navigator.popUntil(context, (route) {
+                          return route.settings.name == Routes.splashScreen;
+                        });
+                      },
                       // ontap: () async {
                       //   if (unAnsweredQuestion.isEmpty) {
                       //     final res = await context

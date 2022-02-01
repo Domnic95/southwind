@@ -234,18 +234,18 @@ class SingleMessage extends StatelessWidget {
                         ),
                       Builder(builder: (context) {
                         switch (messageModel.mediaType!) {
-                          case MediaType.message:
+                          case MediaTypes.message:
                             return TextMessage(
                                 isLeft: isLeft,
                                 messageModel: messageModel,
                                 borderRadius: borderRadius);
 
-                          case MediaType.Image:
+                          case MediaTypes.Image:
                             return ImageMessage(
                               messageModel: messageModel,
                               isLeft: isLeft,
                             );
-                          case MediaType.Video:
+                          case MediaTypes.Video:
                             return VideoApp(
                               isLeft: isLeft,
                               groupMessage: messageModel,
@@ -326,6 +326,7 @@ class ImageMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _groupProvider = context.read(groupProvider);
     final size = MediaQuery.of(context).size;
 
     // BorderRadius borderRadius = BorderRadius.circular(radius);
@@ -339,8 +340,8 @@ class ImageMessage extends StatelessWidget {
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return ShowImageScreen(
-            messageModel: messageModel,
-            isLeft: isLeft,
+              mediaUrl: messageModel.mediaUrl!,
+              title:_groupProvider.listGroup[_groupProvider.selectedGroupIndex!].group!.groupName!
           );
         }));
       },

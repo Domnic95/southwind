@@ -28,7 +28,7 @@ class GroupMessage {
   int? profileId;
   String? message;
   String? mediaUrl;
-  MediaType? mediaType;
+  MediaTypes? mediaType;
   DateTime? createdOn;
   String? userImage;
   String? fullName;
@@ -65,14 +65,14 @@ class GroupMessage {
       };
 }
 
-enum MediaType { Image, Video, message }
-MediaType media(String type) {
+enum MediaTypes { Image, Video, message }
+MediaTypes media(String type) {
   if (type == 'video') {
-    return MediaType.Video;
+    return MediaTypes.Video;
   } else if (type == 'image') {
-    return MediaType.Image;
+    return MediaTypes.Image;
   } else {
-    return MediaType.message;
+    return MediaTypes.message;
   }
 }
 

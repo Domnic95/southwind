@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:southwind/Models/Group/GroupMessages.dart';
 import 'package:southwind/Models/news/singleNews.dart';
 import 'package:southwind/Models/user_data.dart';
 
@@ -25,7 +26,7 @@ class CommentModal {
   int? communicationNotificationId;
   int? profileId;
   String? comment;
-  dynamic mediaType;
+  MediaTypes? mediaType;
   dynamic mediaUrl;
   DateTime? createdAt;
   DateTime? updatedAt;
@@ -39,7 +40,7 @@ class CommentModal {
         communicationNotificationId: json["communication_notification_id"],
         profileId: json["profile_id"],
         comment: json["comment"],
-        mediaType: json["media_type"],
+        mediaType: media(json["media_type"].toString()),
         mediaUrl: json["media_url"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),

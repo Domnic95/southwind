@@ -21,9 +21,15 @@ class CareerProvider extends BaseNotifier {
   List<CareerAchievement> completedAchievement = [];
   CareerAchievement selectedAchievement =
       CareerAchievement(careerPathNotificationAchievementQuestion: []);
+  bool textReadibility = false;
 
   CareerProvider() {
     userData = UserFetch().fetchUserData();
+
+    notifyListeners();
+  }
+  setReadibility(bool va) {
+    textReadibility = va;
 
     notifyListeners();
   }
@@ -38,14 +44,14 @@ class CareerProvider extends BaseNotifier {
       // 'franchiseuser_detail': "",
       // 'questions': "",
     });
-print('carrer pathss = ${res}');
+    print('carrer pathss = ${res}');
     careerModel = CareerModel.fromJson(res.data);
     if (careerModel.careerPath!.length > 0) {
       selectedCareerPathIndex = 0;
       selectedCareerPath = careerModel.careerPath!.first;
     }
 
-     await categorizedData();
+    await categorizedData();
     notifyListeners();
   }
 
@@ -70,39 +76,37 @@ print('carrer pathss = ${res}');
     completedAchievement = [];
     final res = await dioClient.getRequest(
         apiEnd: api_career_single_career + selectedCareerPath.id.toString());
-print('unwanted URl = ${res.data}');
+    print('unwanted URl = ${res.data}');
     if (res.data['careerpath'] != null) {
       allSelectedCareerPath = List<CareerAchievement>.from(res
           .data['careerpath']['career_path_notification_achievement']
           .map((x) => CareerAchievement.fromJson(x)));
       for (int i = 0; i < allSelectedCareerPath.length; i++) {
-        if(allSelectedCareerPath[i].is_completed == 0 &&
-            allSelectedCareerPath[i]
-                    .careerPathNotificationAchievementQuestion!.length>0){
-
-if (allSelectedCareerPath[i].is_completed == 0 &&
+        if (allSelectedCareerPath[i].is_completed == 0 &&
             allSelectedCareerPath[i]
                     .careerPathNotificationAchievementQuestion!
-                    .first
-                    .careerPathNotificationAchievementAnswer!
                     .length >
                 0) {
-          submittedAchievement.add(allSelectedCareerPath[i]);
-        } else
-         if (allSelectedCareerPath[i].is_completed == 0) {
-          newAchievement.add(allSelectedCareerPath[i]);
-        } else if (allSelectedCareerPath[i].is_completed == 1) {
-          completedAchievement.add(allSelectedCareerPath[i]);
+          if (allSelectedCareerPath[i].is_completed == 0 &&
+              allSelectedCareerPath[i]
+                      .careerPathNotificationAchievementQuestion!
+                      .first
+                      .careerPathNotificationAchievementAnswer!
+                      .length >
+                  0) {
+            submittedAchievement.add(allSelectedCareerPath[i]);
+          } else if (allSelectedCareerPath[i].is_completed == 0) {
+            newAchievement.add(allSelectedCareerPath[i]);
+          } else if (allSelectedCareerPath[i].is_completed == 1) {
+            completedAchievement.add(allSelectedCareerPath[i]);
+          }
+        } else {
+          if (allSelectedCareerPath[i].is_completed == 0) {
+            newAchievement.add(allSelectedCareerPath[i]);
+          } else if (allSelectedCareerPath[i].is_completed == 1) {
+            completedAchievement.add(allSelectedCareerPath[i]);
+          }
         }
-                    }else{
-                      
-         if (allSelectedCareerPath[i].is_completed == 0) {
-          newAchievement.add(allSelectedCareerPath[i]);
-        } else if (allSelectedCareerPath[i].is_completed == 1) {
-          completedAchievement.add(allSelectedCareerPath[i]);
-        }
-                    }
-        
       }
 
       notifyListeners();

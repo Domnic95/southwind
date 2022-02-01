@@ -5,23 +5,25 @@ import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/providers.dart';
 
 class ShowImageScreen extends StatelessWidget {
-  final GroupMessage messageModel;
-  final bool isLeft;
-  const ShowImageScreen(
-      {required this.messageModel, required this.isLeft, Key? key})
+  final String mediaUrl;
+  final String title;
+
+  const ShowImageScreen({required this.mediaUrl,
+  required this.title,
+   Key? key})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final _groupProvider = context.read(groupProvider);
+    
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: primaryColor,
-        title: Text(_groupProvider.listGroup[_groupProvider.selectedGroupIndex!].group!.groupName!),
+        title: Text(title),
         elevation: 20,
       ),
-      body: Center(child: Image.network(messageModel.mediaUrl!)),
+      body: Center(child: Image.network(mediaUrl)),
     );
   }
 }

@@ -53,7 +53,12 @@ class _CareerTabState extends State<CareerTab> {
                             horizontal: 4, vertical: 10),
                         child: InkWell(
                           borderRadius: BorderRadius.circular(1000),
-                          onTap: () {
+                          onTap: () async {
+                            if (i == 0) {
+                              await careerProvider.setReadibility(false);
+                            } else {
+                              await careerProvider.setReadibility(true);
+                            }
                             setState(() {
                               selectedIndex = i;
                             });
@@ -289,13 +294,12 @@ class SingleCollection extends HookWidget {
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: InkWell(
         onTap: () {
-          if (pageIndex == 0) {
-            careerProvider.setAchievement(achievement);
-            Navigator.pushNamed(
-              context,
-              Routes.QuestionPage,
-            );
-          }
+          // if (pageIndex == 0)
+          careerProvider.setAchievement(achievement);
+          Navigator.pushNamed(
+            context,
+            Routes.QuestionPage,
+          );
         },
         child: Material(
           elevation: 3,
