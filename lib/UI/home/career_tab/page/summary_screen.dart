@@ -182,7 +182,7 @@ class SummaryScreen extends StatelessWidget {
                       //     showToast('Some questions are not answered');
                       //   }
                       // },
-                      lable: "Submit",
+                      lable: "Thank You!",
                     ),
                   ],
                 ),

@@ -14,6 +14,7 @@ MERGED from [:wakelock] E:\Abhay Gajipara\UI\Southwind\build\wakelock\intermedia
 MERGED from [:image_picker] E:\Abhay Gajipara\UI\Southwind\build\image_picker\intermediates\library_manifest\debug\AndroidManifest.xml:2:1-19:12
 MERGED from [:flutter_plugin_android_lifecycle] E:\Abhay Gajipara\UI\Southwind\build\flutter_plugin_android_lifecycle\intermediates\library_manifest\debug\AndroidManifest.xml:2:1-7:12
 MERGED from [:firebase_messaging] E:\Abhay Gajipara\UI\Southwind\build\firebase_messaging\intermediates\library_manifest\debug\AndroidManifest.xml:2:1-46:12
+MERGED from [:webview_flutter_android] E:\Abhay Gajipara\UI\Southwind\build\webview_flutter_android\intermediates\library_manifest\debug\AndroidManifest.xml:2:1-7:12
 MERGED from [:flutter_inappwebview] E:\Abhay Gajipara\UI\Southwind\build\flutter_inappwebview\intermediates\library_manifest\debug\AndroidManifest.xml:2:1-29:12
 MERGED from [:path_provider] E:\Abhay Gajipara\UI\Southwind\build\path_provider\intermediates\library_manifest\debug\AndroidManifest.xml:2:1-7:12
 MERGED from [:shared_preferences] E:\Abhay Gajipara\UI\Southwind\build\shared_preferences\intermediates\library_manifest\debug\AndroidManifest.xml:2:1-7:12
@@ -232,6 +233,8 @@ MERGED from [:flutter_plugin_android_lifecycle] E:\Abhay Gajipara\UI\Southwind\b
 MERGED from [:flutter_plugin_android_lifecycle] E:\Abhay Gajipara\UI\Southwind\build\flutter_plugin_android_lifecycle\intermediates\library_manifest\debug\AndroidManifest.xml:5:5-44
 MERGED from [:firebase_messaging] E:\Abhay Gajipara\UI\Southwind\build\firebase_messaging\intermediates\library_manifest\debug\AndroidManifest.xml:5:5-44
 MERGED from [:firebase_messaging] E:\Abhay Gajipara\UI\Southwind\build\firebase_messaging\intermediates\library_manifest\debug\AndroidManifest.xml:5:5-44
+MERGED from [:webview_flutter_android] E:\Abhay Gajipara\UI\Southwind\build\webview_flutter_android\intermediates\library_manifest\debug\AndroidManifest.xml:5:5-44
+MERGED from [:webview_flutter_android] E:\Abhay Gajipara\UI\Southwind\build\webview_flutter_android\intermediates\library_manifest\debug\AndroidManifest.xml:5:5-44
 MERGED from [:flutter_inappwebview] E:\Abhay Gajipara\UI\Southwind\build\flutter_inappwebview\intermediates\library_manifest\debug\AndroidManifest.xml:5:5-44
 MERGED from [:flutter_inappwebview] E:\Abhay Gajipara\UI\Southwind\build\flutter_inappwebview\intermediates\library_manifest\debug\AndroidManifest.xml:5:5-44
 MERGED from [:path_provider] E:\Abhay Gajipara\UI\Southwind\build\path_provider\intermediates\library_manifest\debug\AndroidManifest.xml:5:5-44

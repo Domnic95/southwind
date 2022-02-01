@@ -1,6 +1,9 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:webview_flutter/webview_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -496,6 +499,10 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
   bool flag = true;
   bool isLink = false;
   List listString = [];
+  String showTitle = '';
+  String link = '';
+  bool linkIsWithIn50 = false;
+  List largerList = ["", "", "", ""];
   @override
   void initState() {
     super.initState();
@@ -505,10 +512,8 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
       int linkedStartIndex = widget.text!.indexOf("href='");
       int firstTagEndIndex = widget.text!.indexOf("'>", firstTagstartIndex + 1);
       int tagEndIndex = widget.text!.indexOf("</a>", firstTagEndIndex);
-      String showTitle =
-          widget.text!.substring(firstTagEndIndex + 2, tagEndIndex);
-      String link =
-          widget.text!.substring(linkedStartIndex + 6, firstTagEndIndex);
+      showTitle = widget.text!.substring(firstTagEndIndex + 2, tagEndIndex);
+      link = widget.text!.substring(linkedStartIndex + 6, firstTagEndIndex);
       int urlEnd = widget.text!.indexOf("</a>", firstTagEndIndex);
       String removeString =
           widget.text!.substring(firstTagstartIndex, urlEnd + 4);
@@ -517,15 +522,36 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
 
       widget.text = listString[0] + " ${showTitle} " + listString[1];
       isLink = true;
-    }
-
-    if (widget.text!.length > 50) {
-      firstHalf = widget.text!.substring(0, 50);
-      secondHalf = widget.text!.substring(50, widget.text!.length);
+      if (widget.text!.length > 50) {
+        if (widget.text!.indexOf(showTitle) > 50) {
+          firstHalf = widget.text!.substring(0, 50);
+          String lo = widget.text!.substring(50, widget.text!.length);
+          List _local = lo.split(showTitle);
+          largerList[2] = _local[0];
+          largerList[3] = _local[1];
+        } else {
+          linkIsWithIn50 = true;
+          String lo = widget.text!.substring(0, 50);
+          List _local = lo.split(showTitle);
+          largerList[0] = _local[0];
+          largerList[1] = _local[1];
+        }
+        // firstHalf = widget.text!.substring(0, 50);
+        // secondHalf = widget.text!.substring(50, widget.text!.length);
+        secondHalf = " ";
+      } else {
+        secondHalf = "";
+      }
     } else {
-      firstHalf = widget.text;
-      secondHalf = "";
+      if (widget.text!.length > 50) {
+        firstHalf = widget.text!.substring(0, 50);
+        secondHalf = widget.text!.substring(50, widget.text!.length);
+      } else {
+        firstHalf = widget.text;
+        secondHalf = "";
+      }
     }
+    setState(() {});
   }
 
   final style = TextStyle(
@@ -538,68 +564,264 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
     return Container(
       // padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
       child: secondHalf!.isEmpty
-          ? RichText(
-              maxLines: 5,
-              overflow: TextOverflow.ellipsis,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                      text: widget.sender.toString(),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText1!
-                          .copyWith(fontWeight: FontWeight.w600, fontSize: 14)),
-                  TextSpan(
-                    text: firstHalf.toString(),
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Colors.black.withOpacity(.8),
-                    ),
-                  ),
-                ],
-              ))
-          : new Column(
-              children: <Widget>[
-                RichText(
-                    // overflow: TextOverflow.ellipsis,
-                    text: TextSpan(
-                  children: [
-                    TextSpan(
-                        text: widget.sender.toString() + " ",
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                            fontWeight: FontWeight.w600, fontSize: 14)),
-                    TextSpan(
-                      text: flag
-                          ? (firstHalf.toString() + "...")
-                          : (firstHalf.toString() + secondHalf!).toString(),
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                        color: Colors.black.withOpacity(.8),
-                      ),
-                    ),
-                    WidgetSpan(
-                      alignment: PlaceholderAlignment.baseline,
-                      baseline: TextBaseline.alphabetic,
-                      child: InkWell(
-                        child: Text(
-                          flag ? "  more" : "  less",
-                          style: TextStyle(
-                            color: Colors.blue.shade500,
-                            // fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
+          ? isLink
+              ? RichText(
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text: widget.sender.toString(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(
+                                  fontWeight: FontWeight.w600, fontSize: 14)),
+                      TextSpan(
+                        text: listString[0].toString() + " ",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Colors.black.withOpacity(.8),
                         ),
-                        onTap: () {
-                          setState(() {
-                            flag = !flag;
-                          });
-                        },
                       ),
-                    ),
-                  ],
-                )),
+                      TextSpan(
+                        text: showTitle.toString(),
+                        recognizer: new TapGestureRecognizer()
+                          ..onTap = () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (c) => WebViewExample(
+                                          url: link,
+                                        )));
+                          },
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Colors.blue.withOpacity(.8),
+                        ),
+                      ),
+                      // if (listString.length > 2)
+                      //   TextSpan(
+                      //     text: listString[1].toString(),
+                      //     style: TextStyle(
+                      //       fontWeight: FontWeight.w600,
+                      //       fontSize: 14,
+                      //       color: Colors.black.withOpacity(.8),
+                      //     ),
+                      //   ),
+                    ],
+                  ))
+              : RichText(
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                          text: widget.sender.toString(),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(
+                                  fontWeight: FontWeight.w600, fontSize: 14)),
+                      TextSpan(
+                        text: firstHalf.toString(),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Colors.black.withOpacity(.8),
+                        ),
+                      ),
+                    ],
+                  ))
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                isLink
+                    ? linkIsWithIn50
+                        ? RichText(
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                    text: widget.sender.toString(),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyText1!
+                                        .copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14)),
+                                TextSpan(
+                                  text: largerList[0].toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: Colors.black.withOpacity(.8),
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: showTitle.toString(),
+                                  recognizer: new TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (c) => WebViewExample(
+                                                    url: link,
+                                                  )));
+                                    },
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: Colors.blue.withOpacity(.8),
+                                  ),
+                                ),
+                                if (!flag)
+                                  TextSpan(
+                                    text: largerList[1].toString(),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      color: Colors.black.withOpacity(.8),
+                                    ),
+                                  ),
+                                WidgetSpan(
+                                  alignment: PlaceholderAlignment.baseline,
+                                  baseline: TextBaseline.alphabetic,
+                                  child: InkWell(
+                                    child: Text(
+                                      flag ? "  more" : "  less",
+                                      style: TextStyle(
+                                        color: Colors.blue.shade500,
+                                        // fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                    onTap: () {
+                                      setState(() {
+                                        flag = !flag;
+                                      });
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ))
+                        : RichText(
+                            // overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                            children: [
+                              TextSpan(
+                                  text: widget.sender.toString(),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .copyWith(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14)),
+                              TextSpan(
+                                text: flag
+                                    ? (firstHalf.toString() + "...")
+                                    : (firstHalf.toString() + largerList[2]!)
+                                        .toString(),
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: Colors.black.withOpacity(.8),
+                                ),
+                              ),
+                              if (!flag)
+                                TextSpan(
+                                  text: showTitle.toString(),
+                                  recognizer: new TapGestureRecognizer()
+                                    ..onTap = () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (c) => WebViewExample(
+                                                    url: link,
+                                                  )));
+                                    },
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: Colors.blue.withOpacity(.8),
+                                  ),
+                                ),
+                              if (!flag)
+                                TextSpan(
+                                  text: largerList[3].toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    color: Colors.black.withOpacity(.8),
+                                  ),
+                                ),
+                              WidgetSpan(
+                                alignment: PlaceholderAlignment.baseline,
+                                baseline: TextBaseline.alphabetic,
+                                child: InkWell(
+                                  child: Text(
+                                    flag ? "  more" : "  less",
+                                    style: TextStyle(
+                                      color: Colors.blue.shade500,
+                                      // fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      flag = !flag;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ))
+                    : RichText(
+                        // overflow: TextOverflow.ellipsis,
+                        text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: widget.sender.toString() + " ",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14)),
+                          TextSpan(
+                            text: flag
+                                ? (firstHalf.toString() + "...")
+                                : (firstHalf.toString() + secondHalf!)
+                                    .toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: Colors.black.withOpacity(.8),
+                            ),
+                          ),
+                          WidgetSpan(
+                            alignment: PlaceholderAlignment.baseline,
+                            baseline: TextBaseline.alphabetic,
+                            child: InkWell(
+                              child: Text(
+                                flag ? "  more" : "  less",
+                                style: TextStyle(
+                                  color: Colors.blue.shade500,
+                                  // fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              onTap: () {
+                                setState(() {
+                                  flag = !flag;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      )),
                 // Text(
                 //   flag
                 //       ? (firstHalf.toString() + "...")
@@ -608,6 +830,29 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
                 // ),
               ],
             ),
+    );
+  }
+}
+
+class WebViewExample extends StatefulWidget {
+  final String url;
+  const WebViewExample({required this.url});
+  @override
+  WebViewExampleState createState() => WebViewExampleState();
+}
+
+class WebViewExampleState extends State<WebViewExample> {
+  @override
+  void initState() {
+    super.initState();
+    // Enable virtual display.
+    if (Platform.isAndroid) WebView.platform = AndroidWebView();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WebView(
+      initialUrl: widget.url,
     );
   }
 }
