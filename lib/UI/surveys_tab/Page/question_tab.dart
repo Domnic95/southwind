@@ -1,26 +1,18 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
-import 'package:flutter/services.dart';
 import 'package:southwind/Models/survey/individual_survey.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
-import 'package:southwind/UI/home/career_tab/components/information_dialog.dart';
 import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
-import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
-import 'package:southwind/UI/surveys_tab/Page/summarypage.dart';
+
 import 'package:southwind/UI/theme/apptheme.dart';
 
-import 'package:southwind/routes/routes.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:southwind/data/providers/providers.dart';
 import 'package:southwind/utils/helpers.dart';
 
 class Questions_Tab extends StatefulWidget {
-  Questions_Tab({
+  const Questions_Tab({
     Key? key,
   }) : super(key: key);
 
@@ -51,7 +43,7 @@ class _Questions_TabState extends State<Questions_Tab> {
 
   loadData() async {
     final _provider = await context.read(surveyNotifierProvider);
-    await _provider.individualSurvey();
+    // await _provider.individualSurvey();
     for (int i = 0;
         i < _provider.selectedSurvey!.surveyNotificationQuestion!.length;
         i++) {
@@ -350,6 +342,20 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
     // TODO: implement initState
     super.initState();
     final surveyProvider = context.read(surveyNotifierProvider);
+    if (surveyProvider.textReadibility) {
+      SurveyNotificationQuestion loc =
+          surveyProvider.selectedSurvey!.surveyNotificationQuestion![widget.i];
+      for (int i = 0; i < loc.surveyNotificationOption!.length; i++) {
+        if (loc.surveyNotificationAnswer!.first.optionId! ==
+            loc.surveyNotificationOption![i].id) {
+          currentindex = i;
+
+          widget.textEditingController.text =
+              loc.surveyNotificationAnswer!.first.other;
+        }
+      }
+    }
+    setState(() {});
     // if (surveyProvider.selectedSurvey!.surveyAnswer![widget.i].other != null) {
     //   widget.textEditingController.text =
     //       surveyProvider.selectedSurvey!.surveyAnswer![widget.i].other;
@@ -481,23 +487,26 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
                                       value: currentindex,
                                       onChanged: (val) {
                                         setState(() {
-                                          print("id:" + index.toString());
-                                          widget.onChange!(widget.i);
-                                          selected1.contains(index)
-                                              ? selected1.remove(index)
-                                              : selected1.add(index);
-                                          currentindex = -1;
-                                          currentindex = index;
-                                          surveyProvider.updateAnswer(
-                                              widget.i,
-                                              widget.textEditingController.text,
-                                              surveyProvider
-                                                  .selectedSurvey!
-                                                  .surveyNotificationQuestion![
-                                                      widget.i]
-                                                  .surveyNotificationOption![
-                                                      index]
-                                                  .id!);
+                                          if (surveyProvider.textReadibility) {
+                                          } else {
+                                            widget.onChange!(widget.i);
+                                            selected1.contains(index)
+                                                ? selected1.remove(index)
+                                                : selected1.add(index);
+                                            currentindex = -1;
+                                            currentindex = index;
+                                            surveyProvider.updateAnswer(
+                                                widget.i,
+                                                widget
+                                                    .textEditingController.text,
+                                                surveyProvider
+                                                    .selectedSurvey!
+                                                    .surveyNotificationQuestion![
+                                                        widget.i]
+                                                    .surveyNotificationOption![
+                                                        index]
+                                                    .id!);
+                                          }
                                         });
                                       },
                                     ),
@@ -516,31 +525,38 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
             SizedBox(
               height: 10,
             ),
-            TextFormField(
-              controller: widget.textEditingController,
-              textInputAction: TextInputAction.done,
-              maxLines: 3,
-              style: TextStyle(
-                fontSize: 16,
+            if (surveyProvider.selectedSurvey!
+                    .surveyNotificationQuestion![widget.i].other ==
+                0)
+              TextFormField(
+                readOnly: surveyProvider.textReadibility,
+                controller: widget.textEditingController,
+                textInputAction: TextInputAction.done,
+                maxLines: 3,
+                onChanged: (c) {
+                  surveyProvider.updateNotes(widget.i, c);
+                },
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+                decoration: InputDecoration(
+                    hintText: "Enter Your Answer",
+                    hintStyle: TextStyle(color: Colors.grey),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    isCollapsed: true,
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide:
+                            BorderSide(width: .5, color: primarySwatch[700]!)),
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide:
+                            BorderSide(width: .5, color: primarySwatch[700]!)),
+                    focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(5),
+                        borderSide: BorderSide(width: 1, color: primaryColor))),
               ),
-              decoration: InputDecoration(
-                  hintText: "Enter Your Answer",
-                  hintStyle: TextStyle(color: Colors.grey),
-                  contentPadding:
-                      EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  isCollapsed: true,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide:
-                          BorderSide(width: .5, color: primarySwatch[700]!)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide:
-                          BorderSide(width: .5, color: primarySwatch[700]!)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide: BorderSide(width: 1, color: primaryColor))),
-            ),
             SizedBox(
               height: 10,
             ),

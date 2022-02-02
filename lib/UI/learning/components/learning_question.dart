@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:southwind/Models/learning/individual_learning.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
@@ -35,6 +36,7 @@ class _LearningQuestiontabState extends State<LearningQuestiontab> {
   loadData() async {
     final _learningProvider = context.read(learningProvider);
     await _learningProvider.indiviualLearning();
+    IndividualLearning loc = _learningProvider.selectedLearning!;
     setState(() {
       questionLength = _learningProvider
           .selectedLearning!.learningNotificationQuestion!.length;
@@ -43,7 +45,7 @@ class _LearningQuestiontabState extends State<LearningQuestiontab> {
         loading = false;
       }
     });
-    showlearningInformationDialog(context);
+    if (loc.resourceType != null) showlearningInformationDialog(context);
   }
 
   animateToQuestion() {

@@ -5,9 +5,13 @@ import 'package:southwind/routes/routes.dart';
 
 class CongratsScreen extends StatelessWidget {
   final int totalquestion;
+  final bool? summaryBool;
   final List<int> unAnsweredQuestion;
   const CongratsScreen(
-      {required this.totalquestion, required this.unAnsweredQuestion, Key? key})
+      {required this.totalquestion,
+      required this.unAnsweredQuestion,
+      this.summaryBool = true,
+      Key? key})
       : super(key: key);
 
   @override
@@ -112,14 +116,20 @@ class CongratsScreen extends StatelessWidget {
                       // Navigator.popUntil(context, (route) {
                       //   return route.settings.name == Routes.splashScreen;
                       // });
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return SummaryScreen(
-                          unAnsweredQuestion: unAnsweredQuestion,
-                          totalquestion: totalquestion,
-                          // onTaps: () async {},
-                        );
-                      }));
+                      if (summaryBool!) {
+                        Navigator.push(context,
+                            MaterialPageRoute(builder: (context) {
+                          return SummaryScreen(
+                            unAnsweredQuestion: unAnsweredQuestion,
+                            totalquestion: totalquestion,
+                            // onTaps: () async {},
+                          );
+                        }));
+                      } else {
+                        Navigator.popUntil(context, (route) {
+                          return route.settings.name == Routes.splashScreen;
+                        });
+                      }
                     },
                     child: Container(
                       decoration: BoxDecoration(

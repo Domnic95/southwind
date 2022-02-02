@@ -222,8 +222,10 @@ class SurveyNotificationAnswer {
       SurveyNotificationAnswer(
         questionId: json["id"],
         answerId: null,
-        optionId: 0,
-        other: "",
+        optionId: json['survey_notification_option_id'] == null
+            ? -1
+            : json['survey_notification_option_id'],
+        other: json['other'].toString(),
       );
 
   Map<String, dynamic> toJson() => {

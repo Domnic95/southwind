@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -15,6 +16,9 @@ class SurveyProvider extends BaseNotifier {
   String selectedSurveyId = '';
   List<LibraryNotification> allSurvey = [];
   IndividualSurvey? selectedSurvey = IndividualSurvey();
+  bool textReadibility = false;
+  List<IndividualSurvey> newSurvey = [];
+  List<IndividualSurvey> submittedSurvey = [];
   SurveyProvider() {
     userData = UserFetch().fetchUserData();
 
@@ -22,6 +26,17 @@ class SurveyProvider extends BaseNotifier {
   }
   setSurveyId(int id) {
     selectedSurveyId = id.toString();
+    notifyListeners();
+  }
+
+  setSurvey(IndividualSurvey survey) {
+    selectedSurvey = survey;
+    notifyListeners();
+  }
+
+  setReadibility(bool va) {
+    textReadibility = va;
+
     notifyListeners();
   }
 
@@ -39,9 +54,30 @@ class SurveyProvider extends BaseNotifier {
   // }
   Future suveryNotification() async {
     allSurvey = [];
+    newSurvey = [];
+    submittedSurvey = [];
     final res = await dioClient.getRequest(apiEnd: api_getSurveyNotification);
     allSurvey = List<LibraryNotification>.from(
         res.data["notifications"].map((x) => LibraryNotification.fromJson(x)));
+    for (int i = 0; i < allSurvey.length; i++) {
+      final res = await dioClient.getRequest(
+          apiEnd: api_getIndividualSurvey + allSurvey[i].id.toString());
+
+      IndividualSurvey loc =
+          IndividualSurvey.fromJson(res.data['notification']);
+      if (loc.surveyNotificationQuestion!.length > 0) {
+        if (loc.surveyNotificationQuestion!.first.surveyNotificationAnswer!
+                .length >
+            0) {
+          submittedSurvey.add(loc);
+        } else {
+          newSurvey.add(loc);
+        }
+      } else {
+        newSurvey.add(loc);
+      }
+    }
+
     notifyListeners();
   }
 
@@ -55,7 +91,13 @@ class SurveyProvider extends BaseNotifier {
   }
 
   updateAnswer(int questionIndex, String notes, int option_id) {
-    selectedSurvey!.surveyAnswer![questionIndex].answerId = option_id;
+    log("notres" + notes);
+    selectedSurvey!.surveyAnswer![questionIndex].optionId = option_id;
+    selectedSurvey!.surveyAnswer![questionIndex].other = notes;
+    notifyListeners();
+  }
+
+  updateNotes(int questionIndex, String notes) {
     selectedSurvey!.surveyAnswer![questionIndex].other = notes;
     notifyListeners();
   }
@@ -64,14 +106,14 @@ class SurveyProvider extends BaseNotifier {
     final questionAnser = jsonEncode(selectedSurvey!.surveyAnswer!.map((e) {
       return e.toJson();
     }).toList());
-    print('resee = ${questionAnser}');
+    log('ressss = ${questionAnser}');
     final res = await dioClient.postWithFormData(
         apiEnd: api_submitSurveyAnswer,
         data: {
           "notification_id": selectedSurvey!.id,
           "answers": questionAnser
         });
-
+    notifyListeners();
     if (res != null) {
       return true;
     }

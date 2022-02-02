@@ -49,7 +49,7 @@ class TimerCard {
 
   factory TimerCard.fromJson(Map<String, dynamic> json) => TimerCard(
         id: json["id"],
-        profileId: json["profile_id"],
+        profileId: json["p crofile_id"],
         timeIn: DateTime.parse(json["time_in"]),
         timeOut: DateTime.parse(json["time_out"]),
         latIn: json["lat_in"].toString(),

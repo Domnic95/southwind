@@ -3,6 +3,7 @@ import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/src/provider.dart';
+
 import 'package:southwind/Models/career/careerModel.dart';
 import 'package:southwind/UI/components/PdfViewer.dart';
 import 'package:southwind/UI/components/common_button.dart';
@@ -27,10 +28,15 @@ class InformationDialog extends StatefulHookWidget {
   _InformationDialogState createState() => _InformationDialogState();
 }
 
+enum InformationMediaType { Image, Video, message, PDF, Audio }
+
 class _InformationDialogState extends State<InformationDialog> {
   late YoutubePlayerController _controller;
   Widget? widgets;
+  Widget? pdfWidget;
   bool isVideo = false;
+  late InformationMediaType mediaTypes;
+  late CareerAchievement achievement;
   @override
   void dispose() {
     if (isVideo) {
@@ -47,64 +53,67 @@ class _InformationDialogState extends State<InformationDialog> {
   }
 
   loadData() async {
-    CareerAchievement achievement =
-        context.read(carerNotifierProvider).selectedAchievement;
-    // if (achievement.resourceVideoLink != null &&
-    //     achievement.resourceVideoLink != '') {
-    //   print('youtube');
-    //   _controller = YoutubePlayerController(
-    //     initialVideoId: achievement.resourceVideoLink!.split('watch?v=')[1],
-    //     flags: YoutubePlayerFlags(
-    //       autoPlay: true,
-    //       mute: true,
-    //     ),
-    //   );
-    //   isVideo = true;
-    //   widgets = YoutubePlayer(
-    //     controller: _controller,
-    //     showVideoProgressIndicator: true,
+    achievement = context.read(carerNotifierProvider).selectedAchievement;
+    if (achievement.attachmentUrl != null && achievement.attachmentUrl != '') {
+      print('youtube');
+      _controller = YoutubePlayerController(
+        initialVideoId: achievement.attachmentUrl!.split('watch?v=')[1],
+        flags: YoutubePlayerFlags(
+          autoPlay: true,
+          mute: true,
+        ),
+      );
+      isVideo = true;
+      widgets = YoutubePlayer(
+        controller: _controller,
+        showVideoProgressIndicator: true,
 
-    //     // videoProgressIndicatorColor: Colors.amber,
-    //     // progressColors: ProgressColors(
-    //     //     playedColor: Colors.amber,
-    //     //     handleColor: Colors.amberAccent,
-    //     // ),
-    //     // onReady (v) {
-    //     //     _controller.addListener(listener);
-    //     // },
-    //   );
-    // } else
+        // videoProgressIndicatorColor: Colors.amber,
+        // progressColors: ProgressColors(
+        //     playedColor: Colors.amber,
+        //     handleColor: Colors.amberAccent,
+        // ),
+        // onReady (v) {
+        //     _controller.addListener(listener);
+        // },
+      );
+    }
+
     if (achievement.cloudinarySecureUrl != "" &&
         achievement.cloudinarySecureUrl != null) {
-      print('pdf');
-      PDFDocument document = await PDFDocument.fromURL(
-        achievement.cloudinarySecureUrl!,
-        /* cacheManager: CacheManager(
+      int lastDot = achievement.cloudinarySecureUrl!.lastIndexOf('.');
+      String extension = achievement.cloudinarySecureUrl!
+          .substring(lastDot + 1, achievement.cloudinarySecureUrl!.length);
+      
+      if (extension == 'pdf') {
+        PDFDocument document = await PDFDocument.fromURL(
+          achievement.cloudinarySecureUrl!,
+          /* cacheManager: CacheManager(
           Config(
             "customCacheKey",
             stalePeriod: const Duration(days: 2),
             maxNrOfCacheObjects: 10,
           ),
         ), */
-      );
-      widgets = PdfViwer(
-        height: 200,
-        document: document,
-      );
-    }
-    // else if (achievement.cloudinaryAudioSecureUrl != "" &&
-    //     achievement.cloudinaryAudioSecureUrl != null) {
-    //   print('audio');
-    //   widgets = Text('Audio');
-    // }
-    else {
-      widgets = Text('No data found');
+        );
+
+        pdfWidget = PdfViwer(
+          height: 200,
+          document: document,
+        );
+        mediaTypes = InformationMediaType.PDF;
+      } else if (extension == 'jpg') {
+        mediaTypes = InformationMediaType.Image;
+      } else {
+        mediaTypes = InformationMediaType.message;
+      }
     }
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () {},
       child: Material(
@@ -117,7 +126,41 @@ class _InformationDialogState extends State<InformationDialog> {
                     const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
                 child: Column(
                   children: [
-                    Expanded(child: Center(child: widgets!)),
+                    Expanded(
+                        child: SingleChildScrollView(
+                      child: Center(
+                        child: Column(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            if (isVideo)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: widgets,
+                              ),
+                            if (mediaTypes == InformationMediaType.PDF)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: pdfWidget,
+                              ),
+                            if (mediaTypes == InformationMediaType.Image)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Image.network(
+                                  achievement.cloudinarySecureUrl!,
+                                  height: size.width * 0.5,
+                                  width: size.width,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
+                            if (mediaTypes == InformationMediaType.message &&
+                                !isVideo)
+                              Center(
+                                child: Text('No data found'),
+                              )
+                          ],
+                        ),
+                      ),
+                    )),
                     CommonButton(
                       lable: "Continue",
                       ontap: () {

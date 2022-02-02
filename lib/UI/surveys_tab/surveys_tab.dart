@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:southwind/Models/survey/basic_survey_details.dart';
+import 'package:southwind/Models/survey/individual_survey.dart';
 import 'package:southwind/Models/survey/surveyModel.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
@@ -15,6 +16,9 @@ class Surveys_Tab extends StatefulHookWidget {
 
 class _Surveys_TabState extends State<Surveys_Tab> {
   bool loading = true;
+  List<String> tabs = ["New Survey", "Submitted Surveys"];
+  int selectedIndex = 0;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -34,126 +38,147 @@ class _Surveys_TabState extends State<Surveys_Tab> {
 
     return SafeArea(
       child: Scaffold(
-        body: loading
-            ? LoadingWidget()
-            : _surveyNotifierProvider.allSurvey.length > 0
-                ? Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 30,
+          body: loading
+              ? LoadingWidget()
+              : Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          for (int i = 0; i < tabs.length; i++)
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 4, vertical: 10),
+                                child: InkWell(
+                                  borderRadius: BorderRadius.circular(1000),
+                                  onTap: () async {
+                                    if (i == 0) {
+                                      await _surveyNotifierProvider
+                                          .setReadibility(false);
+                                    } else {
+                                      await _surveyNotifierProvider
+                                          .setReadibility(true);
+                                    }
+                                    setState(() {
+                                      selectedIndex = i;
+                                    });
+                                  },
+                                  child: Material(
+                                    color: Colors.transparent,
+                                    elevation: selectedIndex == i ? 10 : 0,
+                                    borderRadius: BorderRadius.circular(1000),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: selectedIndex == i
+                                              ? primarySwatch[700]
+                                              : Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: primarySwatch[900]!,
+                                              width: .5)),
+                                      child: Center(
+                                          child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 10),
+                                        child: Text(
+                                          tabs[i],
+                                          maxLines: 1,
+                                          textAlign: TextAlign.center,
+                                          overflow: TextOverflow.visible,
+                                          style: selectedIndex != i
+                                              ? TextStyle(
+                                                  color: primarySwatch[900],
+                                                  fontWeight: FontWeight.bold)
+                                              : TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                        ),
+                                      )),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 30,
+                      ),
+                      Expanded(
+                        child: SurveyCategory(
+                          title:
+                              selectedIndex == 0 ? "Interesting" : "Submitted",
+                          data: selectedIndex == 0
+                              ? _surveyNotifierProvider.newSurvey
+                              : _surveyNotifierProvider.submittedSurvey,
                         ),
-                        const Text(
-                          "Interesting Surveys",
-                          style: TextStyle(
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5),
-                        ),
-                        Text(
-                          "${_surveyNotifierProvider.allSurvey.length} Surveys",
-                          style: const TextStyle(
-                              fontSize: 15, fontWeight: FontWeight.w500),
-                        ),
-                        const SizedBox(
-                          height: 30,
-                        ),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: _surveyNotifierProvider.allSurvey.length,
-                            padding: const EdgeInsets.only(top: 0, bottom: 60),
-                            itemBuilder: (context, index) {
-                              // if (index == 0) {
-                              //   return Column(
-                              //     mainAxisSize: MainAxisSize.min,
-                              //     children: [
-                              //       Container(
-                              //         decoration: BoxDecoration(
-                              //             color: Color(0xFF53ac54),
-                              //
-                              //             // color: Color(0xFF25AA25),
-                              //             borderRadius: BorderRadius.circular(10)),
-                              //         child: Padding(
-                              //           padding: const EdgeInsets.symmetric(vertical: 10),
-                              //           child: Row(
-                              //             mainAxisAlignment: MainAxisAlignment.start,
-                              //             children: [
-                              //               SizedBox(
-                              //                 width: 20,
-                              //               ),
-                              //               Image.asset(
-                              //                 "assets/images/premiumquality.png",
-                              //                 height: 50,
-                              //               ),
-                              //               SizedBox(
-                              //                 width: 20,
-                              //               ),
-                              //               SizedBox(
-                              //                 width: .5,
-                              //                 height: 55,
-                              //                 child: Container(
-                              //                   color: Colors.white,
-                              //                 ),
-                              //               ),
-                              //               SizedBox(
-                              //                 width: 10,
-                              //               ),
-                              //               Column(
-                              //                 crossAxisAlignment: CrossAxisAlignment.start,
-                              //                 children: [
-                              //                   Text(
-                              //                     "21 STEPS LEFT",
-                              //                     style: TextStyle(
-                              //                         fontSize: 18,
-                              //                         color: Colors.white,
-                              //                         fontWeight: FontWeight.bold),
-                              //                     textAlign: TextAlign.center,
-                              //                   ),
-                              //                   Row(
-                              //                     children: [
-                              //                       Text(
-                              //                         "Certified Sales Leader",
-                              //                         style: TextStyle(color: Colors.white),
-                              //                       ),
-                              //                       Icon(
-                              //                         Icons.arrow_drop_down,
-                              //                         color: Colors.white,
-                              //                       )
-                              //                     ],
-                              //                   ),
-                              //                 ],
-                              //               ),
-                              //             ],
-                              //           ),
-                              //         ),
-                              //       ),
-                              //       SizedBox(
-                              //         height: 10,
-                              //       ),
-                              //       SingleCollection(collections[index]),
-                              //     ],
-                              //   );
-                              // }
-                              return SingleCollection(
-                                  _surveyNotifierProvider.allSurvey[index]);
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
-                : Center(
-                    child: Text('No survey found'),
+                      )
+                    ],
                   ),
-      ),
+                )
+          // : Center(
+          //     child: Text('No survey found'),
+          //   ),
+          ),
     );
   }
 }
 
+class SurveyCategory extends StatefulHookWidget {
+  final String title;
+  final List<IndividualSurvey> data;
+  SurveyCategory({required this.data, required this.title, Key? key})
+      : super(key: key);
+
+  @override
+  State<SurveyCategory> createState() => _SurveyCategoryState();
+}
+
+class _SurveyCategoryState extends State<SurveyCategory> {
+  @override
+  Widget build(BuildContext context) {
+    return widget.data.length > 0
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${widget.title} Surveys",
+                style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5),
+              ),
+              Text(
+                "${widget.data.length} Surveys",
+                style:
+                    const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(
+                height: 30,
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.data.length,
+                  padding: const EdgeInsets.only(top: 0, bottom: 60),
+                  itemBuilder: (context, index) {
+                    return SingleCollection(widget.data[index]);
+                  },
+                ),
+              ),
+            ],
+          )
+        : Center(
+            child: Text('No survey found'),
+          );
+  }
+}
+
 class SingleCollection extends HookWidget {
-  final LibraryNotification collection;
+  final IndividualSurvey collection;
 
   const SingleCollection(this.collection, {Key? key}) : super(key: key);
 
@@ -167,7 +192,8 @@ class SingleCollection extends HookWidget {
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: InkWell(
           onTap: () async {
-            await surveyProvider.setSurveyId(collection.id!);
+            // await surveyProvider.setSurveyId(collection.id!);
+            await surveyProvider.setSurvey(collection);
             // Navigator.push(context, MaterialPageRoute(builder: (_)=>Questions_Tab()));
             Navigator.pushNamed(context, Routes.question_tab);
           },

@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:southwind/Models/career/careerModel.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
@@ -29,9 +30,15 @@ class _QuestionsPageState extends State<QuestionsPage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      showInformationDialog(context);
-      loadData();
+      CareerAchievement achievement =
+          context.read(carerNotifierProvider).selectedAchievement;
+      if ((achievement.attachmentUrl != null &&
+              achievement.attachmentUrl != '') ||
+          (achievement.cloudinarySecureUrl != "" &&
+              achievement.cloudinarySecureUrl != null))
+        showInformationDialog(context);
     });
+    loadData();
   }
 
   loadData() async {
@@ -235,6 +242,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
                                       return CongratsScreen(
+                                        summaryBool: false,
                                         unAnsweredQuestion: unAnsweredQuestion,
                                         totalquestion: questionLength,
                                       );
