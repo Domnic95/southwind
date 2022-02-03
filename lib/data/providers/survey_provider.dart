@@ -17,6 +17,7 @@ class SurveyProvider extends BaseNotifier {
   List<LibraryNotification> allSurvey = [];
   IndividualSurvey? selectedSurvey = IndividualSurvey();
   bool textReadibility = false;
+  bool reloadData = false;
   List<IndividualSurvey> newSurvey = [];
   List<IndividualSurvey> submittedSurvey = [];
   SurveyProvider() {
@@ -77,7 +78,7 @@ class SurveyProvider extends BaseNotifier {
         newSurvey.add(loc);
       }
     }
-
+reloadData = false;
     notifyListeners();
   }
 
@@ -113,6 +114,7 @@ class SurveyProvider extends BaseNotifier {
           "notification_id": selectedSurvey!.id,
           "answers": questionAnser
         });
+        reloadData = true;
     notifyListeners();
     if (res != null) {
       return true;

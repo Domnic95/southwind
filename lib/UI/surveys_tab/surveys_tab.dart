@@ -108,14 +108,24 @@ class _Surveys_TabState extends State<Surveys_Tab> {
                       const SizedBox(
                         height: 30,
                       ),
-                      Expanded(
-                        child: SurveyCategory(
-                          title:
-                              selectedIndex == 0 ? "Interesting" : "Submitted",
-                          data: selectedIndex == 0
-                              ? _surveyNotifierProvider.newSurvey
-                              : _surveyNotifierProvider.submittedSurvey,
-                        ),
+                      FutureBuilder(
+                        future: _surveyNotifierProvider.suveryNotification(),
+                        builder: (context, snapshot) {
+                          if(snapshot.connectionState== ConnectionState.done){
+                             return Expanded(
+                            child: SurveyCategory(
+                              title:
+                                  selectedIndex == 0 ? "Interesting" : "Submitted",
+                              data: selectedIndex == 0
+                                  ? _surveyNotifierProvider.newSurvey
+                                  : _surveyNotifierProvider.submittedSurvey,
+                            ),
+                          );
+                          }else{
+                            return Center(child: LoadingWidget(),);
+                          }
+                         
+                        }
                       )
                     ],
                   ),
