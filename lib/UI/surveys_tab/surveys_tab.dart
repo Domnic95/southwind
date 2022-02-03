@@ -108,24 +108,32 @@ class _Surveys_TabState extends State<Surveys_Tab> {
                       const SizedBox(
                         height: 30,
                       ),
-                      FutureBuilder(
-                        future: _surveyNotifierProvider.suveryNotification(),
-                        builder: (context, snapshot) {
-                          if(snapshot.connectionState== ConnectionState.done){
-                             return Expanded(
-                            child: SurveyCategory(
-                              title:
-                                  selectedIndex == 0 ? "Interesting" : "Submitted",
-                              data: selectedIndex == 0
-                                  ? _surveyNotifierProvider.newSurvey
-                                  : _surveyNotifierProvider.submittedSurvey,
-                            ),
-                          );
-                          }else{
-                            return Center(child: LoadingWidget(),);
-                          }
-                         
-                        }
+                      // SurveyCategory(
+                      //   title: selectedIndex == 0 ? "Interesting" : "Submitted",
+                      //   data: selectedIndex == 0
+                      //       ? _surveyNotifierProvider.newSurvey
+                      //       : _surveyNotifierProvider.submittedSurvey,
+                      // )
+                      Expanded(
+                        child: FutureBuilder(
+                            future: _surveyNotifierProvider.reload(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                return SurveyCategory(
+                                  title: selectedIndex == 0
+                                      ? "Interesting"
+                                      : "Submitted",
+                                  data: selectedIndex == 0
+                                      ? _surveyNotifierProvider.newSurvey
+                                      : _surveyNotifierProvider.submittedSurvey,
+                                );
+                              } else {
+                                return Center(
+                                  child: LoadingWidget(),
+                                );
+                              }
+                            }),
                       )
                     ],
                   ),

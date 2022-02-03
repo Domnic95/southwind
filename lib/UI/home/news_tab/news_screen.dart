@@ -39,6 +39,7 @@ class _NewsScreenState extends State<NewsScreen> {
     loadData();
   }
 
+ 
   loadData() async {
     await context.read(newsNotifierProvider).fetchNews();
     setState(() {

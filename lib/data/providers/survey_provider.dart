@@ -53,6 +53,11 @@ class SurveyProvider extends BaseNotifier {
   //           ['survey']
   //       .map((x) => BasicSurveyDetail.fromJson(x)));
   // }
+  reload() async {
+    if(reloadData)
+    await suveryNotification();
+  }
+
   Future suveryNotification() async {
     allSurvey = [];
     newSurvey = [];
@@ -78,7 +83,7 @@ class SurveyProvider extends BaseNotifier {
         newSurvey.add(loc);
       }
     }
-reloadData = false;
+    reloadData = false;
     notifyListeners();
   }
 
@@ -114,7 +119,7 @@ reloadData = false;
           "notification_id": selectedSurvey!.id,
           "answers": questionAnser
         });
-        reloadData = true;
+    reloadData = true;
     notifyListeners();
     if (res != null) {
       return true;
@@ -123,4 +128,3 @@ reloadData = false;
     return false;
   }
 }
- 
