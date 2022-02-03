@@ -256,7 +256,7 @@ class _FeedPostState extends State<FeedPost> {
                                 );
                               },
                             ),
-                            const Text("comment"),
+                            Text("${widget.post.commentCount} comment"),
                           ],
                         ),
                       ),
@@ -851,8 +851,18 @@ class WebViewExampleState extends State<WebViewExample> {
 
   @override
   Widget build(BuildContext context) {
-    return WebView(
-      initialUrl: widget.url,
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: true,
+        title: Container(
+          // color: Colors.teal,
+          height: 25,
+          child: Image.asset("assets/images/southwind_logo.png"),
+        ),
+      ),
+      body: WebView(
+        initialUrl: widget.url,
+      ),
     );
   }
 }
