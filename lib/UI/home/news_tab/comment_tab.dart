@@ -23,6 +23,7 @@ class CommentTab extends StatefulHookWidget {
 
 class _CommentTabState extends State<CommentTab> {
   TextEditingController textController = TextEditingController();
+  ScrollController scrollController = ScrollController();
   bool isLoading = true;
   @override
   void initState() {
@@ -35,6 +36,7 @@ class _CommentTabState extends State<CommentTab> {
     await context
         .read(commentNotifierProvider(widget.postModal.id.toString()))
         .loadComments();
+      
     setState(() {
       isLoading = false;
     });
@@ -70,6 +72,8 @@ class _CommentTabState extends State<CommentTab> {
                           child: Text("No Comment Found"),
                         )
                       : ListView.builder(
+                        controller: scrollController,
+                        // reverse: true,
                           itemCount: commentNotifier.comments.length,
                           itemBuilder: (context, index) {
                             return CommentWidget(
@@ -149,26 +153,33 @@ class _CommentTabState extends State<CommentTab> {
                                       return Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
+                                          
                                           bottomSheetWidget(() async {
+                                             showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.imageUpload(
                                                 ImageSource.gallery,
                                                 widget.postModal.id.toString());
+                                                Navigator.pop(context);
                                           }, "Gallery"),
                                           Divider(
                                             color: primarySwatch.shade800,
                                           ),
                                           bottomSheetWidget(() async {
+                                             showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.imageUpload(
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
+                                                   Navigator.pop(context);
                                           }, "Camera"),
                                           Divider(
                                             color: primarySwatch.shade800,
                                           ),
                                           bottomSheetWidget(() async {
+                                             showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.videoUpload(
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
+                                                   Navigator.pop(context);
                                           }, "Video")
                                         ],
                                       );
@@ -186,11 +197,13 @@ class _CommentTabState extends State<CommentTab> {
                             // Icon(Icons.send_outlined),
                             InkWell(
                               onTap: () async {
-                                print('heelo');
+                              String loc = textController.text;
+                               textController.clear();
                                 await commentNotifier.sendComment(
                                     widget.postModal.id.toString(),
-                                    textController.text);
-                                textController.clear();
+                                    loc);
+                                 
+                                  scrollController.jumpTo(scrollController.position.maxScrollExtent);
                               },
                               child: Image.asset(
                                 "assets/images/send.png",
@@ -218,6 +231,7 @@ class _CommentTabState extends State<CommentTab> {
       onTap: () {
         Navigator.pop(context);
         voidCallback();
+        //  scrollController.jumpTo(scrollController.position.maxScrollExtent);
       },
       child: Container(
         decoration: BoxDecoration(),

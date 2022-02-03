@@ -26,6 +26,8 @@ class NewsCommentNotifier extends BaseNotifier {
     if (res.statusCode == 200) {
       comments = List<CommentModal>.from(
           res.data["comments"].map((x) => CommentModal.fromJson(x)));
+    
+    
       notifyListeners();
     }
     // isLoading = false;
@@ -63,9 +65,11 @@ class NewsCommentNotifier extends BaseNotifier {
     final res = await dioClient
         .postWithFormData(apiEnd: api_communication_comment, data: {
       "notification_id": id,
-      'comment': '',
+      'comment': "--",
       'media_url': url,
       'media_type': media,
     });
+    loadComments() ;
+    print('res'+ res.toString() );
   }
 }
