@@ -8,7 +8,6 @@ import 'package:southwind/Models/news/postModal.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/chat_tab/components/FullScreenImage.dart';
 import 'package:southwind/UI/home/chat_tab/components/FullscreenVideo.dart';
-import 'package:southwind/UI/home/chat_tab/single_chat_screen.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/constant/Global.dart';
 import 'package:southwind/data/providers/providers.dart';
@@ -36,7 +35,7 @@ class _CommentTabState extends State<CommentTab> {
     await context
         .read(commentNotifierProvider(widget.postModal.id.toString()))
         .loadComments();
-      
+
     setState(() {
       isLoading = false;
     });
@@ -72,8 +71,8 @@ class _CommentTabState extends State<CommentTab> {
                           child: Text("No Comment Found"),
                         )
                       : ListView.builder(
-                        controller: scrollController,
-                        // reverse: true,
+                          controller: scrollController,
+                          // reverse: true,
                           itemCount: commentNotifier.comments.length,
                           itemBuilder: (context, index) {
                             return CommentWidget(
@@ -111,8 +110,6 @@ class _CommentTabState extends State<CommentTab> {
                                     suffixIcon: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        // Icon(Icons.file_copy),
-
                                         SizedBox(
                                           width: 10,
                                         ),
@@ -153,33 +150,70 @@ class _CommentTabState extends State<CommentTab> {
                                       return Column(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          
                                           bottomSheetWidget(() async {
+
                                             //  showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.imageUpload(
                                                 ImageSource.gallery,
                                                 widget.postModal.id.toString());
                                                 // Navigator.pop(context);
+
+                                            showDialog(
+                                                context: context,
+                                                builder: (c) =>
+                                                    LoadingWidget());
+                                            await commentNotifier.imageUpload(
+                                              ImageSource.gallery,
+                                              widget.postModal.id.toString(),
+                                            );
+                                            Navigator.pop(context);
+
                                           }, "Gallery"),
+
                                           Divider(
                                             color: primarySwatch.shade800,
                                           ),
+
                                           bottomSheetWidget(() async {
+
                                             //  showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.imageUpload(
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
                                                   //  Navigator.pop(context);
+
+                                            showDialog(
+                                                context: context,
+                                                builder: (c) =>
+                                                    LoadingWidget());
+                                            await commentNotifier.imageUpload(
+                                                ImageSource.camera,
+                                                widget.postModal.id.toString());
+                                            Navigator.pop(context);
+
                                           }, "Camera"),
+
                                           Divider(
                                             color: primarySwatch.shade800,
                                           ),
+                                          
                                           bottomSheetWidget(() async {
+
                                          //  showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.videoUpload(
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
                                                   //  Navigator.pop(context);
+
+                                            showDialog(
+                                                context: context,
+                                                builder: (c) =>
+                                                    LoadingWidget());
+                                            await commentNotifier.videoUpload(
+                                                ImageSource.camera,
+                                                widget.postModal.id.toString());
+                                            Navigator.pop(context);
+
                                           }, "Video")
                                         ],
                                       );
@@ -191,19 +225,19 @@ class _CommentTabState extends State<CommentTab> {
                                 width: 25,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 15,
                             ),
                             // Icon(Icons.send_outlined),
                             InkWell(
                               onTap: () async {
-                              String loc = textController.text;
-                               textController.clear();
+                                String loc = textController.text;
+                                textController.clear();
                                 await commentNotifier.sendComment(
-                                    widget.postModal.id.toString(),
-                                    loc);
-                                 
-                                  scrollController.jumpTo(scrollController.position.maxScrollExtent);
+                                    widget.postModal.id.toString(), loc);
+
+                                scrollController.jumpTo(
+                                    scrollController.position.maxScrollExtent);
                               },
                               child: Image.asset(
                                 "assets/images/send.png",
@@ -211,7 +245,7 @@ class _CommentTabState extends State<CommentTab> {
                                 width: 25,
                               ),
                             ),
-                            SizedBox(
+                            const SizedBox(
                               width: 15,
                             ),
                           ],
