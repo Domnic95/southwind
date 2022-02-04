@@ -42,7 +42,7 @@ class ScheduleProvider extends BaseNotifier {
     for (int i = 0; i < scheduleModel.profileSchedules!.length; i++) {
       if (scheduleModel.profileSchedules![i].day == dateTime) {
         print(scheduleModel.profileSchedules![i].day);
-        print(i);
+       
         scheduleIndex.add(i);
       }
     }

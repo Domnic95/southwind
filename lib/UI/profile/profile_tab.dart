@@ -19,6 +19,17 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     final _userProvider = useProvider(authProvider);
+    String firstLetter =
+        _userProvider.userData!.profileFirstName.substring(0, 1).toUpperCase();
+    String lastFirstLetter = _userProvider.userData!.profileFirstName
+        .substring(1, _userProvider.userData!.profileFirstName.length);
+    String firstName = firstLetter + lastFirstLetter;
+    String lastNameFirst =
+        _userProvider.userData!.profileLastName.substring(0, 1).toUpperCase();
+    String lastName = lastNameFirst +
+        _userProvider.userData!.profileLastName
+            .substring(1, _userProvider.userData!.profileLastName.length);
+
     final size = MediaQuery.of(context).size;
     DateTime now = DateTime.now();
     String gap =
@@ -57,9 +68,7 @@ class _ProfileState extends State<Profile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            _userProvider.userData!.profileFirstName +
-                                " " +
-                                _userProvider.userData!.profileLastName,
+                            firstName + " " + lastName,
                             style: TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 20),
                           ),
@@ -71,17 +80,18 @@ class _ProfileState extends State<Profile> {
                           SizedBox(
                             height: size.height * 0.01,
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Row(
                             children: [
                               Text(
-                                gap.split('.')[0],
+                                "Year of  Service: ",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
+                                    height: 1,
+                                    // fontWeight: FontWeight.bold,
+                                    fontSize: 18),
                               ),
                               Text(
-                                "Y. Service",
-                                style: TextStyle(height: 1),
+                                gap.split('.')[0],
+                                style: TextStyle(fontSize: 18),
                               ),
                             ],
                           ),

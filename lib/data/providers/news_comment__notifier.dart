@@ -26,8 +26,7 @@ class NewsCommentNotifier extends BaseNotifier {
     if (res.statusCode == 200) {
       comments = List<CommentModal>.from(
           res.data["comments"].map((x) => CommentModal.fromJson(x)));
-    
-    
+
       notifyListeners();
     }
     // isLoading = false;
@@ -45,7 +44,10 @@ class NewsCommentNotifier extends BaseNotifier {
     loadComments();
   }
 
-  Future imageUpload(ImageSource source, String id) async {
+  Future imageUpload(
+    ImageSource source,
+    String id,
+  ) async {
     String file = await file_picker.pickImage(source);
 
     CloudinaryResponse cloudinaryres = await cloudinaryClient.uploadImage(file,
@@ -69,7 +71,7 @@ class NewsCommentNotifier extends BaseNotifier {
       'media_url': url,
       'media_type': media,
     });
-    loadComments() ;
-    print('res'+ res.toString() );
+    loadComments();
+    print('res' + res.toString());
   }
 }
