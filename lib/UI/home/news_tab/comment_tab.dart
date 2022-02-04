@@ -155,31 +155,31 @@ class _CommentTabState extends State<CommentTab> {
                                         children: [
                                           
                                           bottomSheetWidget(() async {
-                                             showDialog(context: context, builder: (c)=>LoadingWidget());
+                                            //  showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.imageUpload(
                                                 ImageSource.gallery,
                                                 widget.postModal.id.toString());
-                                                Navigator.pop(context);
+                                                // Navigator.pop(context);
                                           }, "Gallery"),
                                           Divider(
                                             color: primarySwatch.shade800,
                                           ),
                                           bottomSheetWidget(() async {
-                                             showDialog(context: context, builder: (c)=>LoadingWidget());
+                                            //  showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.imageUpload(
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
-                                                   Navigator.pop(context);
+                                                  //  Navigator.pop(context);
                                           }, "Camera"),
                                           Divider(
                                             color: primarySwatch.shade800,
                                           ),
                                           bottomSheetWidget(() async {
-                                             showDialog(context: context, builder: (c)=>LoadingWidget());
+                                         //  showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.videoUpload(
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
-                                                   Navigator.pop(context);
+                                                  //  Navigator.pop(context);
                                           }, "Video")
                                         ],
                                       );
@@ -231,7 +231,10 @@ class _CommentTabState extends State<CommentTab> {
       onTap: () {
         Navigator.pop(context);
         voidCallback();
-        //  scrollController.jumpTo(scrollController.position.maxScrollExtent);
+     setState(() {
+          scrollController.jumpTo(scrollController.position.maxScrollExtent);
+            
+          });
       },
       child: Container(
         decoration: BoxDecoration(),
