@@ -160,18 +160,24 @@ class ProfileTimeOff {
   ProfileTimeOff({
     this.reqMessage,
     this.status,
+    this.offDay,
+    this.profile_id,
   });
 
   String? reqMessage;
   int? status;
+  int? profile_id;
+  DateTime? offDay;
 
   factory ProfileTimeOff.fromJson(Map<String, dynamic> json) => ProfileTimeOff(
-        reqMessage: json["req_message"],
-        status: json["status"],
-      );
+      reqMessage: json["req_message"],
+      status: json["status"],
+      offDay: DateTime.parse(json["off_date"]),
+      profile_id: json["profile_id"]);
 
   Map<String, dynamic> toJson() => {
         "req_message": reqMessage,
         "status": status,
+               
       };
 }

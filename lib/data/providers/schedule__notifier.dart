@@ -9,7 +9,7 @@ class ScheduleProvider extends BaseNotifier {
   UserData? userData;
   ScheduleModel scheduleModel = ScheduleModel();
   List<DateTime> schedule_dates = [];
-  List<DateTime> leaveDays_dates = [];
+  List<List<DateTime>> leaveDays_dates = [[], [], []];
 
   ScheduleProvider() {
     userData = UserFetch().fetchUserData();
@@ -26,12 +26,30 @@ class ScheduleProvider extends BaseNotifier {
     // scheduleModel.profileTimeOff!.clear();
 
     schedule_dates = [];
+    leaveDays_dates = [[], [], []];
+    List<DateTime> appliedLeave = [];
+    List<DateTime> approvedLeave = [];
+    List<DateTime> rejectedLeave = [];
+
     final res = await dioClient.getRequest(apiEnd: api_schedule);
-    print(res);
+
     scheduleModel = ScheduleModel.fromJson(res.data['result']);
     for (int i = 0; i < scheduleModel.profileSchedules!.length; i++) {
       schedule_dates.add(scheduleModel.profileSchedules![i].day!);
     }
+    for (int i = 0; i < scheduleModel.profileTimeOff!.length; i++) {
+      if (scheduleModel.profileTimeOff![i].status == 0) {
+        appliedLeave.add(scheduleModel.profileTimeOff![i].offDay!);
+      } else if (scheduleModel.profileTimeOff![i].status == 1) {
+        approvedLeave.add(scheduleModel.profileTimeOff![i].offDay!);
+      } else {
+        rejectedLeave.add(scheduleModel.profileTimeOff![i].offDay!);
+      }
+      // leaveDays_dates.add(scheduleModel.profileTimeOff![i].offDay!);
+    }
+    leaveDays_dates[0] = appliedLeave;
+    leaveDays_dates[1] = approvedLeave;
+    leaveDays_dates[2] = rejectedLeave;
 
     notifyListeners();
   }
@@ -41,12 +59,20 @@ class ScheduleProvider extends BaseNotifier {
 
     for (int i = 0; i < scheduleModel.profileSchedules!.length; i++) {
       if (scheduleModel.profileSchedules![i].day == dateTime) {
-        print(scheduleModel.profileSchedules![i].day);
-       
         scheduleIndex.add(i);
       }
     }
     return scheduleIndex;
+  }
+
+  Future<ProfileTimeOff> getLeaveData(DateTime dateTime) async {
+    late ProfileTimeOff loc;
+    for (int i = 0; i < scheduleModel.profileTimeOff!.length; i++) {
+      if (scheduleModel.profileTimeOff![i].offDay == dateTime) {
+        loc = scheduleModel.profileTimeOff![i];
+      }
+    }
+    return loc;
   }
 
   Future request(

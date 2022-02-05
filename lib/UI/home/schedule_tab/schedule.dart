@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:southwind/Models/schedule/schedule_model.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/schedule_tab/request_leave.dart';
@@ -24,6 +25,7 @@ class _ScheduleState extends State<Schedule> {
   // CalendarFormat style = CalendarFormat.twoWeeks;
   bool loading = true;
   DateTime currentTime = DateTime.now();
+  List<Color> colorList = [Colors.green, Colors.orange, Colors.red];
   @override
   void initState() {
     // TODO: implement initState
@@ -71,19 +73,24 @@ class _ScheduleState extends State<Schedule> {
                             eventLoader: (da) {
                               DateTime data = DateTime(
                                   da.year, da.month, da.day, 00, 00, 00, 000);
-
+                              // log('schedule_data = ${_schedule_provider.leaveDays_dates.contains(data)}');
                               if (_schedule_provider.schedule_dates
                                   .contains(data)) {
-                                return <int>[1];
-                              }
-                              if (_schedule_provider.leaveDays_dates
-                                  .contains(data.day)) {
-                                if (data.isAfter(DateTime.now())) {
-                                  return [];
-                                }
                                 return <int>[0];
+                              } else if (_schedule_provider.leaveDays_dates[0]
+                                  .contains(data)) {
+                                return <int>[1];
+                              } else if (_schedule_provider.leaveDays_dates[1]
+                                  .contains(data)) {
+                                return <int>[2];
                               }
-                              return [];
+                              //  else if (_schedule_provider.leaveDays_dates[0]
+                              //     .contains(data)) {
+                              //  return <int>[3];
+                              // }
+                              else {
+                                return [];
+                              }
                             },
                             rangeSelectionMode: RangeSelectionMode.toggledOn,
                             // pageAnimationEnabled: false,
@@ -135,9 +142,11 @@ class _ScheduleState extends State<Schedule> {
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: Border.all(
-                                            color: data[0] == 0
-                                                ? Colors.red
-                                                : Colors.green,
+                                            color: colorList[
+                                                int.parse(data[0].toString())],
+                                            //  data[0] == 0
+                                            //     ? Colors.red
+                                            //     : Colors.green,
                                             width: 1.8),
                                       )
                                       // height: dotWidth,
@@ -286,7 +295,8 @@ class _ScheduleState extends State<Schedule> {
           );
   }
 
-  Widget getDayCard(List<DateTime> scheduleDays, List<DateTime> leaveDays) {
+  Widget getDayCard(
+      List<DateTime> scheduleDays, List<List<DateTime>> leaveDays) {
     final provider = context.read(scheduleNotifierProvider);
 
     return Column(
@@ -395,98 +405,110 @@ class _ScheduleState extends State<Schedule> {
               }
             },
           )),
-        if (leaveDays.contains(currentTime))
-          Expanded(
-            child: Column(
-              children: [
-                Card(
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
+        if (leaveDays[0].contains(currentTime) ||
+            leaveDays[1].contains(currentTime)
+        // ||leaveDays[2].contains(currentTime)
+        )
+          FutureBuilder<ProfileTimeOff>(
+              future: provider.getLeaveData(currentTime),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return Expanded(
+                    child: Column(
                       children: [
-                        const SizedBox(
-                          width: 8,
-                        ),
                         Card(
                           elevation: 5,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          child: Container(
-                            height: 60,
-                            width: 60,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
                               children: [
-                                Text(
-                                  weekDays[currentTime.weekday]!,
-                                  style: Theme.of(context).textTheme.bodyText1,
+                                const SizedBox(
+                                  width: 8,
                                 ),
-                                Text(
-                                  (currentTime.day).toString(),
-                                  style: TextStyle(height: 1),
+                                Card(
+                                  elevation: 5,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  child: Container(
+                                    height: 60,
+                                    width: 60,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          weekDays[
+                                              snapshot.data!.offDay!.weekday]!,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyText1,
+                                        ),
+                                        Text(
+                                          (snapshot.data!.offDay!.day)
+                                              .toString(),
+                                          style: TextStyle(height: 1),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
                                 ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Leave Reason",
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                            color: primarySwatch[900]),
+                                      ),
+                                      Text(
+                                        snapshot.data!.reqMessage.toString(),
+                                        style: TextStyle(
+                                            color: primarySwatch[400],
+                                            fontSize: 12),
+                                      )
+                                    ],
+                                  ),
+                                )
                               ],
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Leave Reason",
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    color: primarySwatch[900]),
-                              ),
-                              Text(
-                                "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.",
-                                maxLines: 3,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                    color: primarySwatch[300], fontSize: 12),
-                              ),
-                              // Row(
-                              //   children: [
-                              //     Icon(
-                              //       Icons.schedule,
-                              //       size: 14,
-                              //       color: primarySwatch[200],
-                              //     ),
-                              //     SizedBox(
-                              //       width: 4,
-                              //     ),
-                              //     Text(
-                              //       "9:00am - 11:30am",
-                              //       style: TextStyle(
-                              //           color: primarySwatch[200], fontSize: 12),
-                              //     )
-                              //   ],
-                              // )
-                            ],
-                          ),
-                        )
                       ],
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        if (!leaveDays.contains(currentTime) &&
+                  );
+                } else {
+                  return Expanded(
+                    child: Center(
+                      child: LoadingWidget(),
+                    ),
+                  );
+                }
+              }),
+        if (!leaveDays[0].contains(currentTime) &&
+            !leaveDays[1].contains(currentTime)
+            // ||leaveDays[2].contains(currentTime)
+            &&
             !scheduleDays.contains(currentTime))
           Expanded(child: NoScheduleWidget()),
-        if (currentTime.isAfter(DateTime.now()))
+        if (!leaveDays[0].contains(currentTime) &&
+            !leaveDays[1].contains(currentTime)
+            // ||leaveDays[2].contains(currentTime)
+            &&
+            !scheduleDays.contains(currentTime) &&
+            currentTime.isAfter(DateTime.now()))
           Center(
               child: CommonButton(
             lable: "Request Leave",
