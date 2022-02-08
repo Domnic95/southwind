@@ -14,7 +14,7 @@ enum DrawerIndex {
   // Incentives,
   Library,
   // Passbook,
-  Surveys,
+Surveys,
   // Challenges,
   // Learning,
   CardTime,

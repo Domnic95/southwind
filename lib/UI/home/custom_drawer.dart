@@ -91,6 +91,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
             currentBottomBarIndex = i;
             setState(() {});
           },
+          onDrawerIndex: (j) {
+            changeIndex(j);
+            setState(() {});
+          },
         );
 
       case DrawerIndex.LeaderBoard:
@@ -129,6 +133,10 @@ class _CustomDrawerState extends State<CustomDrawer> {
         currentBottomBarIndex = i;
         setState(() {});
       },
+      onDrawerIndex: (j) {
+            changeIndex(j);
+            setState(() {});
+          },
     );
   }
 }

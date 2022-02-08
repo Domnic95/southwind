@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:southwind/UI/home/career_tab/career_tab.dart';
@@ -9,17 +11,22 @@ import 'package:southwind/UI/home/schedule_tab/schedule.dart';
 import 'package:southwind/UI/profile/profile_tab.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/component/bottom_navigation.dart';
+import 'package:southwind/component/drawe_controller.dart';
 import 'package:southwind/component/navigationtheme.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(int) onindexChange;
-  const HomeScreen({required this.onindexChange, Key? key}) : super(key: key);
+  final Function(DrawerIndex) onDrawerIndex;
+  const HomeScreen(
+      {required this.onindexChange, required this.onDrawerIndex, Key? key})
+      : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int selectedIndex = 0;
   @override
   void initState() {
     super.initState();
@@ -32,16 +39,26 @@ class _HomeScreenState extends State<HomeScreen> {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
+      log('A new onMessageOpenedApp = ${message.data}');
     });
-    
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('A new onMessageOpenedApp event was published!');
+      log('A new onMessageOpenedApp = ${message.data}');
+      if (message.data['area'] == 'survey') {
+        widget.onDrawerIndex(DrawerIndex.Surveys);
+      } else if (message.data['area'] == 'communication') {
+        widget.onDrawerIndex(DrawerIndex.Home);
+        widget.onindexChange(0);
+        selectedIndex = 0;
+      } else {
+        //  widget.onindexChange(2);
+      }
     });
-    FirebaseMessaging.onBackgroundMessage((message) async {});
+    FirebaseMessaging.onBackgroundMessage((message) async {
+      log('A new onMessageOpenedApp = ${message.data}');
+    });
   }
 
-  int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Container(
