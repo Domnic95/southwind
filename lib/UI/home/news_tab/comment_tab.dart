@@ -151,6 +151,13 @@ class _CommentTabState extends State<CommentTab> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           bottomSheetWidget(() async {
+
+                                            //  showDialog(context: context, builder: (c)=>LoadingWidget());
+                                            await commentNotifier.imageUpload(
+                                                ImageSource.gallery,
+                                                widget.postModal.id.toString());
+                                                // Navigator.pop(context);
+
                                             showDialog(
                                                 context: context,
                                                 builder: (c) =>
@@ -160,6 +167,7 @@ class _CommentTabState extends State<CommentTab> {
                                               widget.postModal.id.toString(),
                                             );
                                             Navigator.pop(context);
+
                                           }, "Gallery"),
 
                                           Divider(
@@ -167,6 +175,13 @@ class _CommentTabState extends State<CommentTab> {
                                           ),
 
                                           bottomSheetWidget(() async {
+
+                                            //  showDialog(context: context, builder: (c)=>LoadingWidget());
+                                            await commentNotifier.imageUpload(
+                                                ImageSource.camera,
+                                                widget.postModal.id.toString());
+                                                  //  Navigator.pop(context);
+
                                             showDialog(
                                                 context: context,
                                                 builder: (c) =>
@@ -175,6 +190,7 @@ class _CommentTabState extends State<CommentTab> {
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
                                             Navigator.pop(context);
+
                                           }, "Camera"),
 
                                           Divider(
@@ -182,6 +198,13 @@ class _CommentTabState extends State<CommentTab> {
                                           ),
                                           
                                           bottomSheetWidget(() async {
+
+                                         //  showDialog(context: context, builder: (c)=>LoadingWidget());
+                                            await commentNotifier.videoUpload(
+                                                ImageSource.camera,
+                                                widget.postModal.id.toString());
+                                                  //  Navigator.pop(context);
+
                                             showDialog(
                                                 context: context,
                                                 builder: (c) =>
@@ -190,6 +213,7 @@ class _CommentTabState extends State<CommentTab> {
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
                                             Navigator.pop(context);
+
                                           }, "Video")
                                         ],
                                       );
@@ -241,7 +265,10 @@ class _CommentTabState extends State<CommentTab> {
       onTap: () {
         Navigator.pop(context);
         voidCallback();
-        //  scrollController.jumpTo(scrollController.position.maxScrollExtent);
+     setState(() {
+          scrollController.jumpTo(scrollController.position.maxScrollExtent);
+            
+          });
       },
       child: Container(
         decoration: BoxDecoration(),

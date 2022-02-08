@@ -132,7 +132,7 @@ class _ProfileState extends State<Profile> {
           ),
           SizedBox(
             height: size.height * 0.1,
-          ),
+           ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 15),
             child: Column(
