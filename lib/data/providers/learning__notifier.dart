@@ -36,7 +36,7 @@ class LearningNotifier extends BaseNotifier {
     compeletedLearning = [];
     submittedLearning = [];
     final res = await dioClient.getRequest(apiEnd: api_learning_get);
-
+    
     learningsList = List<LearningNotification>.from(
         res.data["notifications"].map((x) => LearningNotification.fromJson(x)));
     for (int i = 0; i < learningsList.length; i++) {

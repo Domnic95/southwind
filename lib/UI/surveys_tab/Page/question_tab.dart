@@ -1,3 +1,4 @@
+import 'package:southwind/UI/surveys_tab/Page/chartScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:southwind/Models/survey/individual_survey.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
@@ -43,7 +44,7 @@ class _Questions_TabState extends State<Questions_Tab> {
 
   loadData() async {
     final _provider = await context.read(surveyNotifierProvider);
-    // await _provider.individualSurvey();
+    await _provider.individualSurvey();
     for (int i = 0;
         i < _provider.selectedSurvey!.surveyNotificationQuestion!.length;
         i++) {
@@ -124,7 +125,6 @@ class _Questions_TabState extends State<Questions_Tab> {
                         QuestionAnswerWidget(
                           textEditingController: textEditingController,
                           onChange: (i) {
-                            print(i);
                             setState(() {
                               unAnsweredQuestion.remove(i + 1);
                             });
@@ -228,59 +228,77 @@ class _Questions_TabState extends State<Questions_Tab> {
                               : Expanded(child: Container()),
                           CommonButton(
                             isExpanded: true,
-                            lable: currentQuestion + 1 <
-                                    surveyProvider.selectedSurvey!
-                                        .surveyNotificationQuestion!.length
-                                ? "Next"
-                                : "Submit",
+                            lable: surveyProvider.textReadibility &&
+                                    currentQuestion + 1 ==
+                                        surveyProvider.selectedSurvey!
+                                            .surveyNotificationQuestion!.length
+                                ? "See result"
+                                : currentQuestion + 1 <
+                                        surveyProvider.selectedSurvey!
+                                            .surveyNotificationQuestion!.length
+                                    ? "Next"
+                                    : "Submit",
                             ontap: () async {
-                              if (currentQuestion + 1 <
-                                  surveyProvider.selectedSurvey!
-                                      .surveyNotificationQuestion!.length) {
-                                setState(() {
-                                  currentQuestion++;
-
-                                  animateToQuestion();
-                                });
+                              if (surveyProvider.textReadibility &&
+                                  currentQuestion + 1 ==
+                                      surveyProvider.selectedSurvey!
+                                          .surveyNotificationQuestion!.length) {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (context) {
+                                  return ChartScreen();
+                                }));
                               } else {
-                                if (unAnsweredQuestion.isEmpty) {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return LoadingWidget();
-                                      });
-                                  final res =
-                                      await surveyProvider.submitAnswers();
-                                  Navigator.pop(context);
-                                  if (res) {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) {
-                                      return CongratsScreen(
-                                        unAnsweredQuestion: unAnsweredQuestion,
-                                        totalquestion: surveyProvider
-                                            .selectedSurvey!
-                                            .surveyNotificationQuestion!
-                                            .length,
-                                      );
-                                    }));
-                                  }
+                                if (currentQuestion + 1 <
+                                    surveyProvider.selectedSurvey!
+                                        .surveyNotificationQuestion!.length) {
+                                  setState(() {
+                                    currentQuestion++;
+
+                                    animateToQuestion();
+                                  });
                                 } else {
-                                  showToast('Some questions are not answered');
+                                  if (unAnsweredQuestion.isEmpty) {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return LoadingWidget();
+                                        });
+                                    final res =
+                                        await surveyProvider.submitAnswers();
+                                    Navigator.pop(context);
+                                    if (res) {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return CongratsScreen(
+                                          // title: "Survey",
+                                          unAnsweredQuestion:
+                                              unAnsweredQuestion,
+                                          totalquestion: surveyProvider
+                                              .selectedSurvey!
+                                              .surveyNotificationQuestion!
+                                              .length,
+                                        );
+                                      }));
+                                    }
+                                  } else {
+                                    showToast(
+                                        'Some questions are not answered');
+                                  }
+
+                                  // Navigator.push(context,
+                                  //     MaterialPageRoute(builder: (context) {
+                                  //   return SummaryScreen(
+                                  //     unAnsweredQuestion: unAnsweredQuestion,
+                                  //     totalquestion: surveyProvider
+                                  //         .selectedSurvey!
+                                  //         .surveyNotificationQuestion!
+                                  //         .length,
+                                  //     onTaps: () async {
+
+                                  //     },
+                                  //   );
+                                  // }));
                                 }
-
-                                // Navigator.push(context,
-                                //     MaterialPageRoute(builder: (context) {
-                                //   return SummaryScreen(
-                                //     unAnsweredQuestion: unAnsweredQuestion,
-                                //     totalquestion: surveyProvider
-                                //         .selectedSurvey!
-                                //         .surveyNotificationQuestion!
-                                //         .length,
-                                //     onTaps: () async {
-
-                                //     },
-                                //   );
-                                // }));
                               }
 
                               // animateToQuestion();
@@ -351,7 +369,9 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
           currentindex = i;
 
           widget.textEditingController.text =
-              loc.surveyNotificationAnswer!.first.other;
+              loc.surveyNotificationAnswer!.first.other.toString().length > 0
+                  ? loc.surveyNotificationAnswer!.first.other
+                  : " ";
         }
       }
     }
@@ -417,20 +437,16 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
                           GestureDetector(
                             onTap: () {
                               setState(() {
-                                widget.onChange!(widget.i);
-                                selected1.contains(index)
-                                    ? selected1.remove(index)
-                                    : selected1.add(index);
+                                if (!surveyProvider.textReadibility) {
+                                  widget.onChange!(widget.i);
+                                  selected1.contains(index)
+                                      ? selected1.remove(index)
+                                      : selected1.add(index);
 
-                                currentindex = index;
-                                surveyProvider.updateAnswer(
-                                    widget.i,
-                                    widget.textEditingController.text,
-                                    surveyProvider
-                                        .selectedSurvey!
-                                        .surveyNotificationQuestion![widget.i]
-                                        .surveyNotificationOption![index]
-                                        .id!);
+                                  currentindex = index;
+                                  surveyProvider.updateAnswer(widget.i,
+                                      widget.textEditingController.text, index);
+                                }
                               });
                             },
                             child: Card(
@@ -487,8 +503,7 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
                                       value: currentindex,
                                       onChanged: (val) {
                                         setState(() {
-                                          if (surveyProvider.textReadibility) {
-                                          } else {
+                                          if (!surveyProvider.textReadibility) {
                                             widget.onChange!(widget.i);
                                             selected1.contains(index)
                                                 ? selected1.remove(index)
@@ -499,13 +514,7 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
                                                 widget.i,
                                                 widget
                                                     .textEditingController.text,
-                                                surveyProvider
-                                                    .selectedSurvey!
-                                                    .surveyNotificationQuestion![
-                                                        widget.i]
-                                                    .surveyNotificationOption![
-                                                        index]
-                                                    .id!);
+                                                index);
                                           }
                                         });
                                       },
@@ -527,7 +536,7 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
             ),
             if (surveyProvider.selectedSurvey!
                     .surveyNotificationQuestion![widget.i].other ==
-                0)
+                1)
               TextFormField(
                 readOnly: surveyProvider.textReadibility,
                 controller: widget.textEditingController,

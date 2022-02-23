@@ -10,6 +10,10 @@ import 'package:southwind/data/providers/base_notifer.dart';
 class NewsNotifier extends BaseNotifier {
   List<PostModal> total_news = [];
   UserData? userData;
+  int offset= 0;
+  int limit = offsetDifference;
+  int maxFeedFromServer = 0;
+  bool lazyLoading = true;
   NewsNotifier() {
     userData = UserFetch().fetchUserData();
 
@@ -36,26 +40,61 @@ class NewsNotifier extends BaseNotifier {
   //   // notifyListeners();
   // }
   Future fetchNews() async {
+     offset= 0;
+   limit = offsetDifference;
     total_news = [];
 
     Response res = await dioClient.getRequest(
       apiEnd: api_communication_get_notification,
       queryParameter: {
-        'limit': 20,
+        'limit': limit,
+"offset":offset        
       },
     );
-    // log(res.data.toString() + "data/////////");
-
+   
+maxFeedFromServer = res.data["notification_count"];
     total_news = List<PostModal>.from(
         res.data["notifications"].map((x) => PostModal.fromJson(x)));
-
+lazyLoading = true;
     // if (res.data.containsKey('CommNotification'))
     //   total_news = List<SingleNews>.from(
     //       res.data["CommNotification"].map((x) => SingleNews.fromJson(x)));
 
-    // notifyListeners();
+
+    
+     notifyListeners();
+  }
+  Future lazyData()async{
+  
+    List<PostModal> local = [];
+
+  if(maxFeedFromServer>offset ){
+    offset = limit;
+  limit = limit +offsetDifference;
+Response res = await dioClient.getRequest(
+      apiEnd: api_communication_get_notification,
+      queryParameter: {
+        'limit': limit,
+"offset":offset        
+      },
+    );
+    print(res);
+  
+    local = List<PostModal>.from(
+        res.data["notifications"].map((x) => PostModal.fromJson(x)));
+       
+          total_news.addAll(local);
+        
+          notifyListeners();
+        
+  }else{
+    lazyLoading = false;
+     notifyListeners();
+  }
+    
   }
 
+  
   like(int index) async {
     final res = await dioClient.postWithFormData(
         apiEnd: api_communication_like,
@@ -80,6 +119,10 @@ class NewsNotifier extends BaseNotifier {
         total_news[index].likesCount = 0;
       }
     }
+    notifyListeners();
+  }
+  localCommentUdpate(int ind)async{
+    total_news[ind].commentCount= total_news[ind].commentCount!+1;
     notifyListeners();
   }
 }

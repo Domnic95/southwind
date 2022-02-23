@@ -1,10 +1,10 @@
 // import 'package:flutter/material.dart';
-// import 'package:southwind/UI/components/common_appbar.dart';
-// import 'package:southwind/UI/components/common_button.dart';
-// import 'package:southwind/UI/home/career_tab/components/chart.dart';
-// import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
-// import 'package:southwind/UI/theme/apptheme.dart';
-// import 'package:southwind/routes/routes.dart';
+// import 'package:YouMoveMe/UI/components/common_appbar.dart';
+// import 'package:YouMoveMe/UI/components/common_button.dart';
+// import 'package:YouMoveMe/UI/home/career_tab/components/chart.dart';
+// import 'package:YouMoveMe/UI/home/career_tab/page/congratsScreen.dart';
+// import 'package:YouMoveMe/UI/theme/apptheme.dart';
+// import 'package:YouMoveMe/routes/routes.dart';
 
 // import 'congratspage.dart';
 

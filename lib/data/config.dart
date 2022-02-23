@@ -59,3 +59,4 @@ const api_group_list = '/get_groups';
 const api_get_group_msgs = '/get_group_msgs';
 const api_getGroup_participates = '/get_group_members';
 const api_sendMessage = '/set_group_msgs';
+const int offsetDifference = 20;

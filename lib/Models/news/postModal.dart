@@ -39,7 +39,7 @@ class PostModal {
   int? id;
   String? title;
   String? notificationText;
-  dynamic notificationUrl;
+  String? notificationUrl;
   String? sendTo;
   dynamic teamId;
   int? individualId;
@@ -68,7 +68,7 @@ class PostModal {
         id: json["id"],
         title: json["title"],
         notificationText: json["notification_text"],
-        notificationUrl: json["notification_url"],
+        notificationUrl: json["notification_url"]??"",
         sendTo: json["send_to"],
         teamId: json["team_id"],
         individualId: json["individual_id"],

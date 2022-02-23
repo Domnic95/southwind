@@ -1,8 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:southwind/UI/components/youtubePlayer.dart';
+import 'package:southwind/data/providers/providers.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -14,12 +15,9 @@ import 'package:southwind/UI/components/NetworkImageLoader.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/news_tab/comment_tab.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
-import 'package:southwind/component/bottom_navigation.dart';
-import 'package:southwind/component/navigationtheme.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:southwind/data/providers/news_notifier.dart';
-import 'package:southwind/data/providers/providers.dart';
 import 'package:video_player/video_player.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 const String profilePath = "assets/images/image2.jpg";
 
@@ -32,19 +30,37 @@ class NewsScreen extends StatefulHookWidget {
 
 class _NewsScreenState extends State<NewsScreen> {
   int selectedIndex = 0;
+  ScrollController controller = ScrollController();
   bool loading = true;
   @override
   void initState() {
     super.initState();
+    controller = ScrollController()..addListener(_scrollListener);
     loadData();
   }
 
- 
+  @override
+  void dispose() {
+    controller.removeListener(_scrollListener);
+    super.dispose();
+  }
+
   loadData() async {
     await context.read(newsNotifierProvider).fetchNews();
     setState(() {
       loading = false;
     });
+  }
+
+  void _scrollListener() async {
+    if (context.read(newsNotifierProvider).lazyLoading) {
+      if (controller.position.extentAfter < 500) {
+        await context.read(newsNotifierProvider).lazyData();
+        // setState(() {
+        //   // items.addAll(List.generate(42, (index) => 'Inserted $index'));
+        // });
+      }
+    }
   }
 
   @override
@@ -56,6 +72,7 @@ class _NewsScreenState extends State<NewsScreen> {
             ? LoadingWidget()
             : _newsNotifier.total_news.length > 0
                 ? ListView.builder(
+                    controller: controller,
                     padding: EdgeInsets.only(top: 3),
                     itemBuilder: (context, index) {
                       return FeedPost(
@@ -151,6 +168,7 @@ class _FeedPostState extends State<FeedPost> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 00),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
@@ -165,37 +183,49 @@ class _FeedPostState extends State<FeedPost> {
                   const SizedBox(
                     width: 10,
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.post.firstName!,
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                            fontSize: 16, fontWeight: FontWeight.w600),
-                      ),
-                      Text(
-                        "${widget.post.timeDifference}",
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                            fontSize: 10,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black38),
-                      ),
-                      Text(
-                        "${widget.post.title}",
-                        style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black),
-                      ),
-                    ],
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.post.firstName!,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        Text(
+                          "${widget.post.timeDifference}",
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black38),
+                        ),
+                        Text(
+                          "${widget.post.title}",
+                          overflow: TextOverflow.ellipsis,
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyText1!
+                              .copyWith(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black),
+                        ),
+                      ],
+                    ),
                   ),
-                  const Spacer(),
+                  // const Spacer(),
                   // const Icon(Icons.more_vert),
                   // IconButton(onPressed: () {}, icon: )
                 ],
               ),
             ),
-            if (widget.post.resourceUrl != null)
+            if (widget.post.resourceUrl != null) ...[
               Container(
                 width: size.width,
                 constraints: BoxConstraints(maxHeight: size.height * .60),
@@ -211,7 +241,14 @@ class _FeedPostState extends State<FeedPost> {
                         setState(() {});
                       },
                     )),
-              ),
+              )
+            ] else ...[
+              widget.post.notificationUrl.toString().isNotEmpty
+                  ? YouTubePlayer(
+                      url: widget.post.notificationUrl!,
+                    )
+                  : SizedBox(),
+            ],
             Padding(
               padding: const EdgeInsets.all(6.0),
               child: Row(
@@ -239,7 +276,8 @@ class _FeedPostState extends State<FeedPost> {
                         onTap: () {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => CommentTab(widget.post),
+                              builder: (context) =>
+                                  CommentTab(widget.post, widget.index),
                             ),
                           );
                         },
@@ -248,11 +286,10 @@ class _FeedPostState extends State<FeedPost> {
                             IconButton(
                               icon: const Icon(FontAwesomeIcons.comment),
                               onPressed: () {
-                                log(widget.post.id.toString());
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        CommentTab(widget.post),
+                                        CommentTab(widget.post, widget.index),
                                   ),
                                 );
                               },
@@ -281,6 +318,7 @@ class _FeedPostState extends State<FeedPost> {
             DescriptionTextWidget(
               sender: widget.post.firstName,
               text: widget.post.notificationText!,
+              index: widget.index,
             ),
             // Padding(
             //   padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -485,8 +523,10 @@ class _MultipleImageViewState extends State<MultipleImageView> {
 class DescriptionTextWidget extends StatefulWidget {
   final String? sender;
   String? text;
+  int index;
 
-  DescriptionTextWidget({required this.sender, required this.text});
+  DescriptionTextWidget(
+      {required this.sender, required this.text, required this.index});
 
   @override
   _DescriptionTextWidgetState createState() =>
@@ -496,12 +536,13 @@ class DescriptionTextWidget extends StatefulWidget {
 class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
   String? firstHalf;
   String? secondHalf;
-
+  late YoutubePlayerController _controller;
   bool flag = true;
   bool isLink = false;
   List listString = [];
   String showTitle = '';
   String link = '';
+  int limit = 120;
   bool linkIsWithIn50 = false;
   List largerList = ["", "", "", ""];
   @override
@@ -523,16 +564,16 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
 
       widget.text = listString[0] + " ${showTitle} " + listString[1];
       isLink = true;
-      if (widget.text!.length > 50) {
-        if (widget.text!.indexOf(showTitle) > 50) {
-          firstHalf = widget.text!.substring(0, 50);
-          String lo = widget.text!.substring(50, widget.text!.length);
+      if (widget.text!.length > limit) {
+        if (widget.text!.indexOf(showTitle) > limit) {
+          firstHalf = widget.text!.substring(0, limit);
+          String lo = widget.text!.substring(limit, widget.text!.length);
           List _local = lo.split(showTitle);
           largerList[2] = _local[0];
           largerList[3] = _local[1];
         } else {
           linkIsWithIn50 = true;
-          String lo = widget.text!.substring(0, 50);
+          String lo = widget.text!.substring(0, limit);
           List _local = lo.split(showTitle);
           largerList[0] = _local[0];
           largerList[1] = _local[1];
@@ -544,9 +585,9 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
         secondHalf = "";
       }
     } else {
-      if (widget.text!.length > 50) {
-        firstHalf = widget.text!.substring(0, 50);
-        secondHalf = widget.text!.substring(50, widget.text!.length);
+      if (widget.text!.length > limit) {
+        firstHalf = widget.text!.substring(0, limit);
+        secondHalf = widget.text!.substring(limit, widget.text!.length);
       } else {
         firstHalf = widget.text;
         secondHalf = "";
@@ -562,158 +603,238 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
   );
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
-      child: secondHalf!.isEmpty
-          ? isLink
-              ? RichText(
-                  maxLines: 5,
-                  overflow: TextOverflow.ellipsis,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                          text: widget.sender.toString(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1!
-                              .copyWith(
-                                  fontWeight: FontWeight.w600, fontSize: 14)),
-                      TextSpan(
-                        text: listString[0].toString() + " ",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: Colors.black.withOpacity(.8),
-                        ),
-                      ),
-                      TextSpan(
-                        text: showTitle.toString(),
-                        recognizer: new TapGestureRecognizer()
-                          ..onTap = () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (c) => WebViewExample(
-                                          url: link,
-                                        )));
-                          },
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: Colors.blue.withOpacity(.8),
-                        ),
-                      ),
-                      // if (listString.length > 2)
-                      //   TextSpan(
-                      //     text: listString[1].toString(),
-                      //     style: TextStyle(
-                      //       fontWeight: FontWeight.w600,
-                      //       fontSize: 14,
-                      //       color: Colors.black.withOpacity(.8),
-                      //     ),
-                      //   ),
-                    ],
-                  ))
-              : RichText(
-                  maxLines: 5,
-                  overflow: TextOverflow.ellipsis,
-                  text: TextSpan(
-                    children: [
-                      TextSpan(
-                          text: widget.sender.toString(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyText1!
-                              .copyWith(
-                                  fontWeight: FontWeight.w600, fontSize: 14)),
-                      TextSpan(
-                        text: firstHalf.toString(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: Colors.black.withOpacity(.8),
-                        ),
-                      ),
-                    ],
-                  ))
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                isLink
-                    ? linkIsWithIn50
-                        ? RichText(
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                    text: widget.sender.toString(),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyText1!
-                                        .copyWith(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14)),
-                                TextSpan(
-                                  text: largerList[0].toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    color: Colors.black.withOpacity(.8),
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: showTitle.toString(),
-                                  recognizer: new TapGestureRecognizer()
-                                    ..onTap = () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (c) => WebViewExample(
-                                                    url: link,
-                                                  )));
-                                    },
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    color: Colors.blue.withOpacity(.8),
-                                  ),
-                                ),
-                                if (!flag)
+    final _newsNotifier = context.read(newsNotifierProvider);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          // padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
+          child: secondHalf!.isEmpty
+              ? isLink
+                  ? RichText(
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: widget.sender.toString() + " ",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14)),
+                          TextSpan(
+                            text: listString[0].toString() + " ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: Colors.black.withOpacity(.8),
+                            ),
+                          ),
+                          TextSpan(
+                            text: showTitle.toString(),
+                            recognizer: new TapGestureRecognizer()
+                              ..onTap = () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (c) => WebViewExample(
+                                              url: link,
+                                            )));
+                              },
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: Colors.blue.withOpacity(.8),
+                            ),
+                          ),
+                          // if (listString.length > 2)
+                          //   TextSpan(
+                          //     text: listString[1].toString(),
+                          //     style: TextStyle(
+                          //       fontWeight: FontWeight.w600,
+                          //       fontSize: 14,
+                          //       color: Colors.black.withOpacity(.8),
+                          //     ),
+                          //   ),
+                        ],
+                      ))
+                  : RichText(
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                              text: widget.sender.toString() + " ",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyText1!
+                                  .copyWith(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14)),
+                          TextSpan(
+                            text: firstHalf.toString(),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: Colors.black.withOpacity(.8),
+                            ),
+                          ),
+                        ],
+                      ))
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    isLink
+                        ? linkIsWithIn50
+                            ? RichText(
+                                overflow: TextOverflow.ellipsis,
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                        text: widget.sender.toString() + " ",
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyText1!
+                                            .copyWith(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 14)),
+                                    TextSpan(
+                                      text: largerList[0].toString(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: Colors.black.withOpacity(.8),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: showTitle.toString(),
+                                      recognizer: new TapGestureRecognizer()
+                                        ..onTap = () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (c) =>
+                                                      WebViewExample(
+                                                        url: link,
+                                                      )));
+                                        },
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: Colors.blue.withOpacity(.8),
+                                      ),
+                                    ),
+                                    if (!flag)
+                                      TextSpan(
+                                        text: largerList[1].toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                          color: Colors.black.withOpacity(.8),
+                                        ),
+                                      ),
+                                    WidgetSpan(
+                                      alignment: PlaceholderAlignment.baseline,
+                                      baseline: TextBaseline.alphabetic,
+                                      child: InkWell(
+                                        child: Text(
+                                          flag ? "  more" : "  less",
+                                          style: TextStyle(
+                                            color: Colors.blue.shade500,
+                                            // fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        onTap: () {
+                                          setState(() {
+                                            flag = !flag;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ))
+                            : RichText(
+                                // overflow: TextOverflow.ellipsis,
+                                text: TextSpan(
+                                children: [
                                   TextSpan(
-                                    text: largerList[1].toString(),
+                                      text: widget.sender.toString() + " ",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyText1!
+                                          .copyWith(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14)),
+                                  TextSpan(
+                                    text: flag
+                                        ? (firstHalf.toString() + "...")
+                                        : (firstHalf.toString() +
+                                                largerList[2]!)
+                                            .toString(),
                                     style: TextStyle(
                                       fontWeight: FontWeight.w600,
                                       fontSize: 14,
                                       color: Colors.black.withOpacity(.8),
                                     ),
                                   ),
-                                WidgetSpan(
-                                  alignment: PlaceholderAlignment.baseline,
-                                  baseline: TextBaseline.alphabetic,
-                                  child: InkWell(
-                                    child: Text(
-                                      flag ? "  more" : "  less",
+                                  if (!flag)
+                                    TextSpan(
+                                      text: showTitle.toString(),
+                                      recognizer: new TapGestureRecognizer()
+                                        ..onTap = () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (c) =>
+                                                      WebViewExample(
+                                                        url: link,
+                                                      )));
+                                        },
                                       style: TextStyle(
-                                        color: Colors.blue.shade500,
-                                        // fontWeight: FontWeight.w600,
+                                        fontWeight: FontWeight.w600,
                                         fontSize: 14,
+                                        color: Colors.blue.withOpacity(.8),
                                       ),
                                     ),
-                                    onTap: () {
-                                      setState(() {
-                                        flag = !flag;
-                                      });
-                                    },
+                                  if (!flag)
+                                    TextSpan(
+                                      text: largerList[3].toString(),
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        color: Colors.black.withOpacity(.8),
+                                      ),
+                                    ),
+                                  WidgetSpan(
+                                    alignment: PlaceholderAlignment.baseline,
+                                    baseline: TextBaseline.alphabetic,
+                                    child: InkWell(
+                                      child: Text(
+                                        flag ? "  more" : "  less",
+                                        style: TextStyle(
+                                          color: Colors.blue.shade500,
+                                          // fontWeight: FontWeight.w600,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          flag = !flag;
+                                        });
+                                      },
+                                    ),
                                   ),
-                                ),
-                              ],
-                            ))
+                                ],
+                              ))
                         : RichText(
                             // overflow: TextOverflow.ellipsis,
                             text: TextSpan(
                             children: [
                               TextSpan(
-                                  text: widget.sender.toString(),
+                                  text: widget.sender.toString() + " ",
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyText1!
@@ -723,7 +844,7 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
                               TextSpan(
                                 text: flag
                                     ? (firstHalf.toString() + "...")
-                                    : (firstHalf.toString() + largerList[2]!)
+                                    : (firstHalf.toString() + secondHalf!)
                                         .toString(),
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
@@ -731,33 +852,6 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
                                   color: Colors.black.withOpacity(.8),
                                 ),
                               ),
-                              if (!flag)
-                                TextSpan(
-                                  text: showTitle.toString(),
-                                  recognizer: new TapGestureRecognizer()
-                                    ..onTap = () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (c) => WebViewExample(
-                                                    url: link,
-                                                  )));
-                                    },
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    color: Colors.blue.withOpacity(.8),
-                                  ),
-                                ),
-                              if (!flag)
-                                TextSpan(
-                                  text: largerList[3].toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    color: Colors.black.withOpacity(.8),
-                                  ),
-                                ),
                               WidgetSpan(
                                 alignment: PlaceholderAlignment.baseline,
                                 baseline: TextBaseline.alphabetic,
@@ -778,59 +872,11 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
                                 ),
                               ),
                             ],
-                          ))
-                    : RichText(
-                        // overflow: TextOverflow.ellipsis,
-                        text: TextSpan(
-                        children: [
-                          TextSpan(
-                              text: widget.sender.toString() + " ",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyText1!
-                                  .copyWith(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 14)),
-                          TextSpan(
-                            text: flag
-                                ? (firstHalf.toString() + "...")
-                                : (firstHalf.toString() + secondHalf!)
-                                    .toString(),
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              color: Colors.black.withOpacity(.8),
-                            ),
-                          ),
-                          WidgetSpan(
-                            alignment: PlaceholderAlignment.baseline,
-                            baseline: TextBaseline.alphabetic,
-                            child: InkWell(
-                              child: Text(
-                                flag ? "  more" : "  less",
-                                style: TextStyle(
-                                  color: Colors.blue.shade500,
-                                  // fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
-                              ),
-                              onTap: () {
-                                setState(() {
-                                  flag = !flag;
-                                });
-                              },
-                            ),
-                          ),
-                        ],
-                      )),
-                // Text(
-                //   flag
-                //       ? (firstHalf.toString() + "...")
-                //       : (firstHalf.toString() + secondHalf!),
-                //   style: style,
-                // ),
-              ],
-            ),
+                          )),
+                  ],
+                ),
+        ),
+      ],
     );
   }
 }
@@ -852,17 +898,22 @@ class WebViewExampleState extends State<WebViewExample> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Container(
-          // color: Colors.teal,
-          height: 25,
-          child: Image.asset("assets/images/southwind_logo.png"),
+    return SafeArea(
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          backgroundColor: primaryColor,
+          title: Container(
+            // color: Colors.teal,
+            height: 50,
+            child: Image.asset("assets/images/logo.png"),
+          ),
         ),
-      ),
-      body: WebView(
-        initialUrl: widget.url,
+        body: WebView(
+          javascriptMode: JavascriptMode.unrestricted,
+          initialUrl: widget.url,
+          // initialUrl: 'https://youtu.be/3aiAxE53yhA',
+        ),
       ),
     );
   }

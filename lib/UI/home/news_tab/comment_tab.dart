@@ -15,7 +15,10 @@ import 'package:video_player/video_player.dart';
 
 class CommentTab extends StatefulHookWidget {
   final PostModal postModal;
-  const CommentTab(this.postModal, {Key? key}) : super(key: key);
+   final int index;
+  const CommentTab(this.postModal,
+   this.index,
+   {Key? key}) : super(key: key);
   @override
   _CommentTabState createState() => _CommentTabState();
 }
@@ -235,7 +238,7 @@ class _CommentTabState extends State<CommentTab> {
                                 textController.clear();
                                 await commentNotifier.sendComment(
                                     widget.postModal.id.toString(), loc);
-
+     updateComment();
                                 scrollController.jumpTo(
                                     scrollController.position.maxScrollExtent);
                               },
@@ -258,7 +261,9 @@ class _CommentTabState extends State<CommentTab> {
             ),
     ));
   }
-
+  updateComment()async{
+await context.read(newsNotifierProvider).localCommentUdpate(widget.index);
+  }
   Widget bottomSheetWidget(VoidCallback voidCallback, String title) {
     final size = MediaQuery.of(context).size;
     return InkWell(

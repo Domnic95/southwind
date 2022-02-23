@@ -216,6 +216,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.14.0+3"
+  flutter_staggered_grid_view:
+    dependency: "direct main"
+    description:
+      name: flutter_staggered_grid_view
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.6.1"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -429,6 +436,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.1.0"
+  pie_chart:
+    dependency: "direct main"
+    description:
+      name: pie_chart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.1.0"
   platform:
     dependency: transitive
     description:

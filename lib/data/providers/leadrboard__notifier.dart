@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:southwind/Models/LeaderBoard/AllLeaderBoard.dart';
 import 'package:southwind/Models/team/team.dart';
 import 'package:southwind/Models/user_data.dart';
@@ -18,20 +19,24 @@ class LeaderBoardProvider extends BaseNotifier {
     // initialize();
   }
   initialize() async {
-    final teamRes =
+    isDataSet = false;
+    Response teamRes =
         await dioClient.postWithFormData(apiEnd: api_teamdetail, data: {
       'team_id': userData!.teamId,
       'notification_type': 'team_list',
       'is_admin': userData!.isAdmin
     });
-
-    teamData = TeamData.fromJson(teamRes.data['teamlist_details']);
+    
+      if(teamRes.statusCode!=200){
+        teamData = TeamData.fromJson(teamRes.data['teamlist_details']);
     if (teamData!.primaryTeamList!.primaryTeamName != null) {
       teamList.add(teamData!.primaryTeamList!.primaryTeamName!.toString());
     }
     await getAllLeaderBoardData();
     await getTeamLeaderBoard();
     isDataSet = true;
+      }
+    
     // notifyListeners();
   }
 

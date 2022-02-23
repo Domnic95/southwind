@@ -7,10 +7,12 @@ import 'package:flutter_riverpod/src/provider.dart';
 import 'package:southwind/Models/career/careerModel.dart';
 import 'package:southwind/UI/components/PdfViewer.dart';
 import 'package:southwind/UI/components/common_button.dart';
+import 'package:southwind/UI/components/youtubePlayer.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/providers.dart';
 import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
 
 showInformationDialog(BuildContext context) {
   showDialog(
@@ -54,29 +56,37 @@ class _InformationDialogState extends State<InformationDialog> {
 
   loadData() async {
     achievement = context.read(carerNotifierProvider).selectedAchievement;
-    if (achievement.attachmentUrl != null && achievement.attachmentUrl != '') {
-      print('youtube');
-      _controller = YoutubePlayerController(
-        initialVideoId: achievement.attachmentUrl!.split('watch?v=')[1],
-        flags: YoutubePlayerFlags(
-          autoPlay: true,
-          mute: true,
-        ),
-      );
-      isVideo = true;
-      widgets = YoutubePlayer(
-        controller: _controller,
-        showVideoProgressIndicator: true,
 
-        // videoProgressIndicatorColor: Colors.amber,
-        // progressColors: ProgressColors(
-        //     playedColor: Colors.amber,
-        //     handleColor: Colors.amberAccent,
-        // ),
-        // onReady (v) {
-        //     _controller.addListener(listener);
-        // },
-      );
+    if (achievement.attachmentUrl != null && achievement.attachmentUrl != '') {
+      //  int lastPoss = achievement.attachmentUrl!.toString().lastIndexOf('/');
+      //  List<String> listData = achievement.attachmentUrl!.toString().split('watch?v=');
+      //  String videoId  =listData.length<2?achievement.attachmentUrl!.toString().substring(lastPoss+1)
+      //  : achievement.attachmentUrl!.split('watch?v=')[1];
+
+      // //  print('videoIdFind = ${videoId}');
+      // //     _controller = YoutubePlayerController(
+      // //       initialVideoId: videoId,
+      // //       flags: YoutubePlayerFlags(
+      // //         autoPlay: true,
+      // //         mute: true,
+      // //       ),
+      // //     );
+      // //     isVideo = true;
+
+      // //     widgets = YoutubePlayer(
+      // //       controller: _controller,
+      // //       showVideoProgressIndicator: true,
+
+      // //       // videoProgressIndicatorColor: Colors.amber,
+      // //       // progressColors: ProgressColors(
+      // //       //     playedColor: Colors.amber,
+      // //       //     handleColor: Colors.amberAccent,
+      // //       // ),
+      // //       // onReady (v) {
+      // //       //     _controller.addListener(listener);
+      // //       // },
+      // //     );
+      mediaTypes = InformationMediaType.Video;
     }
 
     if (achievement.cloudinarySecureUrl != "" &&
@@ -84,7 +94,7 @@ class _InformationDialogState extends State<InformationDialog> {
       int lastDot = achievement.cloudinarySecureUrl!.lastIndexOf('.');
       String extension = achievement.cloudinarySecureUrl!
           .substring(lastDot + 1, achievement.cloudinarySecureUrl!.length);
-      
+
       if (extension == 'pdf') {
         PDFDocument document = await PDFDocument.fromURL(
           achievement.cloudinarySecureUrl!,
@@ -122,8 +132,7 @@ class _InformationDialogState extends State<InformationDialog> {
             clipBehavior: Clip.none,
             children: [
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                padding: const EdgeInsets.fromLTRB(18, 20, 18, 10),
                 child: Column(
                   children: [
                     Expanded(
@@ -132,10 +141,12 @@ class _InformationDialogState extends State<InformationDialog> {
                         child: Column(
                           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            if (isVideo)
+                            if (mediaTypes == InformationMediaType.Video)
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: widgets,
+                                child: YouTubePlayer(
+                                  url: achievement.attachmentUrl!.toString(),
+                                ),
                               ),
                             if (mediaTypes == InformationMediaType.PDF)
                               Padding(

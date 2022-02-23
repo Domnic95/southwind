@@ -55,7 +55,10 @@ class _LeaderBoardState extends State<LeaderBoard> {
       //     Container(margin: EdgeInsets.only(right: 15), child: Icon(Icons.menu))
       //   ],
       // ),
-      body: loading
+      body: 
+      !_leaderBoardProvider.isDataSet?
+      Center(child: Text('Something went wrong'),):
+      loading
           ? LoadingWidget()
           : Column(
               children: [

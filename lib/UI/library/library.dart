@@ -153,12 +153,12 @@ class _LibraryWithFilterState extends State<LibraryWithFilter> {
           ),
           centerTitle: true,
           actions: [
-            IconButton(
-              icon: Icon(Icons.notifications),
-              onPressed: () {
-                Navigator.of(context).pushNamed(Routes.notification);
-              },
-            )
+            // IconButton(
+            //   icon: Icon(Icons.notifications),
+            //   onPressed: () {
+            //     Navigator.of(context).pushNamed(Routes.notification);
+            //   },
+            // )
             // (widget.screenIndex == DrawerIndex.Incentives)
             //     ? IconButton(
             //         icon: Icon(Icons.history),

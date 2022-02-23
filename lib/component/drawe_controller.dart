@@ -211,24 +211,25 @@ class _DrawerUserControllerState extends State<DrawerUserController>
                                   "assets/images/southwind_logo.png"),
                             ),
                             centerTitle: true,
-                            actions: [
-                              IconButton(
-                                icon: Icon(Icons.notifications),
-                                onPressed: () {
-                                  Navigator.of(context)
-                                      .pushNamed(Routes.notification);
-                                },
-                              )
-                              // (widget.screenIndex == DrawerIndex.Incentives)
-                              //     ? IconButton(
-                              //         icon: Icon(Icons.history),
-                              //         onPressed: () {
-                              //           Navigator.of(context)
-                              //               .pushNamed(Routes.history);
-                              //         },
-                              //       )
-                              //     : Container(),
-                            ]),
+                            // actions: [
+                            //   IconButton(
+                            //     icon: Icon(Icons.notifications),
+                            //     onPressed: () {
+                            //       Navigator.of(context)
+                            //           .pushNamed(Routes.notification);
+                            //     },
+                            //   )
+                            //   // (widget.screenIndex == DrawerIndex.Incentives)
+                            //   //     ? IconButton(
+                            //   //         icon: Icon(Icons.history),
+                            //   //         onPressed: () {
+                            //   //           Navigator.of(context)
+                            //   //               .pushNamed(Routes.history);
+                            //   //         },
+                            //   //       )
+                            //   //     : Container(),
+                            // ]
+                            ),
                         body: widget.screenView,
                       ),
 
