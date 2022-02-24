@@ -43,14 +43,14 @@ class _QuestionsPageState extends State<QuestionsPage> {
 
   loadData() async {
     final _careerProvider = context.read(carerNotifierProvider);
-    setState(() {
-      questionLength = _careerProvider.selectedAchievement
-          .careerPathNotificationAchievementQuestion!.length;
 
-      for (int i = 0; i < questionLength; i++) {
-        unAnsweredQuestion.add(i + 1);
-      }
-    });
+    questionLength = _careerProvider
+        .selectedAchievement.careerPathNotificationAchievementQuestion!.length;
+
+    for (int i = 0; i < questionLength; i++) {
+      unAnsweredQuestion.add(i + 1);
+    }
+    setState(() {});
   }
 
   animateToQuestion() {
@@ -220,14 +220,14 @@ class _QuestionsPageState extends State<QuestionsPage> {
                                 controller.clear();
                                 unAnsweredQuestion.remove(currentQuestion + 1);
                               }
-
+                              log('currentLKastr = ${currentQuestion}');
                               setState(() {
-                                currentQuestion++;
+                                if (currentQuestion < questionLength - 1)
+                                  currentQuestion++;
                                 animateToQuestion();
                               });
-
                               // animateToQuestion();
-                              if (currentQuestion == questionLength) {
+                              if (currentQuestion == questionLength - 1) {
                                 if (unAnsweredQuestion.isEmpty) {
                                   showDialog(
                                       context: context,
@@ -242,6 +242,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                                     Navigator.push(context,
                                         MaterialPageRoute(builder: (context) {
                                       return CongratsScreen(
+                                        title: "Career path",
                                         summaryBool: false,
                                         unAnsweredQuestion: unAnsweredQuestion,
                                         totalquestion: questionLength,

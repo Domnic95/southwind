@@ -11,7 +11,6 @@ import 'package:video_player/video_player.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 
-
 class LibraryResource extends StatefulWidget {
   LibraryModel libraryModel;
   LibraryResource({required this.libraryModel});
@@ -84,14 +83,14 @@ class _LibraryResourceState extends State<LibraryResource> {
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: primaryColor,
+        // backgroundColor: primaryColor,
         title: Text(
           widget.libraryModel.resourceTitle!,
           maxLines: 1,
           overflow: TextOverflow.clip,
           style: TextStyle(
-            color: primarySwatch[900],
-          ),
+              // color: primarySwatch[900],
+              ),
         ),
         // title: Container(
         //   // color: Colors.teal,

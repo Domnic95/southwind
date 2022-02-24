@@ -1,7 +1,10 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:southwind/UI/home/home_screen.dart';
 import 'package:southwind/UI/home/news_tab/news_screen.dart';
 import 'package:southwind/UI/incentives/incentives.dart';
+import 'package:southwind/UI/jobs/components/add_jobScreen.dart';
+import 'package:southwind/UI/jobs/jobs_screen.dart';
 import 'package:southwind/UI/leader_board/leader_board.dart';
 import 'package:southwind/UI/learning/learning_screen.dart';
 import 'package:southwind/UI/library/library.dart';
@@ -35,13 +38,39 @@ class _CustomDrawerState extends State<CustomDrawer> {
   void initState() {
     title = "Southwind";
     super.initState();
-    Duration();
+    loadData();
   }
+
   // Widget screenView = HomeScreen(onindexChange: onindexChange)
+  loadData() async {
+    RemoteMessage? message =
+        await FirebaseMessaging.instance.getInitialMessage();
+    // print(message!.data.toString() + "messgaeNull");
+
+    if (message!.data['area'] == 'survey') {
+      changeIndex(DrawerIndex.Surveys);
+    } else if (message.data['area'] == 'communication') {
+      changeIndex(DrawerIndex.Home);
+
+      selectedIndex = 0;
+    } else {
+      //  widget.onindexChange(2);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: drawerIndex == DrawerIndex.Jobs
+          ? FloatingActionButton(
+              backgroundColor: primarySwatch[700],
+              onPressed: () {
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (c) => AddJob()));
+              },
+              child: Icon(Icons.add),
+            )
+          : Container(),
       resizeToAvoidBottomInset: true,
       //  appBar: AppBar(
       //   title: Text(
@@ -123,6 +152,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
       //   break;
       case DrawerIndex.CardTime:
         return TimeCardScreen();
+        break;
+      case DrawerIndex.Jobs:
+        return JobScreen();
+        break;
+
       // break;
       // case DrawerIndex.Goals:
       //   // TODO: Handle this case.
@@ -134,9 +168,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
         setState(() {});
       },
       onDrawerIndex: (j) {
-            changeIndex(j);
-            setState(() {});
-          },
+        changeIndex(j);
+        setState(() {});
+      },
     );
   }
 }

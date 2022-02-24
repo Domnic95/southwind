@@ -8,7 +8,7 @@ class GroupMembers {
   factory GroupMembers.fromJson(Map<String, dynamic> json) => GroupMembers(
       id: json["id"],
       fullName: json["fullName"],
-      userProfile: json['user_image']);
+      userProfile: json['user_image'] ?? "");
 
   Map<String, dynamic> toJson() => {
         "id": id,

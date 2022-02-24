@@ -14,10 +14,11 @@ enum DrawerIndex {
   // Incentives,
   Library,
   // Passbook,
-Surveys,
+  Surveys,
   // Challenges,
   // Learning,
   CardTime,
+  Jobs
   // Incentives,
   // Goals,
 }
@@ -170,66 +171,65 @@ class _DrawerUserControllerState extends State<DrawerUserController>
                     children: <Widget>[
                       Scaffold(
                         appBar: AppBar(
-                            leading: SizedBox(
-                              width: AppBar().preferredSize.height - 8,
-                              height: AppBar().preferredSize.height - 8,
-                              child: Material(
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(20),
-                                    bottomRight: Radius.circular(20)),
-                                color: Colors.transparent,
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(
-                                      AppBar().preferredSize.height),
-                                  child: Center(
-                                    // if you use your own menu view UI you add form initialization
-                                    child: widget.menuView != null
-                                        ? widget.menuView
-                                        : AnimatedIcon(
-                                            icon:
-                                                widget.animatedIconData != null
-                                                    ? widget.animatedIconData
-                                                    : AnimatedIcons.close_menu,
-                                            color: Colors.black,
-                                            size: 30,
-                                            progress: iconAnimationController),
-                                  ),
-                                  onTap: () {
-                                    FocusScope.of(context)
-                                        .requestFocus(FocusNode());
-                                    onDrawerClick();
-                                  },
+                          leading: SizedBox(
+                            width: AppBar().preferredSize.height - 8,
+                            height: AppBar().preferredSize.height - 8,
+                            child: Material(
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(20),
+                                  bottomRight: Radius.circular(20)),
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(
+                                    AppBar().preferredSize.height),
+                                child: Center(
+                                  // if you use your own menu view UI you add form initialization
+                                  child: widget.menuView != null
+                                      ? widget.menuView
+                                      : AnimatedIcon(
+                                          icon: widget.animatedIconData != null
+                                              ? widget.animatedIconData
+                                              : AnimatedIcons.close_menu,
+                                          color: Colors.black,
+                                          size: 30,
+                                          progress: iconAnimationController),
                                 ),
+                                onTap: () {
+                                  FocusScope.of(context)
+                                      .requestFocus(FocusNode());
+                                  onDrawerClick();
+                                },
                               ),
                             ),
-                            // shadowColor: Colors.red,
-                            backgroundColor: Colors.white,
-                            title: Container(
-                              // color: Colors.teal,
-                              height: 25,
-                              child: Image.asset(
-                                  "assets/images/southwind_logo.png"),
-                            ),
-                            centerTitle: true,
-                            // actions: [
-                            //   IconButton(
-                            //     icon: Icon(Icons.notifications),
-                            //     onPressed: () {
-                            //       Navigator.of(context)
-                            //           .pushNamed(Routes.notification);
-                            //     },
-                            //   )
-                            //   // (widget.screenIndex == DrawerIndex.Incentives)
-                            //   //     ? IconButton(
-                            //   //         icon: Icon(Icons.history),
-                            //   //         onPressed: () {
-                            //   //           Navigator.of(context)
-                            //   //               .pushNamed(Routes.history);
-                            //   //         },
-                            //   //       )
-                            //   //     : Container(),
-                            // ]
-                            ),
+                          ),
+                          // shadowColor: Colors.red,
+                          backgroundColor: Colors.white,
+                          title: Container(
+                            // color: Colors.teal,
+                            height: 25,
+                            child:
+                                Image.asset("assets/images/southwind_logo.png"),
+                          ),
+                          centerTitle: true,
+                          // actions: [
+                          //   IconButton(
+                          //     icon: Icon(Icons.notifications),
+                          //     onPressed: () {
+                          //       Navigator.of(context)
+                          //           .pushNamed(Routes.notification);
+                          //     },
+                          //   )
+                          //   // (widget.screenIndex == DrawerIndex.Incentives)
+                          //   //     ? IconButton(
+                          //   //         icon: Icon(Icons.history),
+                          //   //         onPressed: () {
+                          //   //           Navigator.of(context)
+                          //   //               .pushNamed(Routes.history);
+                          //   //         },
+                          //   //       )
+                          //   //     : Container(),
+                          // ]
+                        ),
                         body: widget.screenView,
                       ),
 
@@ -480,6 +480,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
         index: DrawerIndex.CardTime,
         labelName: 'Time Card',
         icon: Icon(Icons.timer),
+      ),
+      DrawerList(
+        index: DrawerIndex.Jobs,
+        labelName: 'Jobs',
+        icon: Icon(Icons.work_outline),
       ),
       // DrawerList(
       //   index: DrawerIndex.Goals,

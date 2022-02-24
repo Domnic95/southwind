@@ -10,7 +10,6 @@ import 'package:southwind/Models/user_data.dart';
 import 'package:southwind/data/providers/ValueFetcher/UserFetch.dart';
 import 'package:southwind/data/providers/base_notifer.dart';
 import 'package:southwind/utils/helpers.dart';
-
 class SurveyProvider extends BaseNotifier {
   UserData? userData;
   String selectedSurveyId = '';
@@ -18,8 +17,12 @@ class SurveyProvider extends BaseNotifier {
   IndividualSurvey? selectedSurvey = IndividualSurvey();
   bool textReadibility = false;
   bool reloadData = false;
-  List<IndividualSurvey> newSurvey = [];
-  List<IndividualSurvey> submittedSurvey = [];
+  List<LibraryNotification> newSurvey = [];
+  List<LibraryNotification> submittedSurvey = [];
+  int offset = 0;
+  int limit = offsetDifference;
+  bool lazyLoading = true;
+  int maxFeedFromServer = 0;
   SurveyProvider() {
     userData = UserFetch().fetchUserData();
 
@@ -30,10 +33,10 @@ class SurveyProvider extends BaseNotifier {
     notifyListeners();
   }
 
-  setSurvey(IndividualSurvey survey) {
-    selectedSurvey = survey;
-    notifyListeners();
-  }
+  // setSurvey(LibraryNotification survey) {
+  //   selectedSurvey = survey;
+  //   notifyListeners();
+  // }
 
   setReadibility(bool va) {
     textReadibility = va;
@@ -54,37 +57,40 @@ class SurveyProvider extends BaseNotifier {
   //       .map((x) => BasicSurveyDetail.fromJson(x)));
   // }
   reload() async {
-    if(reloadData)
-    await suveryNotification();
+    if (reloadData) {
+      await suveryNotification();
+      notifyListeners();
+    }
   }
 
   Future suveryNotification() async {
     allSurvey = [];
     newSurvey = [];
+
     submittedSurvey = [];
-    final res = await dioClient.getRequest(apiEnd: api_getSurveyNotification);
+    offset = 0;
+    limit = offsetDifference;
+    final res = await dioClient.getRequest(
+      apiEnd: api_getSurveyNotification,
+      queryParameter: {'limit': limit, "offset": offset},
+    );
+
     allSurvey = List<LibraryNotification>.from(
         res.data["notifications"].map((x) => LibraryNotification.fromJson(x)));
+    maxFeedFromServer = res.data["notification_count"];
     for (int i = 0; i < allSurvey.length; i++) {
-      final res = await dioClient.getRequest(
-          apiEnd: api_getIndividualSurvey + allSurvey[i].id.toString());
-
-      IndividualSurvey loc =
-          IndividualSurvey.fromJson(res.data['notification']);
-      if (loc.surveyNotificationQuestion!.length > 0) {
-        if (loc.surveyNotificationQuestion!.first.surveyNotificationAnswer!
-                .length >
-            0) {
-          submittedSurvey.add(loc);
-        } else {
-          newSurvey.add(loc);
-        }
+      if (allSurvey[i].submitted!) {
+        submittedSurvey.add(allSurvey[i]);
       } else {
-        newSurvey.add(loc);
+        newSurvey.add(allSurvey[i]);
       }
+
+      reloadData = false;
+      lazyLoading = true;
     }
-    reloadData = false;
-    notifyListeners();
+    // print('survey data ${submittedSurvey.length}');
+    // print('survey data ${newSurvey.length}');
+    // notifyListeners();
   }
 
   Future individualSurvey() async {
@@ -96,10 +102,20 @@ class SurveyProvider extends BaseNotifier {
     notifyListeners();
   }
 
-  updateAnswer(int questionIndex, String notes, int option_id) {
+  updateAnswer(int questionIndex, String notes, int optionIndex) {
     log("notres" + notes);
-    selectedSurvey!.surveyAnswer![questionIndex].optionId = option_id;
+    selectedSurvey!.surveyAnswer![questionIndex].optionId = selectedSurvey!
+        .surveyNotificationQuestion![questionIndex]
+        .surveyNotificationOption![optionIndex]
+        .id!;
+    selectedSurvey!.surveyNotificationQuestion![questionIndex]
+        .surveyNotificationOption![optionIndex].answerCount = selectedSurvey!
+            .surveyNotificationQuestion![questionIndex]
+            .surveyNotificationOption![optionIndex]
+            .answerCount! +
+        1;
     selectedSurvey!.surveyAnswer![questionIndex].other = notes;
+
     notifyListeners();
   }
 
@@ -124,8 +140,38 @@ class SurveyProvider extends BaseNotifier {
     if (res != null) {
       return true;
     }
+
     return false;
   }
+
+  Future lazyData() async {
+    List<LibraryNotification> local = [];
+    List<LibraryNotification> _new = [];
+    List<LibraryNotification> _submitted = [];
+    if (maxFeedFromServer > offset) {
+      offset = limit;
+      limit = limit + offsetDifference;
+      Response res = await dioClient.getRequest(
+        apiEnd: api_communication_get_notification,
+        queryParameter: {'limit': limit, "offset": offset},
+      );
+
+      local = List<LibraryNotification>.from(res.data["notifications"]
+          .map((x) => LibraryNotification.fromJson(x)));
+      for (int i = 0; i < local.length; i++) {
+        if (local[i].submitted!) {
+          _submitted.add(local[i]);
+        } else {
+          _new.add(local[i]);
+        }
+      }
+      // total_news.addAll(local);
+      newSurvey.addAll(_new);
+      submittedSurvey.addAll(_submitted);
+      notifyListeners();
+    } else {
+      lazyLoading = false;
+      notifyListeners();
+    }
+  }
 }
-
-

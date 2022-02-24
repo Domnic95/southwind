@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
+import 'package:southwind/UI/surveys_tab/Page/chartScreen.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/routes/routes.dart';
 
 class CongratsScreen extends StatelessWidget {
+  final String title;
   final int totalquestion;
   final bool? summaryBool;
   final List<int> unAnsweredQuestion;
   const CongratsScreen(
       {required this.totalquestion,
+      required this.title,
       required this.unAnsweredQuestion,
       this.summaryBool = true,
       Key? key})
@@ -72,7 +75,7 @@ class CongratsScreen extends StatelessWidget {
                               ),
                               Center(
                                 child: Text(
-                                  "Quiz completed sucessfully",
+                                  "${title} completed sucessfully",
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.normal),
@@ -116,9 +119,10 @@ class CongratsScreen extends StatelessWidget {
                       // Navigator.popUntil(context, (route) {
                       //   return route.settings.name == Routes.splashScreen;
                       // });
-                      if (summaryBool!) {
+                      if (summaryBool!) { 
                         Navigator.push(context,
                             MaterialPageRoute(builder: (context) {
+                          return ChartScreen();
                           return SummaryScreen(
                             unAnsweredQuestion: unAnsweredQuestion,
                             totalquestion: totalquestion,

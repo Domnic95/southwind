@@ -35,15 +35,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   notification() async {
     String? token = await FirebaseMessaging.instance.getToken();
-    print("FCM" + token!);
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      log('A new onMessageOpenedApp = ${message.data}');
-    });
+
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   RemoteNotification? notification = message.notification;
+    //   AndroidNotification? android = message.notification?.android;
+    //   log('A new onMessageOpenedApp = ${message.data}');
+    // });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      log('A new onMessageOpenedApp = ${message.data}');
       if (message.data['area'] == 'survey') {
         widget.onDrawerIndex(DrawerIndex.Surveys);
       } else if (message.data['area'] == 'communication') {
@@ -54,9 +53,9 @@ class _HomeScreenState extends State<HomeScreen> {
         //  widget.onindexChange(2);
       }
     });
-    FirebaseMessaging.onBackgroundMessage((message) async {
-      log('A new onMessageOpenedApp = ${message.data}');
-    });
+    // FirebaseMessaging.onBackgroundMessage((message) async {
+    //   log('A new onMessageOpenedApp = ${message.data}');
+    // });
   }
 
   @override

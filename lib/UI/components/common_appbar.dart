@@ -54,11 +54,11 @@ class CommonAppbar extends StatelessWidget implements PreferredSizeWidget {
         child: Image.asset("assets/images/southwind_logo.png"),
       ),
       actions: [
-        IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.notifications,
-            )),
+        // IconButton(
+        //     onPressed: () {},
+        //     icon: Icon(
+        //       Icons.notifications,
+        //     )),
         actions,
       ],
       centerTitle: true,

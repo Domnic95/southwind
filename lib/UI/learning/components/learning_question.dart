@@ -238,6 +238,7 @@ class _LearningQuestiontabState extends State<LearningQuestiontab> {
                                               MaterialPageRoute(
                                                   builder: (context) {
                                             return CongratsScreen(
+                                              title: "Learning",
                                               unAnsweredQuestion:
                                                   unAnsweredQuestion,
                                               totalquestion: questionLength,

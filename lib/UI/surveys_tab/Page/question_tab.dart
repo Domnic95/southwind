@@ -270,7 +270,7 @@ class _Questions_TabState extends State<Questions_Tab> {
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (context) {
                                         return CongratsScreen(
-                                          // title: "Survey",
+                                          title: "Survey",
                                           unAnsweredQuestion:
                                               unAnsweredQuestion,
                                           totalquestion: surveyProvider

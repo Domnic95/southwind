@@ -177,28 +177,27 @@ class SurveyNotificationQuestion {
 }
 
 class SurveyNotificationOption {
-  SurveyNotificationOption({
-    this.id,
-    this.surveyNotificationId,
-    this.surveyNotificationQuestionId,
-    this.optionName,
-    this.answerCount
-  });
+  SurveyNotificationOption(
+      {this.id,
+      this.surveyNotificationId,
+      this.surveyNotificationQuestionId,
+      this.optionName,
+      this.answerCount});
 
   int? id;
   int? surveyNotificationId;
   int? surveyNotificationQuestionId;
   String? optionName;
-  int? answerCount ;
+  int? answerCount;
 
   factory SurveyNotificationOption.fromJson(Map<String, dynamic> json) =>
       SurveyNotificationOption(
         id: json["id"],
         surveyNotificationId: json["survey_notification_id"],
-        surveyNotificationQuestionId: json["survey_notification_question_id"] ,
+        surveyNotificationQuestionId: json["survey_notification_question_id"],
         optionName: json["option_name"],
-        // answerCount:json["survey_notification_answer_count"],
-        answerCount:0
+        answerCount: json["survey_notification_answer_count"],
+        // answerCount:0
       );
 
   Map<String, dynamic> toJson() => {
@@ -206,7 +205,7 @@ class SurveyNotificationOption {
         "survey_notification_id": surveyNotificationId,
         "survey_notification_question_id": surveyNotificationQuestionId,
         "option_name": optionName,
-        "survey_notification_answer_count":answerCount
+        "survey_notification_answer_count": answerCount
       };
 }
 

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:southwind/Models/survey/basic_survey_details.dart';
+// import 'package:YouMoveMe/Models/survey/basic_survey_dekmmktails.dart';
 import 'package:southwind/Models/survey/individual_survey.dart';
 import 'package:southwind/Models/survey/surveyModel.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/providers.dart';
 import 'package:southwind/routes/routes.dart';
+import 'package:southwind/UI/theme/apptheme.dart';
 
 class Surveys_Tab extends StatefulHookWidget {
   @override
@@ -18,10 +19,11 @@ class _Surveys_TabState extends State<Surveys_Tab> {
   bool loading = true;
   List<String> tabs = ["New Survey", "Submitted Surveys"];
   int selectedIndex = 0;
-
+  ScrollController controller = ScrollController();
   @override
   void initState() {
     // TODO: implement initState
+   controller = ScrollController()..addListener(_scrollListener);
     loadData();
   }
 
@@ -31,7 +33,24 @@ class _Surveys_TabState extends State<Surveys_Tab> {
       loading = false;
     });
   }
+@override
+  void dispose() {
+    controller.removeListener(_scrollListener);
+    super.dispose();
+  }
+ 
+void _scrollListener() async{
+   if( context.read(surveyNotifierProvider).lazyLoading){
 
+   
+    if (controller.position.extentAfter < 500) {
+         await context.read(surveyNotifierProvider).lazyData();
+      // setState(() {
+      //   // items.addAll(List.generate(42, (index) => 'Inserted $index'));
+      // });
+    }
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final _surveyNotifierProvider = useProvider(surveyNotifierProvider);
@@ -114,27 +133,39 @@ class _Surveys_TabState extends State<Surveys_Tab> {
                       //       ? _surveyNotifierProvider.newSurvey
                       //       : _surveyNotifierProvider.submittedSurvey,
                       // )
-                      Expanded(
-                        child: FutureBuilder(
-                            future: _surveyNotifierProvider.reload(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.done) {
-                                return SurveyCategory(
-                                  title: selectedIndex == 0
-                                      ? "Interesting"
-                                      : "Submitted",
-                                  data: selectedIndex == 0
-                                      ? _surveyNotifierProvider.newSurvey
-                                      : _surveyNotifierProvider.submittedSurvey,
-                                );
-                              } else {
-                                return Center(
-                                  child: LoadingWidget(),
-                                );
-                              }
-                            }),
-                      )
+
+                      
+                      // Expanded(
+                      //   child: SurveyCategory(
+                      //             title: selectedIndex == 0
+                      //                 ? "Interesting"
+                      //                 : "Submitted",
+                      //             data: selectedIndex == 0
+                      //                 ? _surveyNotifierProvider.newSurvey
+                      //                 : _surveyNotifierProvider.submittedSurvey,
+                      //           ),
+                        Expanded(
+                          child: FutureBuilder(
+                              future: _surveyNotifierProvider.reload(),
+                              builder: (context, snapshot) {
+                                if (snapshot.connectionState ==
+                                    ConnectionState.done) {
+                                  return SurveyCategory(
+                                    title: selectedIndex == 0
+                                        ? "Interesting"
+                                        : "Submitted",
+                                    data: selectedIndex == 0
+                                        ? _surveyNotifierProvider.newSurvey
+                                        : _surveyNotifierProvider.submittedSurvey,
+                                  );
+                                } else {
+                                  return Center(
+                                    child: LoadingWidget(),
+                                  );
+                                }
+                              }),
+                        ),
+                    
                     ],
                   ),
                 )
@@ -148,7 +179,7 @@ class _Surveys_TabState extends State<Surveys_Tab> {
 
 class SurveyCategory extends StatefulHookWidget {
   final String title;
-  final List<IndividualSurvey> data;
+  final List<LibraryNotification> data;
   SurveyCategory({required this.data, required this.title, Key? key})
       : super(key: key);
 
@@ -196,7 +227,7 @@ class _SurveyCategoryState extends State<SurveyCategory> {
 }
 
 class SingleCollection extends HookWidget {
-  final IndividualSurvey collection;
+  final LibraryNotification collection;
 
   const SingleCollection(this.collection, {Key? key}) : super(key: key);
 
@@ -210,8 +241,8 @@ class SingleCollection extends HookWidget {
         padding: const EdgeInsets.symmetric(vertical: 4),
         child: InkWell(
           onTap: () async {
-            // await surveyProvider.setSurveyId(collection.id!);
-            await surveyProvider.setSurvey(collection);
+             await surveyProvider.setSurveyId(collection.id!);
+            // await surveyProvider.setSurvey(collection);
             // Navigator.push(context, MaterialPageRoute(builder: (_)=>Questions_Tab()));
             Navigator.pushNamed(context, Routes.question_tab);
           },

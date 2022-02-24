@@ -10,6 +10,7 @@ import 'package:southwind/UI/home/custom_drawer.dart';
 import 'package:southwind/UI/home/home_screen.dart';
 import 'package:southwind/UI/incentives/incentives.dart';
 import 'package:southwind/UI/incentives/page/history.dart';
+import 'package:southwind/UI/jobs/jobs_screen.dart';
 import 'package:southwind/UI/learning/components/learning_question.dart';
 import 'package:southwind/UI/library/library.dart';
 import 'package:southwind/UI/login/log_in.dart';
@@ -36,8 +37,8 @@ class Routes {
   static const String splashScreen = 'splashScrren';
   static const String history = "history";
   static const String notification = 'notification';
-   static const String libraryFilter = 'libraryFilter';
-
+  static const String libraryFilter = 'libraryFilter';
+  static const String jobs = 'jobs';
 
   static Route<dynamic> onRouteGenerate(RouteSettings settings) {
     return MaterialPageRoute(
@@ -56,7 +57,7 @@ class Routes {
             case Routes.learning_question_tab:
               page = LearningQuestiontab();
               break;
-              case Routes.libraryFilter:
+            case Routes.libraryFilter:
               page = LibraryWithFilter();
               break;
             // case Routes.singleChatScreen:
@@ -81,6 +82,9 @@ class Routes {
             //   break;
             case Routes.customDrawer:
               page = CustomDrawer();
+              break;
+            case Routes.jobs:
+              page = JobScreen();
               break;
             case Routes.login:
               page = Log_In();

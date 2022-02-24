@@ -44,7 +44,7 @@ class CareerProvider extends BaseNotifier {
       // 'franchiseuser_detail': "",
       // 'questions': "",
     });
-    print('carrer pathss = ${res}');
+    
     careerModel = CareerModel.fromJson(res.data);
     if (careerModel.careerPath!.length > 0) {
       selectedCareerPathIndex = 0;

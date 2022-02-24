@@ -211,7 +211,9 @@ class EditTextfild extends StatelessWidget {
   late Widget? suffix;
   late String? onsaved;
   late bool passwordshow;
+  bool? readibility;
   late TextInputType? keybordtype;
+  EdgeInsetsGeometry? padding;
   late String? Function(String?)? validator;
 
   EditTextfild(
@@ -221,15 +223,18 @@ class EditTextfild extends StatelessWidget {
       this.hint,
       this.prefixicon,
       this.suffix,
+      this.readibility = false,
       this.passwordshow = true,
       this.onsaved,
       this.keybordtype,
+      this.padding = const EdgeInsets.all(16),
       this.number,
       this.suffixicon})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      readOnly: readibility!,
       controller: controller,
       obscureText: !passwordshow,
       cursorColor: Colors.grey,
@@ -242,6 +247,8 @@ class EditTextfild extends StatelessWidget {
         onsaved = val;
       },
       decoration: InputDecoration(
+        isCollapsed: true,
+        contentPadding: padding,
         hintStyle: TextStyle(
             fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w500),
         focusedBorder: OutlineInputBorder(
@@ -255,6 +262,50 @@ class EditTextfild extends StatelessWidget {
         suffixIcon: suffixicon,
         suffix: suffix,
       ),
+    );
+  }
+}
+
+class DropDownWidget extends StatelessWidget {
+  final List<String> title;
+  final String labelTitle;
+  final ValueChanged<String?> onChanged;
+  final String selectedvalue;
+  final EdgeInsetsGeometry? padding;
+  const DropDownWidget(
+      {required this.onChanged,
+      required this.title,
+      required this.labelTitle,
+      required this.selectedvalue,
+      this.padding = const EdgeInsets.all(16),
+      Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<String>(
+      decoration: InputDecoration(
+        isCollapsed: true,
+        contentPadding: padding,
+        label: Text(labelTitle),
+        hintStyle: TextStyle(
+            fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w500),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey, width: 1.5)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey)),
+      ),
+      value: selectedvalue,
+      onChanged: onChanged,
+      items: title.map((e) {
+        return DropdownMenuItem<String>(
+          value: e,
+          // onTap: onChanged,
+          child: Text(e),
+        );
+      }).toList(),
     );
   }
 }
