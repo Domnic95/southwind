@@ -64,7 +64,7 @@ class _AddJobState extends State<AddJob> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final jobsService = useProvider(jobsNotifierProvider);
-    double ver = 10;
+    double ver = 15;
     return Scaffold(
       appBar: CommonAppbar(),
       body: Form(
@@ -75,6 +75,7 @@ class _AddJobState extends State<AddJob> {
             child: Column(
               children: [
                 EditTextfild(
+                  
                   controller: jobIdController,
                   hint: "Enter Job Id",
                 ),
