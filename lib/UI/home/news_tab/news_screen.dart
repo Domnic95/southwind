@@ -294,7 +294,7 @@ class _FeedPostState extends State<FeedPost> {
                                 );
                               },
                             ),
-                            Text("${widget.post.commentCount} comment"),
+                            Text("${widget.post.commentCount} comments"),
                           ],
                         ),
                       ),

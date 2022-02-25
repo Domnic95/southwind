@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +18,7 @@ void main() async {
       await Firebase.initializeApp();
       WidgetsFlutterBinding.ensureInitialized();
       sharedPreferences = await SharedPreferences.getInstance();
-
+      FlutterAppBadger.removeBadge();
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
           // systemNavigationBarColor: Colors.white, // navigation bar color
           statusBarColor: Colors.white,

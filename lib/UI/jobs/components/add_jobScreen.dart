@@ -80,7 +80,7 @@ class _AddJobState extends State<AddJob> {
                 ),
                 SizedBox(
                   height: ver,
-                ),
+                ),   
                 DropDownWidget(
                   labelTitle: "Job type",
                   onChanged: (c) {

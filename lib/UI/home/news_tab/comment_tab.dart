@@ -15,10 +15,8 @@ import 'package:video_player/video_player.dart';
 
 class CommentTab extends StatefulHookWidget {
   final PostModal postModal;
-   final int index;
-  const CommentTab(this.postModal,
-   this.index,
-   {Key? key}) : super(key: key);
+  final int index;
+  const CommentTab(this.postModal, this.index, {Key? key}) : super(key: key);
   @override
   _CommentTabState createState() => _CommentTabState();
 }
@@ -154,12 +152,11 @@ class _CommentTabState extends State<CommentTab> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           bottomSheetWidget(() async {
-
                                             //  showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.imageUpload(
                                                 ImageSource.gallery,
                                                 widget.postModal.id.toString());
-                                                // Navigator.pop(context);
+                                            // Navigator.pop(context);
 
                                             showDialog(
                                                 context: context,
@@ -170,20 +167,16 @@ class _CommentTabState extends State<CommentTab> {
                                               widget.postModal.id.toString(),
                                             );
                                             Navigator.pop(context);
-
                                           }, "Gallery"),
-
                                           Divider(
                                             color: primarySwatch.shade800,
                                           ),
-
                                           bottomSheetWidget(() async {
-
                                             //  showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.imageUpload(
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
-                                                  //  Navigator.pop(context);
+                                            //  Navigator.pop(context);
 
                                             showDialog(
                                                 context: context,
@@ -193,20 +186,16 @@ class _CommentTabState extends State<CommentTab> {
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
                                             Navigator.pop(context);
-
                                           }, "Camera"),
-
                                           Divider(
                                             color: primarySwatch.shade800,
                                           ),
-                                          
                                           bottomSheetWidget(() async {
-
-                                         //  showDialog(context: context, builder: (c)=>LoadingWidget());
+                                            //  showDialog(context: context, builder: (c)=>LoadingWidget());
                                             await commentNotifier.videoUpload(
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
-                                                  //  Navigator.pop(context);
+                                            //  Navigator.pop(context);
 
                                             showDialog(
                                                 context: context,
@@ -216,7 +205,6 @@ class _CommentTabState extends State<CommentTab> {
                                                 ImageSource.camera,
                                                 widget.postModal.id.toString());
                                             Navigator.pop(context);
-
                                           }, "Video")
                                         ],
                                       );
@@ -238,7 +226,7 @@ class _CommentTabState extends State<CommentTab> {
                                 textController.clear();
                                 await commentNotifier.sendComment(
                                     widget.postModal.id.toString(), loc);
-     updateComment();
+                                updateComment();
                                 scrollController.jumpTo(
                                     scrollController.position.maxScrollExtent);
                               },
@@ -261,19 +249,20 @@ class _CommentTabState extends State<CommentTab> {
             ),
     ));
   }
-  updateComment()async{
-await context.read(newsNotifierProvider).localCommentUdpate(widget.index);
+
+  updateComment() async {
+    await context.read(newsNotifierProvider).localCommentUdpate(widget.index);
   }
+
   Widget bottomSheetWidget(VoidCallback voidCallback, String title) {
     final size = MediaQuery.of(context).size;
     return InkWell(
       onTap: () {
         Navigator.pop(context);
         voidCallback();
-     setState(() {
+        setState(() {
           scrollController.jumpTo(scrollController.position.maxScrollExtent);
-            
-          });
+        });
       },
       child: Container(
         decoration: BoxDecoration(),
@@ -308,12 +297,19 @@ class CommentWidget extends StatelessWidget {
                       SizedBox(
                         width: 10,
                       ),
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: Colors.transparent,
-                        backgroundImage:
-                            NetworkImage("${commentModal.profile.userImage}"),
-                      ),
+                      commentModal.profile.userImage.isEmpty
+                          ? CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Colors.transparent,
+                              backgroundImage:
+                                  AssetImage("assets/images/images.jpg"),
+                            )
+                          : CircleAvatar(
+                              radius: 20,
+                              backgroundColor: Colors.transparent,
+                              backgroundImage: NetworkImage(
+                                  "${commentModal.profile.userImage}"),
+                            ),
                       SizedBox(
                         width: 10,
                       ),
@@ -322,7 +318,8 @@ class CommentWidget extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              "${commentModal.profile.profileFirstName}",
+                              "${commentModal.profile.profileFirstName} - ${commentModal.profile.teamName}",
+                              // "${commentModal.profile.profileFirstName}",
                               style: TextStyle(fontSize: 14),
                             ),
                             Builder(builder: (context) {

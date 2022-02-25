@@ -13,7 +13,7 @@ import 'package:video_player/video_player.dart';
 
 double videoHeightAspect = 0.25;
 
-double videoWidthAspect = 0.5;
+double videoWidthAspect = 0.7;
 // class SingleChatScreen extends StatelessWidget {
 //   const SingleChatScreen({Key? key}) : super(key: key);
 
@@ -227,7 +227,8 @@ class SingleMessage extends StatelessWidget {
                               padding: EdgeInsets.fromLTRB(8, 2, 8, 0),
                               child: Text(
                                 messageModel.fullName!,
-                                style: TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 14),
                               ),
                             ),
                           ],
@@ -341,8 +342,10 @@ class ImageMessage extends StatelessWidget {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return ShowImageScreen(
               mediaUrl: messageModel.mediaUrl!,
-              title:_groupProvider.listGroup[_groupProvider.selectedGroupIndex!].group!.groupName!
-          );
+              title: _groupProvider
+                  .listGroup[_groupProvider.selectedGroupIndex!]
+                  .group!
+                  .groupName!);
         }));
       },
       child: ClipRRect(
