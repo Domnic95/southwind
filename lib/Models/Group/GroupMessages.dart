@@ -81,7 +81,7 @@ String timeDifference(DateTime times) {
   DateTime now = DateTime.now();
 
   if (now.difference(times).inDays > 1) {
-    time = "${times.day}/${times.month}/${times.year}";
+    time = "${times.day}-${times.month}-${times.year}";
   } else {
     String hour =
         times.hour > 13 ? (24 - times.hour).toString() : times.hour.toString();
