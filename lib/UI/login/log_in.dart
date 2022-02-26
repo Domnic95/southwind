@@ -227,7 +227,7 @@ class EditTextfild extends StatelessWidget {
       this.passwordshow = true,
       this.onsaved,
       this.keybordtype,
-      this.padding = const EdgeInsets.all(16),
+      this.padding = const EdgeInsets.all(12),
       this.number,
       this.suffixicon})
       : super(key: key);
@@ -277,7 +277,7 @@ class DropDownWidget extends StatelessWidget {
       required this.title,
       required this.labelTitle,
       required this.selectedvalue,
-      this.padding = const EdgeInsets.all(16),
+      this.padding = const EdgeInsets.all(10),
       Key? key})
       : super(key: key);
 
