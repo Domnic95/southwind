@@ -283,6 +283,7 @@ class CommentWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
           child: Row(
@@ -293,6 +294,7 @@ class CommentWidget extends StatelessWidget {
                 child: Container(
                   //margin: EdgeInsets.symmetric(vertical: 5),
                   child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(
                         width: 10,

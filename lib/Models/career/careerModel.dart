@@ -115,6 +115,7 @@ class CareerPathNotificationAchievementQuestion {
     this.createdAt,
     this.updatedAt,
     this.careerPathNotificationAchievementAnswer,
+    this.options,
   });
 
   int? id;
@@ -122,29 +123,31 @@ class CareerPathNotificationAchievementQuestion {
   String? question;
   DateTime? createdAt;
   DateTime? updatedAt;
-  String answer = "";
+  int? optionId = -1;
+  List<CareerOption>? options;
 
   List<CareerAnswer>? careerPathNotificationAchievementAnswer;
 
   factory CareerPathNotificationAchievementQuestion.fromJson(
       Map<String, dynamic> json) {
     return CareerPathNotificationAchievementQuestion(
-      id: json["id"],
-      careerPathNotificationAchievementId:
-          json["career_path_notification_achievement_id"],
-      question: json["question"],
-      createdAt: DateTime.parse(json["created_at"]),
-      updatedAt: DateTime.parse(json["updated_at"]),
-      // answerId: json["career_path_notification_achievement_answer"][0]['id'],
-      // ? json["career_path_notification_achievement_answer"][0]['id']
-      // : null,
-      // answer: json["career_path_notification_achievement_answer"].length > 0
-      //     ? json["career_path_notification_achievement_answer"][0]['answer']
-      //     : null,
-      careerPathNotificationAchievementAnswer: List<CareerAnswer>.from(
-          json["career_path_notification_achievement_answer"]
-              .map((x) => CareerAnswer.fromJson(x))),
-    );
+        id: json["id"],
+        careerPathNotificationAchievementId:
+            json["career_path_notification_achievement_id"],
+        question: json["question"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+        // answerId: json["career_path_notification_achievement_answer"][0]['id'],
+        // ? json["career_path_notification_achievement_answer"][0]['id']
+        // : null,
+        // answer: json["career_path_notification_achievement_answer"].length > 0
+        //     ? json["career_path_notification_achievement_answer"][0]['answer']
+        //     : null,
+        careerPathNotificationAchievementAnswer: List<CareerAnswer>.from(
+            json["career_path_notification_achievement_answer"]
+                .map((x) => CareerAnswer.fromJson(x))),
+        options: List<CareerOption>.from(
+            json["options"].map((x) => CareerOption.fromJson(x))));
   }
 
   Map<String, dynamic> toJson() => {
@@ -162,7 +165,37 @@ class CareerPathNotificationAchievementQuestion {
         "answer_id": careerPathNotificationAchievementAnswer!.length > 0
             ? careerPathNotificationAchievementAnswer![0].id
             : null,
-        "answer": answer
+        "option_id": optionId
+      };
+}
+
+class CareerOption {
+  CareerOption({
+    this.id,
+    this.optionName,
+    this.score,
+    this.careerPathNotificationAchievementQuestionId,
+  });
+
+  int? id;
+  String? optionName;
+  int? score;
+  int? careerPathNotificationAchievementQuestionId;
+
+  factory CareerOption.fromJson(Map<String, dynamic> json) => CareerOption(
+        id: json["id"],
+        optionName: json["option_name"],
+        score: json["score"],
+        careerPathNotificationAchievementQuestionId:
+            json["career_path_notification_achievement_question_id"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "option_name": optionName,
+        "score": score,
+        "career_path_notification_achievement_question_id":
+            careerPathNotificationAchievementQuestionId,
       };
 }
 

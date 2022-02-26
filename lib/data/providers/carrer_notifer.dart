@@ -44,7 +44,7 @@ class CareerProvider extends BaseNotifier {
       // 'franchiseuser_detail': "",
       // 'questions': "",
     });
-    
+
     careerModel = CareerModel.fromJson(res.data);
     if (careerModel.careerPath!.length > 0) {
       selectedCareerPathIndex = 0;
@@ -74,9 +74,10 @@ class CareerProvider extends BaseNotifier {
     allSelectedCareerPath = [];
     submittedAchievement = [];
     completedAchievement = [];
+
     final res = await dioClient.getRequest(
         apiEnd: api_career_single_career + selectedCareerPath.id.toString());
-    print('unwanted URl = ${res.data}');
+
     if (res.data['careerpath'] != null) {
       allSelectedCareerPath = List<CareerAchievement>.from(res
           .data['careerpath']['career_path_notification_achievement']
@@ -118,14 +119,26 @@ class CareerProvider extends BaseNotifier {
     notifyListeners();
   }
 
-  updateAnswer(int index, String answer) {
-    selectedAchievement
-        .careerPathNotificationAchievementQuestion![index].answer = answer;
+  updateAnswer(int index, int optionIndex) {
+    // selectedAchievement
+    //     .careerPathNotificationAchievementQuestion![index].answer = answer;
     // careerModel
     //     .questions![selectedCareerPath.id.toString()]![
     //         selectedAchievement.id.toString()]![index]
     //     .answer = answer;
-
+    selectedAchievement
+            .careerPathNotificationAchievementQuestion![index].optionId =
+        selectedAchievement.careerPathNotificationAchievementQuestion![index]
+            .options![optionIndex].id;
+    selectedAchievement.careerPathNotificationAchievementQuestion![index].id =
+        selectedAchievement.careerPathNotificationAchievementQuestion![index]
+            .options![optionIndex].id!;
+    selectedAchievement.careerPathNotificationAchievementQuestion![index]
+        .options![optionIndex].score = selectedAchievement
+            .careerPathNotificationAchievementQuestion![index]
+            .options![optionIndex]
+            .score! +
+        1;
     notifyListeners();
   }
 

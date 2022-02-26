@@ -150,9 +150,12 @@ class _QuestionsPageState extends State<QuestionsPage> {
               children: [
                 for (int i = 0; i < questionLength; i++)
                   QuestionAnswerWidget(
-                    onchnage: (c) {
-                      controller.text = c;
-                      setState(() {});
+                    onChange: (c) {
+                      // controller.text = c;
+
+                      setState(() {
+                        unAnsweredQuestion.remove(i + 1);
+                      });
                     },
                     i: i,
                   ),
@@ -214,13 +217,13 @@ class _QuestionsPageState extends State<QuestionsPage> {
                                 ? "Submit"
                                 : "Next",
                             ontap: () async {
-                              if (controller.text.isNotEmpty) {
-                                await careerProvider.updateAnswer(
-                                    currentQuestion, controller.text);
-                                controller.clear();
-                                unAnsweredQuestion.remove(currentQuestion + 1);
-                              }
-                              log('currentLKastr = ${currentQuestion}');
+                              // if (controller.text.isNotEmpty) {
+                              //   await careerProvider.updateAnswer(
+                              //       currentQuestion, controller.text);
+                              //   controller.clear();
+                              //   unAnsweredQuestion.remove(currentQuestion + 1);
+                              // }
+
                               setState(() {
                                 if (currentQuestion < questionLength - 1)
                                   currentQuestion++;
@@ -291,9 +294,9 @@ class _QuestionsPageState extends State<QuestionsPage> {
 
 class QuestionAnswerWidget extends StatefulHookWidget {
   final int i;
-  final ValueChanged<String> onchnage;
+  final ValueChanged<int> onChange;
   const QuestionAnswerWidget(
-      {Key? key, required this.i, required this.onchnage})
+      {Key? key, required this.i, required this.onChange})
       : super(key: key);
 
   @override
@@ -301,26 +304,42 @@ class QuestionAnswerWidget extends StatefulHookWidget {
 }
 
 class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
+  Set selected = {};
+  Set selected1 = {};
+  int currentindex = -1;
+  bool vlaue = false;
   @override
   void initState() {
     super.initState();
+    final careerProvider = context.read(carerNotifierProvider);
+    if (careerProvider.textReadibility) {
+      CareerPathNotificationAchievementQuestion loc = careerProvider
+          .selectedAchievement
+          .careerPathNotificationAchievementQuestion![widget.i];
+      for (int i = 0; i < loc.options!.length; i++) {
+        if (loc.careerPathNotificationAchievementAnswer!.first.id! ==
+            loc.options![i].id) {
+          currentindex = i;
+        }
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final careerProvider = useProvider(carerNotifierProvider);
     bool readibility = careerProvider.textReadibility;
-    String answer = readibility
-        ? careerProvider
-            .selectedAchievement
-            .careerPathNotificationAchievementQuestion![widget.i]
-            .careerPathNotificationAchievementAnswer!
-            .first
-            .answer
-            .toString()
-        : careerProvider.selectedAchievement
-            .careerPathNotificationAchievementQuestion![widget.i].answer
-            .toString();
+    // String answer = readibility
+    //     ? careerProvider
+    //         .selectedAchievement
+    //         .careerPathNotificationAchievementQuestion![widget.i]
+    //         .careerPathNotificationAchievementAnswer!
+    //         .first
+    //         .answer
+    //         .toString()
+    //     : careerProvider.selectedAchievement
+    //         .careerPathNotificationAchievementQuestion![widget.i].answer
+    //         .toString();
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: SingleChildScrollView(
@@ -348,33 +367,148 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
             const SizedBox(
               height: 2,
             ),
-            TextFormField(
-              readOnly: readibility,
-              initialValue: answer,
-              maxLines: 6,
-              onChanged: widget.onchnage,
-              style: const TextStyle(
-                fontSize: 16,
+            // TextFormField(
+            //   readOnly: readibility,
+            //   initialValue: answer,
+            //   maxLines: 6,
+            //   onChanged: widget.onchnage,
+            //   style: const TextStyle(
+            //     fontSize: 16,
+            //   ),
+            //   decoration: InputDecoration(
+            //       hintText: "Enter Your Answer",
+            //       hintStyle: const TextStyle(color: Colors.grey),
+            //       contentPadding:
+            //           const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            //       isCollapsed: true,
+            //       border: OutlineInputBorder(
+            //           borderRadius: BorderRadius.circular(5),
+            //           borderSide:
+            //               BorderSide(width: .5, color: primarySwatch[700]!)),
+            //       enabledBorder: OutlineInputBorder(
+            //           borderRadius: BorderRadius.circular(5),
+            //           borderSide:
+            //               BorderSide(width: .5, color: primarySwatch[700]!)),
+            //       focusedBorder: OutlineInputBorder(
+            //           borderRadius: BorderRadius.circular(5),
+            //           borderSide:
+            //               const BorderSide(width: 1, color: primaryColor))),
+            // )
+
+            Container(
+              height: 68 *
+                  careerProvider
+                      .selectedAchievement
+                      .careerPathNotificationAchievementQuestion![widget.i]
+                      .options!
+                      .length
+                      .toDouble(),
+              child: ListView.builder(
+                itemCount: careerProvider
+                    .selectedAchievement
+                    .careerPathNotificationAchievementQuestion![widget.i]
+                    .options!
+                    .length,
+                physics: NeverScrollableScrollPhysics(),
+                itemBuilder: (context, index) {
+                  return Stack(
+                    children: [
+                      Column(
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                if (!careerProvider.textReadibility) {
+                                  widget.onChange(widget.i);
+                                  selected1.contains(index)
+                                      ? selected1.remove(index)
+                                      : selected1.add(index);
+
+                                  currentindex = index;
+                                  // surveyProvider.updateAnswer(widget.i,
+                                  //     widget.textEditingController.text, index);
+                                }
+                              });
+                            },
+                            child: Card(
+                              // elevation: currentindex == index ? 5 : 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(vertical: 3),
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: currentindex == index
+                                          ? primarySwatch.shade900
+                                          : Colors.white,
+                                      width: 2),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    // Container(
+                                    //   margin: EdgeInsets.only(left: 10),
+                                    //   child: Text(
+                                    //     "${Chose1[index].char}",
+                                    //     style: TextStyle(
+                                    //       fontWeight: FontWeight.bold,
+                                    //       fontSize: 30,
+                                    //       color: selected1.contains(index)
+                                    //           ? primarySwatch.shade900
+                                    //           : Colors.grey[700],
+                                    //     ),
+                                    //   ),
+                                    // ),
+                                    // SizedBox(
+                                    //   width: size.width * 0.05,
+                                    // ),
+                                    Container(
+                                      margin: EdgeInsets.only(left: 15),
+                                      child: Text(
+                                        "${careerProvider.selectedAchievement.careerPathNotificationAchievementQuestion![widget.i].options![index].optionName}",
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: currentindex == index
+                                              ? primarySwatch.shade900
+                                              : Colors.grey[700],
+                                        ),
+                                      ),
+                                    ),
+                                    Radio(
+                                      groupValue: index,
+                                      value: currentindex,
+                                      onChanged: (val) {
+                                        setState(() {
+                                          if (!careerProvider.textReadibility) {
+                                            widget.onChange(widget.i);
+                                            selected1.contains(index)
+                                                ? selected1.remove(index)
+                                                : selected1.add(index);
+                                            currentindex = -1;
+                                            currentindex = index;
+                                            careerProvider.updateAnswer(
+                                                widget.i, index);
+                                          }
+                                        });
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
               ),
-              decoration: InputDecoration(
-                  hintText: "Enter Your Answer",
-                  hintStyle: const TextStyle(color: Colors.grey),
-                  contentPadding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  isCollapsed: true,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide:
-                          BorderSide(width: .5, color: primarySwatch[700]!)),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide:
-                          BorderSide(width: .5, color: primarySwatch[700]!)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(5),
-                      borderSide:
-                          const BorderSide(width: 1, color: primaryColor))),
-            )
+            ),
           ],
         ),
       ),

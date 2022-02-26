@@ -32,14 +32,15 @@ class _SplashScrrenState extends State<SplashScrren> {
   @override
   Widget build(BuildContext context) {
     final authNotifier = useProvider(authProvider);
+    final size = MediaQuery.of(context).size;
     return nextScreen
         ? AuthWrapper()
         : Scaffold(
             body: Center(
               child: Image.asset(
-                'assets/images/southwind_logo_single.png',
-                height: 200,
-                width: 200,
+                'assets/images/splash.png',
+                height: size.height,
+                width: size.width,
                 fit: BoxFit.cover,
               ),
             ),
