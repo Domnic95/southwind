@@ -234,16 +234,16 @@ class _LearningQuestiontabState extends State<LearningQuestiontab> {
                                             .submitAnswers();
                                         Navigator.pop(context);
                                         if (res) {
-                                          Navigator.push(context,
-                                              MaterialPageRoute(
-                                                  builder: (context) {
-                                            return CongratsScreen(
-                                              title: "Learning",
-                                              unAnsweredQuestion:
-                                                  unAnsweredQuestion,
-                                              totalquestion: questionLength,
-                                            );
-                                          }));
+                                          // Navigator.push(context,
+                                          //     MaterialPageRoute(
+                                          //         builder: (context) {
+                                          //   return CongratsScreen(
+                                          //     title: "Learning",
+                                          //     unAnsweredQuestion:
+                                          //         unAnsweredQuestion,
+                                          //     totalquestion: questionLength,
+                                          //   );
+                                          // }));
                                         }
                                       } else {
                                         showToast(

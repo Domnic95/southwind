@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:southwind/UI/components/youtubePlayer.dart';
 import 'package:southwind/data/providers/providers.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -882,22 +883,71 @@ class _DescriptionTextWidgetState extends State<DescriptionTextWidget> {
 }
 
 class WebViewExample extends StatefulWidget {
-  final String url;
-  const WebViewExample({required this.url});
+  String url;
+  WebViewExample({required this.url});
   @override
   WebViewExampleState createState() => WebViewExampleState();
 }
 
 class WebViewExampleState extends State<WebViewExample> {
+  WebViewController? controller;
   @override
   void initState() {
     super.initState();
+
     // Enable virtual display.
+    // FlutterWebviewPlugin().onUrlChanged.listen((event) {
+    //   log("url cahnged... " + event.toString());
+    // });
+    // FlutterWebviewPlugin().launch(widget.url);
+    // loadData();
     if (Platform.isAndroid) WebView.platform = AndroidWebView();
   }
 
+  loadData(String url) async {
+    if (url.startsWith("mailto") ||
+        url.startsWith("whatsup") ||
+        url.startsWith("file") ||
+        url.startsWith("telnet") ||
+        url.startsWith("intent") ||
+        url.startsWith("market") ||
+        url.startsWith("app://")) {
+      // log('Handle your Error Page here');
+      Navigator.pop(context);
+      await launch(widget.url);
+      // if (await canLaunch(url)) {}
+    }
+  }
+//   webView.setWebViewClient(new WebViewClient() {
+// @Override
+// public boolean shouldOverrideUrlLoading(WebView view, String url) {
+//     if (Uri.parse(url).getScheme().equals("market")) {
+//         try {
+//             Intent intent = new Intent(Intent.ACTION_VIEW);
+//             intent.setData(Uri.parse(url));
+//             Activity host = (Activity) view.getContext();
+//             host.startActivity(intent);
+//             return true;
+//         } catch (ActivityNotFoundException e) {
+//             Uri uri = Uri.parse(url);
+//             view.loadUrl("http://play.google.com/store/apps/" + uri.getHost() + "?" + uri.getQuery());
+//             return false;
+//         }
+
+//     }
+//     return false;
+// }
+// })
+
   @override
   Widget build(BuildContext context) {
+    log("loadded url " + widget.url);
+    // return WebviewScaffold(
+    //   url: widget.url,
+    //   appBar: new AppBar(
+    //     title: new Text("Widget webview"),
+    //   ),
+    // );
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -912,9 +962,93 @@ class WebViewExampleState extends State<WebViewExample> {
         body: WebView(
           javascriptMode: JavascriptMode.unrestricted,
           initialUrl: widget.url,
+
+          onWebViewCreated: (v) {},
+          onWebResourceError: (WebResourceError webviewerrr) {
+            loadData(webviewerrr.failingUrl!);
+            // log("Handle your Error Page here = ${webviewerrr.failingUrl}");
+          },
+          allowsInlineMediaPlayback: true,
+          // onWebViewCreated: (controller) {
+          //   log("url" + widget.url);
+          //   controller.loadUrl(
+          //     widget.url,
+          //   );
+          //   this.controller = controller;
+          // },
+          // onPageStarted: (s) {
+          //   log("page started " + s);
+          // },
+          // onWebResourceError: (e) {
+          //   if (e.failingUrl?.contains(RegExp('intent://')) ?? false) {
+          //     _launchURL(e.failingUrl.toString());
+          //   }
+          //   log("error " + e.failingUrl.toString());
+          //   // controller?.loadUrl(e.failingUrl
+          //   //     .toString()
+          //   //     .replaceAll("scheme=https", "scheme=http"));
+          // },
+
+          debuggingEnabled: true,
+          // javascriptMode: JavascriptMode.unrestricted,
+          // navigationDelegate: (NavigationRequest request) {
+          //   if (request.url.contains("uber")) {
+          //     _launchURL(request.url);
+          //     return NavigationDecision.prevent;
+          //   } else if (request.url.contains("tel:")) {
+          //     _launchURL(request.url);
+          //     return NavigationDecision.prevent;
+          //   } else if (request.url.contains("https://wa.me/")) {
+          //     _launchURL(request.url);
+          //     return NavigationDecision.prevent;
+          //   } else if (request.url.contains("mailto:")) {
+          //     _launchURL(request.url);
+          //   } else if (request.url.contains("market://")) {
+          //     return NavigationDecision.prevent;
+          //   }
+          // }
+
           // initialUrl: 'https://youtu.be/3aiAxE53yhA',
         ),
       ),
     );
   }
 }
+
+// class WebViewExample extends StatefulWidget {
+//   final String url;
+//   const WebViewExample({required this.url});
+//   @override
+//   WebViewExampleState createState() => WebViewExampleState();
+// }
+
+// class WebViewExampleState extends State<WebViewExample> {
+//   @override
+//   void initState() {
+//     super.initState();
+//     // Enable virtual display.
+//     if (Platform.isAndroid) WebView.platform = AndroidWebView();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return SafeArea(
+//       child: Scaffold(
+//         appBar: AppBar(
+//           centerTitle: true,
+//           backgroundColor: primaryColor,
+//           title: Container(
+//             // color: Colors.teal,
+//             height: 50,
+//             child: Image.asset("assets/images/logo.png"),
+//           ),
+//         ),
+//         body: WebView(
+//           javascriptMode: JavascriptMode.unrestricted,
+//           initialUrl: widget.url,
+//           // initialUrl: 'https://youtu.be/3aiAxE53yhA',
+//         ),
+//       ),
+//     );
+//   }
+// }
