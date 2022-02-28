@@ -10,9 +10,11 @@ import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/career_tab/components/information_dialog.dart';
 import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
 import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
+import 'package:southwind/UI/surveys_tab/Page/chartScreen.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/providers.dart';
 import 'package:southwind/utils/helpers.dart';
+
 
 class QuestionsPage extends StatefulHookWidget {
   const QuestionsPage({Key? key}) : super(key: key);
@@ -65,8 +67,6 @@ class _QuestionsPageState extends State<QuestionsPage> {
   Widget build(BuildContext context) {
     final careerProvider = useProvider(carerNotifierProvider);
 
-    questionLength = careerProvider
-        .selectedAchievement.careerPathNotificationAchievementQuestion!.length;
     bool readibility = careerProvider.textReadibility;
     final size = MediaQuery.of(context).size;
     const double radius = 20;
@@ -112,7 +112,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 18),
                         child: Text(
-                          "Being Exceptional at Accountabilty",
+                          careerProvider.selectedAchievement.name.toString(),
                           style: TextStyle(
                               color: primarySwatch[700],
                               fontWeight: FontWeight.bold,
@@ -154,7 +154,9 @@ class _QuestionsPageState extends State<QuestionsPage> {
                       // controller.text = c;
 
                       setState(() {
+                        log('selectedIndex after ${unAnsweredQuestion}');
                         unAnsweredQuestion.remove(i + 1);
+                        log('selectedIndex before ${unAnsweredQuestion}');
                       });
                     },
                     i: i,
@@ -208,9 +210,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                           )
                         : Expanded(child: Container()),
                     currentQuestion == questionLength - 1 && readibility
-                        ? Expanded(
-                            child: Container(),
-                          )
+                        ? Expanded(child: Container())
                         : CommonButton(
                             isExpanded: true,
                             lable: currentQuestion == questionLength - 1
@@ -224,49 +224,56 @@ class _QuestionsPageState extends State<QuestionsPage> {
                               //   unAnsweredQuestion.remove(currentQuestion + 1);
                               // }
 
-                              setState(() {
-                                if (currentQuestion < questionLength - 1)
-                                  currentQuestion++;
+                              if (currentQuestion + 1 < questionLength) {
+                                currentQuestion++;
                                 animateToQuestion();
-                              });
-                              // animateToQuestion();
-                              if (currentQuestion == questionLength - 1) {
-                                if (unAnsweredQuestion.isEmpty) {
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return LoadingWidget();
-                                      });
-                                  final res = await context
-                                      .read(carerNotifierProvider)
-                                      .submitAnswers();
-                                  Navigator.pop(context);
-                                  if (res) {
-                                    Navigator.push(context,
-                                        MaterialPageRoute(builder: (context) {
-                                      return CongratsScreen(
-                                        title: "Career path",
-                                        summaryBool: false,
-                                        unAnsweredQuestion: unAnsweredQuestion,
-                                        totalquestion: questionLength,
-                                      );
-                                    }));
+                                setState(() {});
+                              } else {
+                                if (currentQuestion == questionLength - 1 &&
+                                    !careerProvider.textReadibility) {
+                                  if (unAnsweredQuestion.isEmpty) {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return LoadingWidget();
+                                        });
+                                    final res = await context
+                                        .read(carerNotifierProvider)
+                                        .submitAnswers();
+                                    Navigator.pop(context);
+                                    if (res) {
+                                      Navigator.push(context,
+                                          MaterialPageRoute(builder: (context) {
+                                        return CongratsScreen(
+                                          survey: false,
+                                          title: "Career path",
+                                          summaryBool: true,
+                                          unAnsweredQuestion:
+                                              unAnsweredQuestion,
+                                          totalquestion: questionLength,
+                                        );
+                                      }));
+                                    }
+                                  } else {
+                                    showToast(
+                                        'Some questions are not answered');
                                   }
-                                } else {
-                                  showToast('Some questions are not answered');
-                                }
 
-                                // Navigator.push(context,
-                                //     MaterialPageRoute(builder: (context) {
-                                //   return SummaryScreen(
-                                //     unAnsweredQuestion: unAnsweredQuestion,
-                                //     totalquestion: questionLength,
-                                //     onTaps: () async {
+                                  // Navigator.push(context,
+                                  //     MaterialPageRoute(builder: (context) {
+                                  //   return SummaryScreen(
+                                  //     unAnsweredQuestion: unAnsweredQuestion,
+                                  //     totalquestion: questionLength,
+                                  //     onTaps: () async {
 
-                                //     },
-                                //   );
-                                // }));
+                                  //     },
+                                  //   );
+                                  // }));
+                                } else {}
                               }
+
+                              // animateToQuestion();
+                              // log('selectedIndex before ${currentQuestion} \\ ${questionLength - 1}  ');
                             },
                             isLeading: false,
                             icon: Padding(
@@ -317,7 +324,8 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
           .selectedAchievement
           .careerPathNotificationAchievementQuestion![widget.i];
       for (int i = 0; i < loc.options!.length; i++) {
-        if (loc.careerPathNotificationAchievementAnswer!.first.id! ==
+        if (loc.careerPathNotificationAchievementAnswer!.first
+                .selectedAnswerId! ==
             loc.options![i].id) {
           currentindex = i;
         }

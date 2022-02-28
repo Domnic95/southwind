@@ -1,3 +1,5 @@
+import 'package:southwind/Models/career/careerModel.dart';
+import 'package:southwind/Models/chart/chart.dart';
 import 'package:southwind/routes/routes.dart';
 import 'package:pie_chart/pie_chart.dart' as chart;
 import 'package:southwind/Models/survey/individual_survey.dart';
@@ -15,19 +17,81 @@ class ChartScreen extends StatefulHookWidget {
   @override
   State<ChartScreen> createState() => _ChartScreenState();
 }
- 
+
 class _ChartScreenState extends State<ChartScreen> {
   // List<charts.Series<SurveyNotificationOption, String>> series = [
 
   //   ];
+  List<ChartModel> chartModelList = [];
   @override
   void initState() {
     super.initState();
+    loadData();
+  }
+
+  loadData() {
+    survey();
+    // if (widget.survey) {
+
+    // } else {
+    //   carrerPath();
+    // }
+    setState(() {});
+  }
+
+  // carrerPath() {
+  //   final res = context.read(carerNotifierProvider);
+  //   for (int j = 0;
+  //       j <
+  //           res.selectedAchievement.careerPathNotificationAchievementQuestion!
+  //               .length;
+  //       j++) {
+  //     Map<String, double> dataMap = {};
+  //     for (int i = 0;
+  //         i <
+  //             res
+  //                 .selectedAchievement
+  //                 .careerPathNotificationAchievementQuestion![j]
+  //                 .options!
+  //                 .length;
+  //         i++) {
+  //       CareerOption loc = res.selectedAchievement
+  //           .careerPathNotificationAchievementQuestion![j].options![i];
+  //       dataMap[loc.optionName!] = loc.score!.toDouble();
+  //     }
+
+  //     chartModelList.add(ChartModel(
+  //         data: dataMap,
+  //         question: res.selectedAchievement
+  //             .careerPathNotificationAchievementQuestion![j].question!));
+  //   }
+  // }
+
+  survey() async {
+    final res = context.read(surveyNotifierProvider);
+    for (int j = 0;
+        j < res.selectedSurvey!.surveyNotificationQuestion!.length;
+        j++) {
+      Map<String, double> dataMap = {};
+      for (int i = 0;
+          i <
+              res.selectedSurvey!.surveyNotificationQuestion![j]
+                  .surveyNotificationOption!.length;
+          i++) {
+        SurveyNotificationOption loc = res.selectedSurvey!
+            .surveyNotificationQuestion![j].surveyNotificationOption![i];
+        dataMap[loc.optionName!] = loc.answerCount!.toDouble();
+      }
+
+      chartModelList.add(ChartModel(
+          data: dataMap,
+          question:
+              res.selectedSurvey!.surveyNotificationQuestion![j].question!));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final res = context.read(surveyNotifierProvider);
     final size = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
@@ -72,30 +136,29 @@ class _ChartScreenState extends State<ChartScreen> {
             Expanded(
               child: MasonryGridView.count(
                   crossAxisCount: 2,
-               
+
                   // gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   //   childAspectRatio: size.width/size.height,
                   //   mainAxisExtent: size.height,
                   // crossAxisCount: 2),
-                  itemCount:
-                      res.selectedSurvey!.surveyNotificationQuestion!.length,
+                  itemCount: chartModelList.length,
                   itemBuilder: (context, index) {
-                    Map<String, double> dataMap = {};
+                    // Map<String, double> dataMap = {};
 
-                    for (int i = 0;
-                        i <
-                            res
-                                .selectedSurvey!
-                                .surveyNotificationQuestion![index]
-                                .surveyNotificationOption!
-                                .length;
-                        i++) {
-                      SurveyNotificationOption loc = res
-                          .selectedSurvey!
-                          .surveyNotificationQuestion![index]
-                          .surveyNotificationOption![i];
-                      dataMap[loc.optionName!] = loc.answerCount!.toDouble();
-                    }
+                    // for (int i = 0;
+                    //     i <
+                    //         res
+                    //             .selectedSurvey!
+                    //             .surveyNotificationQuestion![index]
+                    //             .surveyNotificationOption!
+                    //             .length;
+                    //     i++) {
+                    //   SurveyNotificationOption loc = res
+                    //       .selectedSurvey!
+                    //       .surveyNotificationQuestion![index]
+                    //       .surveyNotificationOption![i];
+                    //   dataMap[loc.optionName!] = loc.answerCount!.toDouble();
+                    // }
 
                     return Container(
                       // decoration:
@@ -109,7 +172,7 @@ class _ChartScreenState extends State<ChartScreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                   (index + 1).toString() + ". ",
+                                  (index + 1).toString() + ". ",
                                   style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
@@ -117,10 +180,7 @@ class _ChartScreenState extends State<ChartScreen> {
                                 ),
                                 Expanded(
                                   child: Text(
-                                    res
-                                        .selectedSurvey!
-                                        .surveyNotificationQuestion![index]
-                                        .question!,
+                                    chartModelList[index].question,
                                     style: TextStyle(
                                       fontSize: 16,
                                       // fontWeight: FontWeight.bold
@@ -134,7 +194,7 @@ class _ChartScreenState extends State<ChartScreen> {
                             height: 10,
                           ),
                           chart.PieChart(
-                            dataMap: dataMap,
+                            dataMap: chartModelList[index].data,
                             // chartRadius: 20,
 
                             animationDuration: Duration(milliseconds: 800),

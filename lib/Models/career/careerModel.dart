@@ -130,6 +130,7 @@ class CareerPathNotificationAchievementQuestion {
 
   factory CareerPathNotificationAchievementQuestion.fromJson(
       Map<String, dynamic> json) {
+    log('questionAnser ${json["id"]}');
     return CareerPathNotificationAchievementQuestion(
         id: json["id"],
         careerPathNotificationAchievementId:
@@ -200,16 +201,16 @@ class CareerOption {
 }
 
 class CareerAnswer {
-  CareerAnswer({
-    this.id,
-    this.careerPathNotificationAchievementId,
-    this.careerPathNotificationAchievementQuestionId,
-    this.profileId,
-    this.answer,
-    this.answerStatus,
-    this.createdAt,
-    this.updatedAt,
-  });
+  CareerAnswer(
+      {this.id,
+      this.careerPathNotificationAchievementId,
+      this.careerPathNotificationAchievementQuestionId,
+      this.profileId,
+      this.answer,
+      this.answerStatus,
+      this.createdAt,
+      this.updatedAt,
+      this.selectedAnswerId});
 
   int? id;
   int? careerPathNotificationAchievementId;
@@ -219,6 +220,7 @@ class CareerAnswer {
   dynamic answerStatus;
   DateTime? createdAt;
   DateTime? updatedAt;
+  int? selectedAnswerId;
 
   factory CareerAnswer.fromJson(Map<String, dynamic> json) => CareerAnswer(
         id: json["id"],
@@ -228,6 +230,8 @@ class CareerAnswer {
             json["career_path_notification_achievement_question_id"],
         profileId: json["profile_id"],
         answer: json["answer"],
+        selectedAnswerId:
+            json['career_path_notification_achievement_option_id'],
         answerStatus: json["answer_status"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),

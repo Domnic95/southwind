@@ -245,7 +245,7 @@ class _Questions_TabState extends State<Questions_Tab> {
                                           .surveyNotificationQuestion!.length) {
                                 Navigator.push(context,
                                     MaterialPageRoute(builder: (context) {
-                                  return ChartScreen();
+                                  return ChartScreen( );
                                 }));
                               } else {
                                 if (currentQuestion + 1 <
@@ -270,6 +270,7 @@ class _Questions_TabState extends State<Questions_Tab> {
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (context) {
                                         return CongratsScreen(
+                                          survey: true,
                                           title: "Survey",
                                           unAnsweredQuestion:
                                               unAnsweredQuestion,
