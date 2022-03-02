@@ -1,7 +1,14 @@
+import 'dart:developer';
+
+import 'package:dio/dio.dart';
+import 'package:southwind/Models/team/team_member.dart';
 import 'package:southwind/data/http_client/dio_client.dart';
 import 'package:southwind/data/providers/base_notifer.dart';
 
 class JobsService extends BaseNotifier {
+  JobsService(){
+    loadTeamMember();
+  }
   List<String> typeJob = ["Residencial", "Commercial"];
   List<String> typePayment = ["Select payment type", "Check", "Credit Card"];
   List<String> typeMember = [
@@ -17,6 +24,16 @@ class JobsService extends BaseNotifier {
     "10+"
   ];
   List<String> additionalMembers = ["Aarion Jenkins", "Aaron Hosack"];
+  List<TeamMember> teamMembers = [];
+  Future loadTeamMember() async{
+    final response = await dioClient.getRequest(apiEnd: api_teamMember);
+    if(response is Response){
+      if(response.statusCode == 200 ){
+          teamMembers = (response.data["team_members"] as List).map((e) => TeamMember.fromJson(e)).toList();
+      }
+      notifyListeners();
+    }
+  }
   Future addService({
     required String job_id,
     required String team_member,
@@ -43,9 +60,45 @@ class JobsService extends BaseNotifier {
       if (additional_team_member == "2")
         "additional_my_job_revenue": additional_my_job_revenue,
       if (payment_type == typePayment.first)
-        "payment_type": payment_type == typePayment,
+        "payment_type": payment_type == typePayment.first ? 1 : 2,
     };
+    log(data.toString());
     // await dioClient.postWithFormData(apiEnd: api_addPost, data: data);
     // notifyListeners();
   }
+
+ Future<bool> createJob({required String jobid,required String jobType,
+  required String cardTips,
+  required String teamMemberId,
+  required String date,required String paymentType,
+  required int numberOfMember,required int totalRevenue,required int myRevenue,
+  int? adiitionMemberId,
+  required String aditionRevenue})async{
+    Map<String,dynamic> data = {
+      "job_id" : jobid,
+      "team_member" : teamMemberId,
+      "job_type" : jobType == typeJob.first ? 1 : 2,
+      "job_date" : date,
+      "my_credit_card_tip" : cardTips,
+      "total_job_revenue" : totalRevenue,
+      "my_job_revenue" : myRevenue,
+      "number_of_team_member": numberOfMember,
+      if(numberOfMember == 2)
+      "additional_team_member" : adiitionMemberId,
+      if(numberOfMember == 2)
+      "additional_my_job_revenue" : aditionRevenue,
+      "payment_type" : paymentType == typePayment[1] ? 1 : 2,
+    };
+    final res = await dioClient.postWithFormData(apiEnd: api_addPost,data: data);
+    print(data.toString());
+    if(res is Response){
+      print(res.data.toString());
+      if(res.statusCode == 200 && res.data["isSuccess"]){
+        return true;
+      }
+    }
+    return false;
+    
+  }
+  
 }

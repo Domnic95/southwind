@@ -481,11 +481,11 @@ class _HomeDrawerState extends State<HomeDrawer> {
         labelName: 'Time Card',
         icon: Icon(Icons.timer),
       ),
-      // DrawerList(
-      //   index: DrawerIndex.Jobs,
-      //   labelName: 'Jobs',
-      //   icon: Icon(Icons.work_outline),
-      // ),
+      DrawerList(
+        index: DrawerIndex.Jobs,
+        labelName: 'Jobs',
+        icon: Icon(Icons.work_outline),
+      ),
       // DrawerList(
       //   index: DrawerIndex.Goals,
       //   labelName: 'Goals',

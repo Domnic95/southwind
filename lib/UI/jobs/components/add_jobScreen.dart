@@ -19,7 +19,7 @@ class _AddJobState extends State<AddJob> {
 
   late String selectedPayment;
   late String selectedMember;
-  late String selectedAdditionalMember;
+   dynamic selectedAdditionalMember;
   DateTime selectedDate = DateTime.now();
   // List<String> typeJob = ["Residencial", "Commercial"];
   // List<String> typePayment = ["Select payment type", "Check", "Credit Card"];
@@ -39,25 +39,28 @@ class _AddJobState extends State<AddJob> {
 
   TextEditingController jobIdController = TextEditingController();
   TextEditingController dateController = TextEditingController();
+  TextEditingController creditTipController = TextEditingController();
   TextEditingController myCreditTipController = TextEditingController();
   TextEditingController totalJobRevenue = TextEditingController();
   TextEditingController myJobRevenue = TextEditingController();
   TextEditingController additionalMyJobRevenue =
-      TextEditingController(text: "50");
+      TextEditingController();
 
   final formKey = GlobalKey<FormState>();
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     final jobsService = context.read(jobsNotifierProvider);
     selectedJob = jobsService.typeJob.first;
     selectedPayment = jobsService.typePayment.first;
     selectedMember = jobsService.typeMember.first;
-    selectedAdditionalMember = jobsService.additionalMembers.first;
     dateController.text =
         "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
     setState(() {});
+  }
+  calcualteRevenue(){
+    myJobRevenue.text = (int.parse(totalJobRevenue.text) / int.parse(selectedMember)).toString();
+  additionalMyJobRevenue.text = myJobRevenue.text;
   }
 
   @override
@@ -96,7 +99,7 @@ class _AddJobState extends State<AddJob> {
                   height: ver,
                 ),
                 EditTextfild(
-                  controller: jobIdController,
+                  controller: creditTipController,
                   hint: "Enter my credit card tip",
                 ),
 
@@ -130,7 +133,10 @@ class _AddJobState extends State<AddJob> {
                   height: ver,
                 ),
                 EditTextfild(
-                  controller: jobIdController,
+                  onChnage: (c){
+                    calcualteRevenue();
+                  },
+                  controller: totalJobRevenue,
                   hint: "Enter total job revenue",
                 ),
                 SizedBox(
@@ -142,6 +148,7 @@ class _AddJobState extends State<AddJob> {
                     setState(() {
                       selectedMember = c!;
                     });
+                    calcualteRevenue();
                   },
                   title: jobsService.typeMember,
                   selectedvalue: selectedMember,
@@ -150,24 +157,24 @@ class _AddJobState extends State<AddJob> {
                   height: ver,
                 ),
                 EditTextfild(
-                  controller: jobIdController,
+                  controller: myJobRevenue,
                   hint: "Enter my job revenue",
                 ),
-                if (selectedMember == "2")
+                if (selectedMember == "2" && jobsService.teamMembers.length > 0)
                   Column(
                     children: [
                       SizedBox(
                         height: ver,
                       ),
-                      DropDownWidget(
+                      DropDownWidget2(
                         labelTitle: "Additional team member",
                         onChanged: (c) {
                           setState(() {
                             selectedAdditionalMember = c!;
                           });
                         },
-                        title: jobsService.additionalMembers,
-                        selectedvalue: selectedAdditionalMember,
+                        title: jobsService.teamMembers.map((e) => DropDownItemModal(label: e.profileFirstName.toString(),val: e.id)).toList(),
+                        selectedvalue: selectedAdditionalMember != null ? selectedAdditionalMember : jobsService.teamMembers.first.id,
                       ),
                       SizedBox(
                         height: ver,
@@ -183,19 +190,7 @@ class _AddJobState extends State<AddJob> {
                 ),
                 InkWell(
                   onTap: () async {
-                    await jobsService.addService(
-                        job_id: jobIdController.text,
-                        team_member: selectedMember,
-                        job_type: selectedJob,
-                        job_date: dateController.text,
-                        my_credit_card_tip: myCreditTipController.text,
-                        total_job_revenue: totalJobRevenue.text,
-                        number_of_team_member: selectedMember,
-                        additional_team_member: selectedAdditionalMember,
-                        additional_my_job_revenue: additionalMyJobRevenue.text,
-                        payment_type: selectedPayment);
-                    showToast("Add sucessfully");
-                    Navigator.pop(context);
+                   _AddJob();
                   },
                   child: Container(
                     width: size.width,
@@ -224,6 +219,53 @@ class _AddJobState extends State<AddJob> {
         ),
       ),
     );
+  }
+  _AddJob() async {
+    final job = context.read(jobsNotifierProvider);
+    if(jobIdController.text.isEmpty){
+      showToast("Enter Job Id");
+      return;
+    }
+    if(creditTipController.text.isEmpty){
+      showToast("Enter credit trips");
+      return;
+    }
+    if(selectedPayment == job.typePayment.first){
+      showToast("Select payment type");
+      return;
+    }
+    if(totalJobRevenue.text.isEmpty){
+      showToast("Enter revenue");
+    }
+
+final res = await job.createJob(
+                      jobid: jobIdController.text,
+                      teamMemberId: (context.read(authProvider).userData?.id).toString(),
+                     jobType: selectedJob,
+                      cardTips: creditTipController.text,
+                      date: dateController.text,
+                       paymentType: selectedPayment,
+                        numberOfMember: int.parse(selectedMember),
+                         totalRevenue: int.parse(totalJobRevenue.text),
+                          myRevenue: double.parse(myJobRevenue.text).toInt(),
+                          adiitionMemberId: selectedAdditionalMember != null ? selectedAdditionalMember : job.teamMembers.first.id,
+                           aditionRevenue: additionalMyJobRevenue.text,);
+                    // await jobsService.addService(
+                    //     job_id: jobIdController.text,
+                    //     team_member: selectedMember,
+                    //     job_type: selectedJob,
+                    //     job_date: dateController.text,
+                    //     my_credit_card_tip: myCreditTipController.text,
+                    //     total_job_revenue: totalJobRevenue.text,
+                    //     number_of_team_member: selectedMember,
+                    //     additional_team_member: selectedAdditionalMember,
+                    //     additional_my_job_revenue: additionalMyJobRevenue.text,
+                    //     payment_type: selectedPayment);
+                    if(res){
+                    showToast("Add sucessfully");
+                    Navigator.pop(context);
+
+                    }
   }
 
   _selectDate(BuildContext context) async {

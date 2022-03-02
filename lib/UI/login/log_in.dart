@@ -208,6 +208,7 @@ class EditTextfild extends StatelessWidget {
   late Icon? prefixicon;
   late Widget? suffixicon;
   late int? number;
+  Function(String)? onChnage;
   late Widget? suffix;
   late String? onsaved;
   late bool passwordshow;
@@ -227,6 +228,7 @@ class EditTextfild extends StatelessWidget {
       this.passwordshow = true,
       this.onsaved,
       this.keybordtype,
+      this.onChnage,
       this.padding = const EdgeInsets.all(12),
       this.number,
       this.suffixicon})
@@ -234,6 +236,7 @@ class EditTextfild extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      onChanged: onChnage,
       readOnly: readibility!,
       controller: controller,
       obscureText: !passwordshow,
@@ -265,7 +268,6 @@ class EditTextfild extends StatelessWidget {
     );
   }
 }
-
 class DropDownWidget extends StatelessWidget {
   final List<String> title;
   final String labelTitle;
@@ -308,4 +310,54 @@ class DropDownWidget extends StatelessWidget {
       }).toList(),
     );
   }
+}
+
+class DropDownWidget2 extends StatelessWidget {
+  final List<DropDownItemModal> title;
+  final String labelTitle;
+  final ValueChanged<dynamic?> onChanged;
+  final dynamic selectedvalue;
+  final EdgeInsetsGeometry? padding;
+  const DropDownWidget2(
+      {required this.onChanged,
+      required this.title,
+      required this.labelTitle,
+      required this.selectedvalue,
+      this.padding = const EdgeInsets.all(10),
+      Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return DropdownButtonFormField<dynamic>(
+      decoration: InputDecoration(
+        isCollapsed: true,
+        contentPadding: padding,
+        label: Text(labelTitle),
+        hintStyle: TextStyle(
+            fontSize: 16, color: Colors.grey, fontWeight: FontWeight.w500),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey, width: 1.5)),
+        enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey)),
+      ),
+      value: selectedvalue,
+      onChanged: onChanged,
+      items: title.map((e) {
+        return DropdownMenuItem<dynamic>(
+          value: e.val,
+          // onTap: onChanged,
+          child: Text(e.label),
+        );
+      }).toList(),
+    );
+  }
+}
+
+class DropDownItemModal{
+  String label;
+  dynamic val;
+  DropDownItemModal({required this.label,this.val});
 }
