@@ -78,6 +78,19 @@ class _AddJobState extends State<AddJob> {
             child: Column(
               children: [
                 EditTextfild(
+                  readibility: true,
+                  suffixicon: InkWell(
+                      onTap: () {
+                        _selectDate(context);
+                      },
+                      child: Icon(Icons.calendar_today)),
+                  controller: dateController,
+                  hint: "Select job date",
+                ),
+                SizedBox(
+                  height: ver,
+                ),
+                EditTextfild(
                   
                   controller: jobIdController,
                   hint: "Enter Job Id",
@@ -106,17 +119,27 @@ class _AddJobState extends State<AddJob> {
                 SizedBox(
                   height: ver,
                 ),
-                EditTextfild(
-                  readibility: true,
-                  suffixicon: InkWell(
-                      onTap: () {
-                        _selectDate(context);
-                      },
-                      child: Icon(Icons.calendar_today)),
-                  controller: dateController,
-                  hint: "Select job date",
+                
+              
+                DropDownWidget(
+                  labelTitle: "Number of team member",
+                  onChanged: (c) {
+                    setState(() {
+                      selectedMember = c!;
+                    });
+                    calcualteRevenue();
+                  },
+                  title: jobsService.typeMember,
+                  selectedvalue: selectedMember,
                 ),
                 SizedBox(
+                  height: ver,
+                ),
+                EditTextfild(
+                  controller: myJobRevenue,
+                  hint: "Enter my job revenue",
+                ),
+                 SizedBox(
                   height: ver,
                 ),
                 DropDownWidget(
@@ -142,24 +165,7 @@ class _AddJobState extends State<AddJob> {
                 SizedBox(
                   height: ver,
                 ),
-                DropDownWidget(
-                  labelTitle: "Number of team member",
-                  onChanged: (c) {
-                    setState(() {
-                      selectedMember = c!;
-                    });
-                    calcualteRevenue();
-                  },
-                  title: jobsService.typeMember,
-                  selectedvalue: selectedMember,
-                ),
-                SizedBox(
-                  height: ver,
-                ),
-                EditTextfild(
-                  controller: myJobRevenue,
-                  hint: "Enter my job revenue",
-                ),
+                
                 if (selectedMember == "2" && jobsService.teamMembers.length > 0)
                   Column(
                     children: [

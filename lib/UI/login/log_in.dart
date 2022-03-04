@@ -21,6 +21,7 @@ class _Log_InState extends State<Log_In> {
   String password = "";
   String passworderror = "";
   bool hidepassword = false;
+  bool keep_me_logged_in = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,6 +93,18 @@ class _Log_InState extends State<Log_In> {
                   ),
                   passwordshow: hidepassword,
                 ),
+                    SizedBox(
+                  height: 15,
+                ),
+                Row(children: [
+                  Checkbox(value: keep_me_logged_in, onChanged: (v){
+                    keep_me_logged_in = v ?? false;
+                    setState(() {
+                                          
+                                        });
+                  }),
+                  Text("Keep me logged in")
+                ],),
                 SizedBox(
                   height: 15,
                 ),
@@ -195,7 +208,7 @@ class _Log_InState extends State<Log_In> {
           });
       await context
           .read(authProvider)
-          .login(_emailcontroller.text, _passwordcontroller.text);
+          .login(_emailcontroller.text, _passwordcontroller.text,keep_me_logged_in);
       Navigator.pop(context);
     }
   }

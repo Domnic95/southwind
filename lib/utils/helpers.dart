@@ -52,8 +52,19 @@ class Utils {
   static removeSingleKey(String key) {
     sharedPreferences.remove(key);
   }
+
+  static setBool(String key,bool val){
+    sharedPreferences.setBool(key, val);
+  }
+  static bool? getBool(String key){
+    return sharedPreferences.getBool(key);
+  }
 }
 
 showToast(String s) {
   Fluttertoast.showToast(msg: s, gravity: ToastGravity.SNACKBAR);
+}
+
+String DateToYYMMDD(DateTime dateTime){
+  return "${dateTime.year}-${dateTime.month}-${dateTime.day}"; 
 }

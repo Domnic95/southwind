@@ -1,15 +1,19 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:southwind/Models/jobs/job_modal.dart';
+import 'package:southwind/Models/jobs/my_job_modal.dart';
 import 'package:southwind/Models/team/team_member.dart';
 import 'package:southwind/data/http_client/dio_client.dart';
 import 'package:southwind/data/providers/base_notifer.dart';
+import 'package:southwind/utils/helpers.dart';
 
 class JobsService extends BaseNotifier {
   JobsService(){
     loadTeamMember();
+    fetchTodaysJob();
   }
-  List<String> typeJob = ["Residencial", "Commercial"];
+  List<String> typeJob = ["Residential", "Commercial"];
   List<String> typePayment = ["Select payment type", "Check", "Credit Card"];
   List<String> typeMember = [
     "1",
@@ -25,6 +29,11 @@ class JobsService extends BaseNotifier {
   ];
   List<String> additionalMembers = ["Aarion Jenkins", "Aaron Hosack"];
   List<TeamMember> teamMembers = [];
+  MyJobs? todaysMyJob;
+  MyJobs? archeive;
+
+  List<JobModal> todaysJob = [];
+  List<JobModal> pastJobs = [];
   Future loadTeamMember() async{
     final response = await dioClient.getRequest(apiEnd: api_teamMember);
     if(response is Response){
@@ -94,11 +103,55 @@ class JobsService extends BaseNotifier {
     if(res is Response){
       print(res.data.toString());
       if(res.statusCode == 200 && res.data["isSuccess"]){
+        fetchTodaysJob();
         return true;
       }
     }
     return false;
     
+  }
+  Future fetchTodaysJob() async {
+    DateTime time = DateTime.now();
+    final res = await dioClient.getRequest(apiEnd: api_todaysJob+"?job_date="+DateToYYMMDD(time));
+    if(res is Response){
+      if(res.statusCode == 200){
+        if(res.data["my_jobs"] != null){
+          todaysMyJob = MyJobs.fromJson(res.data["my_jobs"]);
+          final int job_count = res.data["my_jobs"]["jobs_count"];
+          if(res.data["my_jobs"]["jobs"] != null){
+            todaysJob = (res.data["my_jobs"]["jobs"] as List).map((e) => JobModal.fromJson(e)..setAJS(job_count)).toList();
+          }
+        }
+        else{
+          todaysJob = [];
+        }
+        
+        notifyListeners();
+        return;
+      }
+    }
+  }
+  Future fetchPastJobs(DateTime date) async{
+    print(date.toString());
+    final res = await dioClient.getRequest(apiEnd: api_todaysJob+"?job_date="+DateToYYMMDD(date));
+     if(res is Response){
+      if(res.statusCode == 200){
+        if(res.data["my_jobs"] != null){
+          archeive = MyJobs.fromJson(res.data["my_jobs"]);
+          final int job_count = res.data["my_jobs"]["jobs_count"];
+          if(res.data["my_jobs"]["jobs"] != null){
+            pastJobs = (res.data["my_jobs"]["jobs"] as List).map((e) => JobModal.fromJson(e)..setAJS(job_count)).toList();
+          }
+        }
+        else{
+          pastJobs = [];
+          archeive = null;
+        }
+        
+        notifyListeners();
+        return;
+      }
+    }
   }
   
 }

@@ -474,16 +474,18 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
                                     // SizedBox(
                                     //   width: size.width * 0.05,
                                     // ),
-                                    Container(
-                                      margin: EdgeInsets.only(left: 15),
-                                      child: Text(
-                                        "${careerProvider.selectedAchievement.careerPathNotificationAchievementQuestion![widget.i].options![index].optionName}",
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold,
-                                          color: currentindex == index
-                                              ? primarySwatch.shade900
-                                              : Colors.grey[700],
+                                    Expanded(
+                                      child: Container(
+                                        margin: EdgeInsets.only(left: 15),
+                                        child: Text(
+                                          "${careerProvider.selectedAchievement.careerPathNotificationAchievementQuestion![widget.i].options![index].optionName}",
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: currentindex == index
+                                                ? primarySwatch.shade900
+                                                : Colors.grey[700],
+                                          ),
                                         ),
                                       ),
                                     ),

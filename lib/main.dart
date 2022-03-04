@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/constant/Global.dart';
 import 'package:southwind/routes/routes.dart';
+import 'package:southwind/utils/helpers.dart';
+import 'package:southwind/utils/utilsContstant.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,6 +20,9 @@ void main() async {
       await Firebase.initializeApp();
       WidgetsFlutterBinding.ensureInitialized();
       sharedPreferences = await SharedPreferences.getInstance();
+      if(!(Utils.getBool(key_keep_me_logged_in) ?? false)){
+        Utils.removePref();
+      }
       FlutterAppBadger.removeBadge();
       SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
           // systemNavigationBarColor: Colors.white, // navigation bar color

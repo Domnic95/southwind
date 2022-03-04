@@ -63,3 +63,4 @@ const api_sendMessage = '/set_group_msgs';
 const api_addPost = '/jobs/add';
 const int offsetDifference = 20;
 const api_teamMember = "/team_members";
+const api_todaysJob = "/jobs";

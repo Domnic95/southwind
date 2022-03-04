@@ -36,9 +36,9 @@ class AuthNotifier extends BaseNotifier {
     }
   }
 
-  login(String email, password) async {
+  login(String email, password,bool keepMeLoggedIn) async {
     String? token = await firebaseMessaging.getToken();
-
+    Utils.setBool(key_keep_me_logged_in, keepMeLoggedIn);
     final response =
         await dioClient.postWithFormData(apiEnd: api_loginApiEnd, data: {
       'email': email,

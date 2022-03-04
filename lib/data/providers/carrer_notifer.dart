@@ -77,7 +77,7 @@ class CareerProvider extends BaseNotifier {
 
     final res = await dioClient.getRequest(
         apiEnd: api_career_single_career + selectedCareerPath.id.toString());
-
+        print("api......"+api_career_single_career + selectedCareerPath.id.toString());
     if (res.data['careerpath'] != null) {
       allSelectedCareerPath = List<CareerAchievement>.from(res
           .data['careerpath']['career_path_notification_achievement']

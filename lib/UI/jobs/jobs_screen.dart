@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:southwind/Models/jobs/job_modal.dart';
 import 'package:southwind/UI/jobs/components/add_jobScreen.dart';
+import 'package:southwind/UI/login/log_in.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
+import 'package:southwind/data/providers/providers.dart';
 import 'package:southwind/routes/routes.dart';
+import 'package:southwind/utils/helpers.dart';
 
 class JobScreen extends StatefulWidget {
   JobScreen({Key? key}) : super(key: key);
@@ -11,8 +17,13 @@ class JobScreen extends StatefulWidget {
 }
 
 class _JobScreenState extends State<JobScreen> {
-  List<String> tabs = ["Today's Jobs", "Past Jobs"];
+  List<String> tabs = ["Today's Jobs", "Archive"];
   int selectedIndex = 0;
+  @override
+  void initState() {
+    super.initState();
+    context.read(jobsNotifierProvider).fetchTodaysJob();
+  }
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -61,10 +72,10 @@ class _JobScreenState extends State<JobScreen> {
                                 style: selectedIndex != i
                                     ? TextStyle(
                                         color: primarySwatch[900],
-                                        fontWeight: FontWeight.bold)
+                                        fontWeight: FontWeight.bold,)
                                     : TextStyle(
                                         color: Colors.white,
-                                        fontWeight: FontWeight.bold),
+                                        fontWeight: FontWeight.bold,),
                               ),
                             )),
                           ),
@@ -74,6 +85,16 @@ class _JobScreenState extends State<JobScreen> {
                   ),
               ],
             ),
+            Expanded(
+              child: IndexedStack(
+                index: selectedIndex,
+                children: [
+                 const TodaysJobWidget(),
+                 const PastJobs(),
+                ],
+              ),
+            ),
+            // Expanded(child:selectedIndex == 0 ?  TodaysJobWidget() : PastJobs()),
             // Container(
             //   height: 50,
             //   child: ListView.builder(
@@ -116,3 +137,259 @@ class _JobScreenState extends State<JobScreen> {
     );
   }
 }
+class PastJobs extends StatefulHookWidget {
+  const PastJobs({Key? key}) : super(key: key);
+
+  @override
+  _PastJobsState createState() => _PastJobsState();
+}
+
+class _PastJobsState extends State<PastJobs> {
+  final dateController = TextEditingController();
+  _selectDate(BuildContext context) async {
+    DateTime time = DateTime.now();
+    final DateTime? selected = await showDatePicker(
+      context: context,
+      initialDate: selectedDate,
+      firstDate: DateTime(2010),
+      lastDate: DateTime.utc(time.year,time.month,time.day).subtract(Duration(days: 1)),
+    );
+    if(selected != null){
+      selectedDate = selected;
+      context.read(jobsNotifierProvider).fetchPastJobs(selectedDate);
+       dateController.text = DateToYYMMDD(selectedDate);
+    }
+    // if (selected != null && selected != selectedDate)
+    //   setState(() {
+    //     selectedDate = selected;
+    //     dateController.text =
+    //         "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+    //   });
+  }
+  DateTime selectedDate = DateTime.now();
+  @override
+  void initState() {
+    super.initState();
+    selectedDate = selectedDate.subtract(Duration(days: 1));
+    context.read(jobsNotifierProvider).fetchPastJobs(selectedDate);
+    dateController.text = DateToYYMMDD(selectedDate);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+     final jobService = useProvider(jobsNotifierProvider);
+     return Column(
+       children: [
+          EditTextfild(
+                  readibility: true,
+                  suffixicon: InkWell(
+                      onTap: () {
+                        _selectDate(context);
+                      },
+                      child: Icon(Icons.calendar_today)),
+                  controller: dateController,
+                  hint: "Select job date",
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                if(jobService.archeive != null)
+                Card(
+                  color: primarySwatch[700],
+                  elevation: 10,
+                  child: Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                    child: Row(
+                      children: [
+                        Flexible(
+                flex: 1,
+                child: Center(
+                    child: Column(
+                      children: [
+                        Text("AJS",style: TextStyle(fontSize: 14,color: Colors.white,height: 1),),
+                        
+                        Text("Average Job Size",style: TextStyle(fontSize: 8,color: Colors.white),),
+                         SizedBox(height: 2,),
+                        Text((jobService.archeive!.totalMyJobRevenue! ~/ jobService.archeive!.jobsCount!).toString(),
+                        style: TextStyle(color: Colors.white),),
+                      ],
+                    ),
+                )),
+                 Flexible(
+                flex: 1,
+                child: Center(
+                    child: Column(
+                      children: [
+                        Text("REV",style: TextStyle(fontSize: 14,color: Colors.white,height: 1),),
+                        Text("Revenue",style: TextStyle(fontSize: 8,color: Colors.white),),
+                         SizedBox(height: 2,),
+                        Text(jobService.archeive!.totalJobRevenue.toString(),style: TextStyle(color: Colors.white),),
+                      ],
+                    ),
+                )),
+                 Flexible(
+                flex: 1,
+                child: Center(
+                    child: Column(
+                      children: [
+                        Text("RPH",style: TextStyle(fontSize: 14,color: Colors.white,height: 1),),
+                       Text("Revenue Per Hour",style: TextStyle(fontSize: 8,color: Colors.white),),
+                        SizedBox(height: 2,),
+                        Text(jobService.archeive!.revenuePerHour.toString(),style: TextStyle(color: Colors.white),),
+                      ],
+                    ),
+                ))
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: jobService.archeive == null ?Container(child: Center(child: Text("No Past jobs Found"),),):
+                  ListView.builder(itemBuilder: (context,index){
+                    return SingleJobCard(jobModal: jobService.archeive!.jobs![index]);
+                  },itemCount: jobService.archeive!.jobs!.length,padding: EdgeInsets.only(bottom: 50),),
+                ),
+       ],
+     );
+     
+  }
+}
+
+
+class TodaysJobWidget extends StatefulHookWidget {
+ const TodaysJobWidget({Key? key}) : super(key: key);
+
+  @override
+  State<TodaysJobWidget> createState() => _TodaysJobWidgetState();
+}
+
+class _TodaysJobWidgetState extends State<TodaysJobWidget> {
+  @override
+    void initState() {
+      super.initState();
+      print("init state called");
+    }
+  @override
+  Widget build(BuildContext context) {
+      print("build method called");
+    final jobService = useProvider(jobsNotifierProvider);
+    if(jobService.todaysMyJob == null){
+      return Center(child: Text("No Job found"));
+    }
+    final todaysJob = jobService.todaysMyJob!.jobs!;
+    return Column(
+      children: [
+       
+                Card(
+                  color: primarySwatch[700],
+                  elevation: 10,
+                  child: Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 10,vertical: 10),
+                    child: Row(
+                      children: [
+                        Flexible(
+                flex: 1,
+                child: Center(
+                    child: Column(
+                      children: [
+                        Text("AJS",style: TextStyle(fontSize: 14,color: Colors.white,height: 1),),
+                        
+                        Text("Average Job Size",style: TextStyle(fontSize: 8,color: Colors.white),),
+                         SizedBox(height: 2,),
+                        Text((jobService.todaysMyJob!.totalMyJobRevenue! ~/ jobService.todaysMyJob!.jobsCount!).toString(),
+                        style: TextStyle(color: Colors.white),),
+                      ],
+                    ),
+                )),
+                 Flexible(
+                flex: 1,
+                child: Center(
+                    child: Column(
+                      children: [
+                        Text("REV",style: TextStyle(fontSize: 14,color: Colors.white,height: 1),),
+                        Text("Revenue",style: TextStyle(fontSize: 8,color: Colors.white),),
+                         SizedBox(height: 2,),
+                        Text(jobService.todaysMyJob!.totalJobRevenue.toString(),style: TextStyle(color: Colors.white),),
+                      ],
+                    ),
+                )),
+                 Flexible(
+                flex: 1,
+                child: Center(
+                    child: Column(
+                      children: [
+                        Text("RPH",style: TextStyle(fontSize: 14,color: Colors.white,height: 1),),
+                       Text("Revenue Per Hour",style: TextStyle(fontSize: 8,color: Colors.white),),
+                        SizedBox(height: 2,),
+                        Text(jobService.todaysMyJob!.revenuePerHour.toString(),style: TextStyle(color: Colors.white),),
+                      ],
+                    ),
+                ))
+                      ],
+                    ),
+                  ),
+                ),
+        Expanded(
+          child: ListView.builder(itemBuilder: (context,index){
+            return SingleJobCard(jobModal: todaysJob[index],);
+          },itemCount: todaysJob.length,padding: EdgeInsets.only(bottom: 100),),
+        ),
+      ],
+    );
+  }
+}
+
+class SingleJobCard extends StatelessWidget {
+  final JobModal jobModal;
+  const SingleJobCard({required this.jobModal,Key? key}) : super(key: key);
+  Widget getKeyValue(String label,String value,{String? fullForm}){
+    return Flexible(
+                flex: 1,
+                child: Center(
+                  child: Column(
+                    children: [
+                      Text(label,style: TextStyle(fontSize: 14,height: 1),),
+                       if(fullForm != null)
+                      Text(fullForm.toString(),style: TextStyle(fontSize: 8),),
+                       SizedBox(height: 2,),
+                      Text(value),
+                    ],
+                  ),
+                ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final titleStyle = TextStyle(fontSize: 14);
+    final valueStyle = TextStyle(fontSize: 16);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 14,horizontal: 2),
+        child: Container(
+          child: Row(
+            children: [
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 10),
+              //   child: Column(
+              //         children: [
+              //           Text("JI",style: TextStyle(fontSize: 14,height: 1),),
+              //            Text("Job Id",style: TextStyle(fontSize: 8),),
+              //            SizedBox(height: 2,),
+              //           Text(jobModal.title.toString()),
+              //         ],
+              //       ),
+              // ),
+              getKeyValue("JI",jobModal.title.toString(),fullForm : "Job Id"),
+                getKeyValue("MTR",jobModal.myJobRevenue.toString(),fullForm: "My Total Revenue"),
+                SizedBox(width: 6,),
+                getKeyValue("TR",jobModal.totalJobRevenue.toString(),fullForm: "Total Revenue"), 
+                // getKeyValue("RPH",jobModal.revenuePerHour.toString(),fullForm: "Rev Per Hour"),
+                // getKeyValue("AJS",jobModal.AJS.toString()),  
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
