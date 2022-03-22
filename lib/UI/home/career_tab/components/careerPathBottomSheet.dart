@@ -34,6 +34,7 @@ class _CareerpathBottomSheetState extends State<CareerpathBottomSheet> {
                   onTap: () {
                     careerProvider.setIndexAndPath(
                         careerProvider.careerModel.careerPath![index], index);
+                        Navigator.pop(context);
                   },
                   child: Row(
                     children: [
@@ -64,7 +65,7 @@ class _CareerpathBottomSheetState extends State<CareerpathBottomSheet> {
                           ),
                         ),
                       ),
-                      Text(careerProvider.careerModel.careerPath![index].name!)
+                      Expanded(child: Text(careerProvider.careerModel.careerPath![index].name!))
                     ],
                   ),
                 );

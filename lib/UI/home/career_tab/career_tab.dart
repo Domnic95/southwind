@@ -203,7 +203,7 @@ class _CareerPathState extends State<CareerPath> {
                               ),
                             if (widget.pageIndex == 1)
                               Text(
-                                "${careerProvider.submittedAchievement.length} / ${totalQuestion} Reviewd",
+                                "${careerProvider.submittedAchievement.length} / ${totalQuestion} Reviewed",
                                 style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.white,
@@ -212,7 +212,7 @@ class _CareerPathState extends State<CareerPath> {
                               ),
                             if (widget.pageIndex == 2)
                               Text(
-                                "${careerProvider.completedAchievement.length} / ${totalQuestion} Reviewd",
+                                "${careerProvider.completedAchievement.length} / ${totalQuestion} Reviewed",
                                 style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.white,

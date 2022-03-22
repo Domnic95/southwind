@@ -33,7 +33,8 @@ const api_timerHistory = '/get_timecard_history_2021';
 const api_timerHistoryDate = '/get_timecard_history_2021_dates';
 const api_punchInAndOut = '/timecard';
 // carrer
-const api_career = '/career-path/get-career-path-by-team';
+const api_career = '/career-path/list';
+// const api_career = '/career-path/get-career-path-by-team';
 const api_career_submit_answer = "/career-path/submit-answer";
 const api_career_single_career =
     '/career-path/career-path-by-id?career_path_id=';
@@ -64,3 +65,7 @@ const api_addPost = '/jobs/add';
 const int offsetDifference = 20;
 const api_teamMember = "/team_members";
 const api_todaysJob = "/jobs";
+
+
+/// feedback
+const api_getFeedBack = "/career-path/get-feedback";

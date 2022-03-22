@@ -22,7 +22,6 @@ class NewsCommentNotifier extends BaseNotifier {
         'notification_id': notificationId,
       },
     );
-
     if (res.statusCode == 200) {
       comments = List<CommentModal>.from(
           res.data["comments"].map((x) => CommentModal.fromJson(x)));

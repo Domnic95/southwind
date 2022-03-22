@@ -7,6 +7,8 @@ import 'dart:convert';
 
 import 'dart:developer';
 
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+
 CareerModel careerModelFromJson(String str) =>
     CareerModel.fromJson(json.decode(str));
 
@@ -21,12 +23,21 @@ class CareerModel {
   List<CareerPath>? careerPath = [];
   // List<CareerAchievement>? careerAchievements = [];
 
-  factory CareerModel.fromJson(Map<String, dynamic> json) => CareerModel(
-        careerPath: List<CareerPath>.from(
-            json["career_paths"].map((x) => CareerPath.fromJson(x))),
+  factory CareerModel.fromJson(Map<String, dynamic> json) {
+    Set<CareerPath> path = {};
+    for(int a =0;a<json["careerpath"].length;a++){
+      path.add(CareerPath.fromJson(json["careerpath"][a]));
+    }
+
+    
+    return CareerModel(
+        // careerPath: List<CareerPath>.from(
+        //     json["careerpath"].map((x) => CareerPath.fromJson(x))),
+        careerPath: path.toList()
         // careerAchievements: List<CareerAchievement>.from(
         //     json["acheivements"].map((x) => CareerAchievement.fromJson(x))),
       );
+      }
 
   Map<String, dynamic> toJson() => {
         "careerpath": List<dynamic>.from(careerPath!.map((x) => x.toJson())),
@@ -50,7 +61,7 @@ class CareerAchievement {
       this.createdAt,
       this.updatedAt,
       this.careerPathNotificationAchievementQuestion,
-      this.is_completed});
+      this.is_completed,this.userAchievemnts});
 
   int? id;
   int? careerPathNotificationId;
@@ -67,6 +78,8 @@ class CareerAchievement {
   int? is_completed;
   List<CareerPathNotificationAchievementQuestion>?
       careerPathNotificationAchievementQuestion;
+      List<UserAchievement>? userAchievemnts;
+      
 
   factory CareerAchievement.fromJson(Map<String, dynamic> json) =>
       CareerAchievement(
@@ -87,6 +100,9 @@ class CareerAchievement {
             List<CareerPathNotificationAchievementQuestion>.from(
                 json["career_path_notification_achievement_question"].map((x) =>
                     CareerPathNotificationAchievementQuestion.fromJson(x))),
+                    userAchievemnts:  List<UserAchievement>.from(json["career_path_notification_user_achievement"].map((x) => 
+                    UserAchievement.fromJson(x))),
+                    
       );
 
   Map<String, dynamic> toJson() => {
@@ -255,28 +271,110 @@ class CareerPath {
   CareerPath({
     this.id,
     this.name,
-    // this.teamId,
-    // this.current,
+    this.teamId,
+    this.current,
   });
 
   int? id;
   String? name;
-  // int? teamId;
-  // int? current;
+  int? teamId;
+  int? current;
 
   factory CareerPath.fromJson(Map<String, dynamic> json) => CareerPath(
         id: json["id"],
         name: json["name"],
-        // teamId: json["team_id"],
-        // current: json["current"],
+        teamId: json["team_id"],
+        current: json["current"],
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
-        // "team_id": teamId,
-        // "current": current,
+        "team_id": teamId,
+        "current": current,
       };
+    @override
+      int get hashCode => this.id!;
+      
+   @override
+    bool operator ==(Object any){
+      return any is CareerPath && any.id == this.id;
+    }
+}
+
+
+// To parse this JSON data, do
+//
+//     final userAchievement = userAchievementFromJson(jsonString);
+
+
+
+UserAchievement userAchievementFromJson(String str) => UserAchievement.fromJson(json.decode(str));
+
+String userAchievementToJson(UserAchievement data) => json.encode(data.toJson());
+
+class UserAchievement {
+    UserAchievement({
+        required this.id,
+        this.profileId,
+        this.careerPathNotificationAchievementId,
+        this.careerPathNotificationId,
+        this.completeStatus,
+        this.feedback,
+        this.needAdminRes,
+        this.achievedDate,
+        this.userFeedback,
+        this.submitStatus,
+        this.score,
+        this.createdAt,
+        this.updatedAt,
+    });
+
+    int id;
+    int? profileId;
+    int? careerPathNotificationAchievementId;
+    int? careerPathNotificationId;
+    int? completeStatus;
+    String? feedback;
+    int? needAdminRes;
+    DateTime? achievedDate;
+    String? userFeedback;
+    int? submitStatus;
+    int? score;
+    DateTime? createdAt;
+    DateTime? updatedAt;
+
+    factory UserAchievement.fromJson(Map<String, dynamic> json) => UserAchievement(
+        id: json["id"],
+        profileId: json["profile_id"],
+        careerPathNotificationAchievementId: json["career_path_notification_achievement_id"],
+        careerPathNotificationId: json["career_path_notification_id"],
+        completeStatus: json["complete_status"],
+        feedback: json["feedback"],
+        needAdminRes: json["need_admin_res"],
+        achievedDate: DateTime.parse(json["achieved_date"]),
+        userFeedback: json["user_feedback"],
+        submitStatus: json["submit_status"],
+        score: json["score"],
+        createdAt: DateTime.parse(json["created_at"]),
+        updatedAt: DateTime.parse(json["updated_at"]),
+    );
+
+    Map<String, dynamic> toJson() => {
+        "id": id,
+        "profile_id": profileId,
+        "career_path_notification_achievement_id": careerPathNotificationAchievementId,
+        "career_path_notification_id": careerPathNotificationId,
+        "complete_status": completeStatus,
+        "feedback": feedback,
+        "need_admin_res": needAdminRes,
+        "achieved_date": achievedDate?.toIso8601String(),
+        "user_feedback": userFeedback,
+        "submit_status": submitStatus,
+        "score": score,
+        "created_at": createdAt?.toIso8601String(),
+        "updated_at": updatedAt?.toIso8601String(),
+    };
 }
 
 

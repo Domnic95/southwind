@@ -7,6 +7,7 @@ import 'package:southwind/Models/career/careerModel.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/common_button.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
+import 'package:southwind/UI/feedback_screen/feedbackScreen.dart';
 import 'package:southwind/UI/home/career_tab/components/information_dialog.dart';
 import 'package:southwind/UI/home/career_tab/page/congratsScreen.dart';
 import 'package:southwind/UI/home/career_tab/page/summary_screen.dart';
@@ -157,6 +158,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
                         log('selectedIndex after ${unAnsweredQuestion}');
                         unAnsweredQuestion.remove(i + 1);
                         log('selectedIndex before ${unAnsweredQuestion}');
+                      
                       });
                     },
                     i: i,
@@ -210,13 +212,35 @@ class _QuestionsPageState extends State<QuestionsPage> {
                           )
                         : Expanded(child: Container()),
                     currentQuestion == questionLength - 1 && readibility
-                        ? Expanded(child: Container())
+                        ?  Builder(
+                          builder: (context) {
+                            if(careerProvider.selectedAchievement.userAchievemnts!.isEmpty){
+                                  return Expanded(child: Container());
+                            }
+                            final feedback = careerProvider.selectedAchievement.userAchievemnts!.first.feedback;
+                            if(feedback  == null || feedback == ""){
+                              return Expanded(child: Container());
+                            }
+                            return CommonButton(lable: "Feedback",
+                            ontap: (){
+                              print((careerProvider.selectedAchievement.userAchievemnts?.first.id).toString());
+                              Navigator.push(context, MaterialPageRoute(builder: (context){
+                                  return FeedBackScreen(notificationData: {
+                                    "title" : careerProvider.selectedAchievement.name,
+                                    "career_path_user_achivement_id" : careerProvider.selectedAchievement.userAchievemnts!.first.id
+                                  },);
+                              }));
+                            },
+                            isExpanded: true,);
+                          }
+                        )
                         : CommonButton(
                             isExpanded: true,
                             lable: currentQuestion == questionLength - 1
                                 ? "Submit"
                                 : "Next",
                             ontap: () async {
+                              // showToast("s");
                               // if (controller.text.isNotEmpty) {
                               //   await careerProvider.updateAnswer(
                               //       currentQuestion, controller.text);
@@ -240,14 +264,19 @@ class _QuestionsPageState extends State<QuestionsPage> {
                                     final res = await context
                                         .read(carerNotifierProvider)
                                         .submitAnswers();
+                                    await Future.delayed(Duration(seconds: 1));
+                                    // final res = true;
                                     Navigator.pop(context);
+                                    final score = await context.read(carerNotifierProvider).getScore();
+                                    final total = context.read(carerNotifierProvider).selectedAchievement.careerPathNotificationAchievementQuestion!.length; 
                                     if (res) {
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (context) {
                                         return CongratsScreen(
                                           survey: false,
                                           title: "Career path",
-                                          summaryBool: true,
+                                          customTitle: "You  got $score out of $total questions correct",
+                                          summaryBool: false,
                                           unAnsweredQuestion:
                                               unAnsweredQuestion,
                                           totalquestion: questionLength,
@@ -261,7 +290,7 @@ class _QuestionsPageState extends State<QuestionsPage> {
 
                                   // Navigator.push(context,
                                   //     MaterialPageRoute(builder: (context) {
-                                  //   return SummaryScreen(
+                                  //   return SummaryScreen(r
                                   //     unAnsweredQuestion: unAnsweredQuestion,
                                   //     totalquestion: questionLength,
                                   //     onTaps: () async {
@@ -428,6 +457,13 @@ class _QuestionAnswerWidgetState extends State<QuestionAnswerWidget> {
                               setState(() {
                                 if (!careerProvider.textReadibility) {
                                   widget.onChange(widget.i);
+                                  careerProvider
+                    .selectedAchievement
+                    .careerPathNotificationAchievementQuestion![widget.i].optionId = 
+                                  careerProvider
+                    .selectedAchievement
+                    .careerPathNotificationAchievementQuestion![widget.i]
+                    .options![index].id;
                                   selected1.contains(index)
                                       ? selected1.remove(index)
                                       : selected1.add(index);

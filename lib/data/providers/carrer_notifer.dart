@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:southwind/Models/career/careerModel.dart';
 import 'package:southwind/Models/user_data.dart';
 import 'package:southwind/data/providers/ValueFetcher/UserFetch.dart';
@@ -45,7 +46,8 @@ class CareerProvider extends BaseNotifier {
       // 'questions': "",
     });
 
-    careerModel = CareerModel.fromJson(res.data);
+    careerModel = CareerModel.fromJson(res.data["notifications"]);
+     careerModel.careerPath?.removeWhere((element) => element.teamId != userData!.teamId);
     if (careerModel.careerPath!.length > 0) {
       selectedCareerPathIndex = 0;
       selectedCareerPath = careerModel.careerPath!.first;
@@ -143,10 +145,10 @@ class CareerProvider extends BaseNotifier {
   Future<bool> submitAnswers() async {
     final questionAnser = jsonEncode(
         selectedAchievement.careerPathNotificationAchievementQuestion!.map((e) {
-      log('questionAnser == ${e.id}');
+      print('questionAnser == ${e.id}');
       return e.toAnswerJson();
     }).toList());
-    log(' questionAnser = ${questionAnser} ');
+    print(' questionAnser = ${questionAnser}');
     final res = await dioClient
         .postWithFormData(apiEnd: api_career_submit_answer, data: {
       "achievement_id": selectedAchievement.id.toString(),
@@ -165,4 +167,25 @@ class CareerProvider extends BaseNotifier {
 
     return false;
   }
+  Future<int> getScore()async{
+    
+    int score = 0;
+    for(int a=0;a<selectedAchievement.careerPathNotificationAchievementQuestion!.length;a++){
+ final element = selectedAchievement.careerPathNotificationAchievementQuestion![a];
+      if(element.optionId != -1){
+        final l = element.options?.where((e) => e.id == element.optionId);
+        if(l?.isNotEmpty ?? false){
+          if(l!.first.score == 1){
+            print("aaaaa");
+            score += 1; 
+          }
+        }
+    }
+    }
+    await Future.delayed(Duration(milliseconds: 100));
+   
+  
+    return score;
+  }
+  
 }

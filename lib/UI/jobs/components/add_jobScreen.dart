@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:southwind/Models/team/team_member.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/login/log_in.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
@@ -21,6 +22,7 @@ class _AddJobState extends State<AddJob> {
   late String selectedMember;
    dynamic selectedAdditionalMember;
   DateTime selectedDate = DateTime.now();
+  TeamMember? selectedTeamMember;
   // List<String> typeJob = ["Residencial", "Commercial"];
   // List<String> typePayment = ["Select payment type", "Check", "Credit Card"];
   // List<String> typeMember = [
@@ -55,7 +57,7 @@ class _AddJobState extends State<AddJob> {
     selectedPayment = jobsService.typePayment.first;
     selectedMember = jobsService.typeMember.first;
     dateController.text =
-        "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+        "${selectedDate.month}-${selectedDate.day}-${selectedDate.year}";
     setState(() {});
   }
   calcualteRevenue(){
@@ -67,6 +69,7 @@ class _AddJobState extends State<AddJob> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final jobsService = useProvider(jobsNotifierProvider);
+    
     double ver = 15;
     return Scaffold(
       appBar: CommonAppbar(),
@@ -115,6 +118,16 @@ class _AddJobState extends State<AddJob> {
                   controller: creditTipController,
                   hint: "Enter my credit card tip",
                 ),
+                SizedBox(
+                  height: ver,
+                ),
+                EditTextfild(
+                  onChnage: (c){
+                    calcualteRevenue();
+                  },
+                  controller: totalJobRevenue,
+                  hint: "Enter total job revenue",
+                ),
 
                 SizedBox(
                   height: ver,
@@ -152,19 +165,10 @@ class _AddJobState extends State<AddJob> {
                   title: jobsService.typePayment,
                   selectedvalue: selectedPayment,
                 ),
-                SizedBox(
-                  height: ver,
-                ),
-                EditTextfild(
-                  onChnage: (c){
-                    calcualteRevenue();
-                  },
-                  controller: totalJobRevenue,
-                  hint: "Enter total job revenue",
-                ),
-                SizedBox(
-                  height: ver,
-                ),
+                
+                // SizedBox(
+                //   height: ver,
+                // ),
                 
                 if (selectedMember == "2" && jobsService.teamMembers.length > 0)
                   Column(
@@ -172,16 +176,51 @@ class _AddJobState extends State<AddJob> {
                       SizedBox(
                         height: ver,
                       ),
-                      DropDownWidget2(
-                        labelTitle: "Additional team member",
-                        onChanged: (c) {
-                          setState(() {
-                            selectedAdditionalMember = c!;
-                          });
+                      InkWell(
+                        onTap: ()async{
+                            print("aa");
+                            final res = await showSearch<TeamMember>(context: context,
+                             delegate: CustomSearchDeleget(jobsService.teamMembers,
+                             ));
+                             if(res != null){
+                               setState(() {
+                                selectedTeamMember = res;                                
+                                });
+                             }
+                            print(res);
                         },
-                        title: jobsService.teamMembers.map((e) => DropDownItemModal(label: e.profileFirstName.toString(),val: e.id)).toList(),
-                        selectedvalue: selectedAdditionalMember != null ? selectedAdditionalMember : jobsService.teamMembers.first.id,
+                        child: Container(
+                          // color: Colors.pink,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(color: Colors.grey)
+                            ),
+                          child: Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Text(selectedTeamMember?.profileFirstName ?? "Select Team Member",
+                                style: TextStyle(color: selectedTeamMember == null ? Colors.grey[500] : Colors.black),),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
+                      // InkWell(
+                      //   onTap: (){
+                      //       print("aa");
+                      //   },
+                      //   child: DropDownWidget2(
+                      //     labelTitle: "Additional team member",
+                      //     onChanged: (c) {
+                      //       setState(() {
+                      //         selectedAdditionalMember = c!;
+                      //       });
+                      //     },
+                      //     title: jobsService.teamMembers.map((e) => DropDownItemModal(label: e.profileFirstName.toString(),val: e.id)).toList(),
+                      //     selectedvalue: selectedAdditionalMember != null ? selectedAdditionalMember : jobsService.teamMembers.first.id,
+                      //   ),
+                      // ),
                       SizedBox(
                         height: ver,
                       ),
@@ -236,8 +275,12 @@ class _AddJobState extends State<AddJob> {
       showToast("Enter credit trips");
       return;
     }
-    if(selectedPayment == job.typePayment.first){
-      showToast("Select payment type");
+    // if(selectedPayment == job.typePayment.first){
+    //   showToast("Select payment type");
+    //   return;
+    // }
+    if(selectedMember == "2" && selectedTeamMember == null){
+       showToast("Select aditional member");
       return;
     }
     if(totalJobRevenue.text.isEmpty){
@@ -254,7 +297,7 @@ final res = await job.createJob(
                         numberOfMember: int.parse(selectedMember),
                          totalRevenue: int.parse(totalJobRevenue.text),
                           myRevenue: double.parse(myJobRevenue.text).toInt(),
-                          adiitionMemberId: selectedAdditionalMember != null ? selectedAdditionalMember : job.teamMembers.first.id,
+                          adiitionMemberId: selectedTeamMember == null ? null : selectedTeamMember!.id,
                            aditionRevenue: additionalMyJobRevenue.text,);
                     // await jobsService.addService(
                     //     job_id: jobIdController.text,
@@ -285,7 +328,74 @@ final res = await job.createJob(
       setState(() {
         selectedDate = selected;
         dateController.text =
-            "${selectedDate.year}-${selectedDate.month}-${selectedDate.day}";
+            "${selectedDate.month}-${selectedDate.day}-${selectedDate.year}";
       });
   }
+}
+
+class CustomSearchDeleget extends SearchDelegate<TeamMember>{
+  List<TeamMember> members;
+  CustomSearchDeleget(this.members);
+  
+  
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [Text("a")];  
+    
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+  
+    return InkWell(
+      onTap: (){
+        Navigator.pop(context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Icon(Icons.arrow_back),
+      ),
+    );  
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    
+    print("Result");
+    
+  final list = members.where((element) => element.profileFirstName!.toLowerCase().contains(query.toLowerCase())).toList();
+     if(list.isEmpty){
+       return Text("No match found");
+     }
+     return ListView.builder(itemBuilder: (context,index){
+    return InkWell(onTap: (){
+      Navigator.pop(context,list[index]);
+    },child: getSingleResult(list[index]));
+  },
+  itemCount: list.length,
+  );   
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    
+    final list = members.where((element) => element.profileFirstName!.toLowerCase().contains(query.toLowerCase())).toList();
+     if(list.isEmpty){
+       return Text("No match found");
+     }
+     return ListView.builder(itemBuilder: (context,index){
+    return InkWell(onTap: (){
+      Navigator.pop(context,list[index]);
+    },child: getSingleResult(list[index]),);
+  },
+  itemCount: list.length,
+  );  
+  }
+  Widget getSingleResult(TeamMember member){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Text(member.profileFirstName! + "  "+member.profileLastName.toString()),
+    );
+  }
+
 }

@@ -27,9 +27,7 @@ class AuthNotifier extends BaseNotifier {
       final res = await dioClient.getRequest(
         apiEnd: api_getUserData,
       );
-
       userData = UserData.fromJson(res.data['user']);
-
       isLogedIn = true;
       Utils.setPref(key_userinfo, jsonEncode(userData!.toJson()));
       notifyListeners();

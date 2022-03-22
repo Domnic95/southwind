@@ -5,6 +5,7 @@ import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/routes/routes.dart';
 class CongratsScreen extends StatelessWidget {
   final String title;
+  final String? customTitle;
   final int totalquestion;
   final bool? summaryBool;
   final bool survey;
@@ -13,6 +14,7 @@ class CongratsScreen extends StatelessWidget {
   const CongratsScreen(
       {required this.totalquestion,
       required this.title,
+      this.customTitle,
       required this.survey,
       required this.unAnsweredQuestion,
       this.summaryBool = true,
@@ -77,7 +79,7 @@ class CongratsScreen extends StatelessWidget {
                               ),
                               Center(
                                 child: Text(
-                                  "${title} completed sucessfully",
+                                  customTitle ?? "${title} completed sucessfully",
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.normal),

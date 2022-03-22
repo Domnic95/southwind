@@ -268,7 +268,7 @@ class _TodaysJobWidgetState extends State<TodaysJobWidget> {
     void initState() {
       super.initState();
       print("init state called");
-    }
+    }     
   @override
   Widget build(BuildContext context) {
       print("build method called");

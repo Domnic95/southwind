@@ -96,6 +96,7 @@ class JobsService extends BaseNotifier {
       "additional_team_member" : adiitionMemberId,
       if(numberOfMember == 2)
       "additional_my_job_revenue" : aditionRevenue,
+      if(paymentType != typePayment[0])
       "payment_type" : paymentType == typePayment[1] ? 1 : 2,
     };
     final res = await dioClient.postWithFormData(apiEnd: api_addPost,data: data);

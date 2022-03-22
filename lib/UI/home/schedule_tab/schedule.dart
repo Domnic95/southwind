@@ -9,7 +9,6 @@ import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/schedule_tab/request_leave.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/providers.dart';
-import 'package:southwind/data/providers/schedule__notifier.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 // final List<int> scheduleDays = [15];
@@ -67,7 +66,7 @@ class _ScheduleState extends State<Schedule> {
                             onDaySelected: (d, da) {
                               setState(() {
                                 currentTime = DateTime(
-                                    da.year, da.month, da.day, 00, 00, 00, 000);
+                                    da.year, da.month, da.day, 00, 00, 00, 000,);
                               });
                             },
                             eventLoader: (da) {
@@ -298,123 +297,242 @@ class _ScheduleState extends State<Schedule> {
   Widget getDayCard(
       List<DateTime> scheduleDays, List<List<DateTime>> leaveDays) {
     final provider = context.read(scheduleNotifierProvider);
-
-    return Column(
-      children: [
-        if (scheduleDays.contains(currentTime))
-          Expanded(
-              child: FutureBuilder<List<int>>(
-            future: provider.getSchedule(currentTime),
-            builder: (context, snap) {
-              if (snap.connectionState == ConnectionState.done) {
-                return ListView.builder(
-                    itemCount: snap.data!.length,
-                    itemBuilder: (context, snapindex) {
-                      int index = snap.data![snapindex];
-                      return Card(
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              Card(
-                                elevation: 5,
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)),
-                                child: Container(
-                                  height: 60,
-                                  width: 60,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        weekDays[provider
-                                            .scheduleModel
-                                            .profileSchedules![index]
-                                            .day!
-                                            .weekday]!,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyText1,
-                                      ),
-                                      Text(
-                                        (provider
-                                                .scheduleModel
-                                                .profileSchedules![index]
-                                                .day!
-                                                .day)
-                                            .toString(),
-                                        style: TextStyle(
-                                            height: 1,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+    print(currentTime);
+final l = provider.scheduleModel.profileSchedules?.where((element) => element.day! == currentTime).toList();
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          if((l?.length ?? 0) > 0)
+          if(l!.first.notes != "")
+          Card(
+            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+            child: Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Notes:",style: TextStyle(fontWeight: FontWeight.w700)),
+                      Text(l.first.notes!,style: TextStyle(fontSize: 14),)
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        //  Text(l.first.notes!),
+          if (scheduleDays.contains(currentTime))
+            FutureBuilder<List<int>>(
+              future: provider.getSchedule(currentTime),
+              builder: (context, snap) {
+            if (snap.connectionState == ConnectionState.done) {
+              
+              return Column(
+                children: [
+                  
+                  for(int a in snap.data!)
+                  Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
                                 children: [
-                                  Text(
-                                    provider.scheduleModel
-                                        .profileSchedules![index].shift!.name
-                                        .toString(),
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
-                                        color: primarySwatch[900]),
+                                  const SizedBox(
+                                    width: 8,
                                   ),
-                                  Row(
+                                  Card(
+                                    elevation: 5,
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(5)),
+                                    child: Container(
+                                      height: 60,
+                                      width: 60,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            weekDays[provider
+                                                .scheduleModel
+                                                .profileSchedules![a]
+                                                .day!
+                                                .weekday]!,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyText1,
+                                          ),
+                                          Text(
+                                            (provider
+                                                    .scheduleModel
+                                                    .profileSchedules![a]
+                                                    .day!
+                                                    .day)
+                                                .toString(),
+                                            style: TextStyle(
+                                                height: 1,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Icon(
-                                        Icons.schedule,
-                                        size: 14,
-                                        color: primarySwatch[400],
-                                      ),
-                                      SizedBox(
-                                        width: 4,
-                                      ),
                                       Text(
-                                        "${provider.scheduleModel.profileSchedules![index].shift!.start} - ${provider.scheduleModel.profileSchedules![index].shift!.end}",
+                                        provider.scheduleModel
+                                            .profileSchedules![a].shift!.name
+                                            .toString(),
+                                        maxLines: 2,
                                         style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                            color: primarySwatch[900]),
+                                      ),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.schedule,
+                                            size: 14,
                                             color: primarySwatch[400],
-                                            fontSize: 14),
+                                          ),
+                                          SizedBox(
+                                            width: 4,
+                                          ),
+                                          Text(
+                                            "${provider.scheduleModel.profileSchedules![a].shift!.start} - ${provider.scheduleModel.profileSchedules![a].shift!.end}",
+                                            style: TextStyle(
+                                                color: primarySwatch[400],
+                                                fontSize: 14),
+                                          )
+                                        ],
                                       )
                                     ],
                                   )
                                 ],
-                              )
-                            ],
+                              ),
+                            ),
                           ),
-                        ),
-                      );
-                    });
-              } else {
-                return LoadingWidget();
-              }
-            },
-          )),
-        if (leaveDays[0].contains(currentTime) ||
-            leaveDays[1].contains(currentTime)
-        // ||leaveDays[2].contains(currentTime)
-        )
-          FutureBuilder<ProfileTimeOff>(
-              future: provider.getLeaveData(currentTime),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done) {
-                  return Expanded(
-                    child: Column(
+                  // Expanded(
+                  //   child: ListView.builder(
+                  //       itemCount: snap.data!.length,
+                  //       itemBuilder: (context, snapindex) {
+                  //         int index = snap.data![snapindex];
+                  //         return Card(
+                  //           elevation: 5,
+                  //           shape: RoundedRectangleBorder(
+                  //               borderRadius: BorderRadius.circular(10)),
+                  //           child: Padding(
+                  //             padding: const EdgeInsets.all(8.0),
+                  //             child: Row(
+                  //               children: [
+                  //                 const SizedBox(
+                  //                   width: 8,
+                  //                 ),
+                  //                 Card(
+                  //                   elevation: 5,
+                  //                   shape: RoundedRectangleBorder(
+                  //                       borderRadius: BorderRadius.circular(5)),
+                  //                   child: Container(
+                  //                     height: 60,
+                  //                     width: 60,
+                  //                     child: Column(
+                  //                       mainAxisAlignment: MainAxisAlignment.center,
+                  //                       crossAxisAlignment:
+                  //                           CrossAxisAlignment.center,
+                  //                       children: [
+                  //                         Text(
+                  //                           weekDays[provider
+                  //                               .scheduleModel
+                  //                               .profileSchedules![index]
+                  //                               .day!
+                  //                               .weekday]!,
+                  //                           style: Theme.of(context)
+                  //                               .textTheme
+                  //                               .bodyText1,
+                  //                         ),
+                  //                         Text(
+                  //                           (provider
+                  //                                   .scheduleModel
+                  //                                   .profileSchedules![index]
+                  //                                   .day!
+                  //                                   .day)
+                  //                               .toString(),
+                  //                           style: TextStyle(
+                  //                               height: 1,
+                  //                               fontWeight: FontWeight.bold),
+                  //                         ),
+                  //                       ],
+                  //                     ),
+                  //                   ),
+                  //                 ),
+                  //                 const SizedBox(
+                  //                   width: 10,
+                  //                 ),
+                  //                 Column(
+                  //                   crossAxisAlignment: CrossAxisAlignment.start,
+                  //                   children: [
+                  //                     Text(
+                  //                       provider.scheduleModel
+                  //                           .profileSchedules![index].shift!.name
+                  //                           .toString(),
+                  //                       maxLines: 2,
+                  //                       style: TextStyle(
+                  //                           fontWeight: FontWeight.w600,
+                  //                           fontSize: 16,
+                  //                           color: primarySwatch[900]),
+                  //                     ),
+                  //                     Row(
+                  //                       children: [
+                  //                         Icon(
+                  //                           Icons.schedule,
+                  //                           size: 14,
+                  //                           color: primarySwatch[400],
+                  //                         ),
+                  //                         SizedBox(
+                  //                           width: 4,
+                  //                         ),
+                  //                         Text(
+                  //                           "${provider.scheduleModel.profileSchedules![index].shift!.start} - ${provider.scheduleModel.profileSchedules![index].shift!.end}",
+                  //                           style: TextStyle(
+                  //                               color: primarySwatch[400],
+                  //                               fontSize: 14),
+                  //                         )
+                  //                       ],
+                  //                     )
+                  //                   ],
+                  //                 )
+                  //               ],
+                  //             ),
+                  //           ),
+                  //         );
+                  //       }),
+                  // ),
+                ],
+              );
+            } else {
+              return LoadingWidget();
+            }
+                        },
+            ),
+          if (leaveDays[0].contains(currentTime) ||
+              leaveDays[1].contains(currentTime)
+          // ||leaveDays[2].contains(currentTime)
+          )
+            FutureBuilder<ProfileTimeOff>(
+                future: provider.getLeaveData(currentTime),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return Column(
                       children: [
                         Card(
                           elevation: 5,
@@ -487,39 +605,40 @@ class _ScheduleState extends State<Schedule> {
                           ),
                         ),
                       ],
-                    ),
-                  );
-                } else {
-                  return Expanded(
-                    child: Center(
+                    );
+                  } else {
+                    return Center(
                       child: LoadingWidget(),
-                    ),
-                  );
-                }
-              }),
-        if (!leaveDays[0].contains(currentTime) &&
-            !leaveDays[1].contains(currentTime)
-            // ||leaveDays[2].contains(currentTime)
-            &&
-            !scheduleDays.contains(currentTime))
-          Expanded(child: NoScheduleWidget()),
-        if (!leaveDays[0].contains(currentTime) &&
-            !leaveDays[1].contains(currentTime)
-            // ||leaveDays[2].contains(currentTime)
-            &&
-            !scheduleDays.contains(currentTime) &&
-            currentTime.isAfter(DateTime.now()))
-          Center(
-              child: CommonButton(
-            lable: "Request Leave",
-            ontap: () {
-              showReuestDialog(context, currentTime);
-            },
-          )),
-        const SizedBox(
-          height: 10,
-        ),
-      ],
+                    );
+                  }
+                }),
+          if (!leaveDays[0].contains(currentTime) &&
+              !leaveDays[1].contains(currentTime)
+              // ||leaveDays[2].contains(currentTime)
+              &&
+              !scheduleDays.contains(currentTime))
+            Padding(
+              padding: const EdgeInsets.only(top: 20),
+              child: NoScheduleWidget(),
+            ),
+          if (!leaveDays[0].contains(currentTime) &&
+              !leaveDays[1].contains(currentTime)
+              // ||leaveDays[2].contains(currentTime)
+              &&
+              !scheduleDays.contains(currentTime) &&
+              currentTime.isAfter(DateTime.now()))
+            Center(
+                child: CommonButton(
+              lable: "Request Leave",
+              ontap: () {
+                showReuestDialog(context, currentTime);
+              },
+            )),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
+      ),
     );
   }
 }
