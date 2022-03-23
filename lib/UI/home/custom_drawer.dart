@@ -43,6 +43,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   // Widget screenView = HomeScreen(onindexChange: onindexChange)
   loadData() async {
+    String? fcm = await FirebaseMessaging.instance.getToken();
+    print("fcmTokenss = ${fcm}");
     RemoteMessage? message =
         await FirebaseMessaging.instance.getInitialMessage();
     // print(message!.data.toString() + "messgaeNull");
@@ -60,6 +62,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       floatingActionButton: drawerIndex == DrawerIndex.Jobs
           ? FloatingActionButton(

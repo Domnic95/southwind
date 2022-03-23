@@ -31,7 +31,7 @@ class JobsService extends BaseNotifier {
   List<TeamMember> teamMembers = [];
   MyJobs? todaysMyJob;
   MyJobs? archeive;
-
+ 
   List<JobModal> todaysJob = [];
   List<JobModal> pastJobs = [];
   Future loadTeamMember() async{

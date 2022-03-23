@@ -544,7 +544,7 @@ final l = provider.scheduleModel.profileSchedules?.where((element) => element.da
                               children: [
                                 const SizedBox(
                                   width: 8,
-                                ),
+                                ), 
                                 Card(
                                   elevation: 5,
                                   shape: RoundedRectangleBorder(

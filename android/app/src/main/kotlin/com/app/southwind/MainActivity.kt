@@ -1,4 +1,4 @@
-package com.app.southwind
+package com.root.southwind
 
 import io.flutter.embedding.android.FlutterActivity
 
