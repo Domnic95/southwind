@@ -131,30 +131,33 @@ class _FlutterStopWatchState extends State<FlutterStopWatch> {
                 ),
                 CommonButton(
                   lable: isClockOn ? "Clock Out" : "Clock In",
-                  ontap: isClockOn
-                      ? () async {
-                          await timerProvider.punchOut();
-                          timerSubscription.pause();
-                          timerStream;
-                          isClockOn = false;
-                          setState(() {});
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return CustomPopUp(
-                                  title: "Clock out!",
-                                  subTitle:
-                                      "You have been successfully clocked out.Have a great day.",
-                                );
-                              });
-                        }
-                      : () async {
-                          await timerProvider.punchIn();
-                          timerStream = stopWatchStream();
-                          clockCounter();
+                  ontap: (){
+                      showToast("This functionality is temporarily disabled");
+                  },
+                  // ontap: isClockOn
+                  //     ? () async {
+                  //         await timerProvider.punchOut();
+                  //         timerSubscription.pause();
+                  //         timerStream;
+                  //         isClockOn = false;
+                  //         setState(() {});
+                  //         showDialog(
+                  //             context: context,
+                  //             builder: (context) {
+                  //               return CustomPopUp(
+                  //                 title: "Clock out!",
+                  //                 subTitle:
+                  //                     "You have been successfully clocked out.Have a great day.",
+                  //               );
+                  //             });
+                  //       }
+                  //     : () async {
+                  //         await timerProvider.punchIn();
+                  //         timerStream = stopWatchStream();
+                  //         clockCounter();
 
-                          showToast("You have succesfully clocked in.");
-                        },
+                  //         showToast("You have succesfully clocked in.");
+                  //       },
                 ),
                 SizedBox(
                   height: 30,

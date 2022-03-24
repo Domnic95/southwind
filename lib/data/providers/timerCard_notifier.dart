@@ -20,7 +20,7 @@ List monthsList = [
   "Nov",
   "Dec"
 ];
-List weekDaysList = ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+List weekDaysList = ["", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
 class TimerCardNotifier extends BaseNotifier {
   UserData? userData;

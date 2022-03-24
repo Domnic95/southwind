@@ -610,33 +610,48 @@ class _HomeDrawerState extends State<HomeDrawer> {
               ),
               Column(
                 children: <Widget>[
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(builder: (context) => Log_In()),
-                          (route) => false);
-                    },
-                    child: ListTile(
-                      title: Text(
-                        'Sign Out',
-                        style: TextStyle(
-                          // fontFamily: AppTheme.fontName,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                          color: Colors.black,
-                        ),
-                        textAlign: TextAlign.left,
-                      ),
-                      trailing: Icon(
-                        Icons.power_settings_new,
+                  ListTile(
+                    title: Text(
+                      'Sign Out',
+                      style: TextStyle(
+                        // fontFamily: AppTheme.fontName,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
                         color: Colors.black,
                       ),
-                      onTap: () {
-                        context.read(authProvider).logout();
-                        // Navigator.of(context).pushNamedAndRemoveUntil(
-                        //     Routes.login, (route) => false);
-                      },
+                      textAlign: TextAlign.left,
                     ),
+                    trailing: Icon(
+                      Icons.power_settings_new,
+                      color: Colors.black,
+                    ),
+                    onTap: () {
+                       showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text('Are you sure!'),
+                                actions: [
+                                  ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Text('No')),
+                                  ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                          primary: primaryColor),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        context.read(authProvider).logout();
+                                      },
+                                      child: Text('Yes'))
+                                ],
+                              );
+                            });
+                      
+                      // Navigator.of(context).pushNamedAndRemoveUntil(
+                      //     Routes.login, (route) => false);
+                    },
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).padding.bottom,

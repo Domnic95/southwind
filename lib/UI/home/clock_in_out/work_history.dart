@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:southwind/UI/components/common_appbar.dart';
 import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/schedule_tab/schedule.dart';
@@ -615,12 +616,18 @@ class ScheduleCard extends StatelessWidget {
     final timerProvider = context.read(timerNotifierProvider);
     DateTime _time = timerProvider.timerCardList[index].createdAt!;
 
-    DateTime _timeIn = timerProvider.timerCardList[index].timeIn!;
-    DateTime _timeOut = timerProvider.timerCardList[index].timeOut!;
-    String _timeInPre =
-        timerProvider.timerCardList[index].timeIn!.hour > 13 ? "pm" : "am";
-    String _timeOutPre =
-        timerProvider.timerCardList[index].timeOut!.hour > 13 ? "pm" : "am";
+    String _timeIn = DateFormat.jm().format(timerProvider.timerCardList[index].timeIn!);
+    
+    String _timeOut = DateFormat.jm().format(timerProvider.timerCardList[index].timeOut!);
+ //${timerProvider.timerCardList[index].totHours!.substring(0, 2)}: ${timerProvider.timerCardList[index].totHours!.substring(8, 10)}
+   
+   int hIndex = timerProvider.timerCardList[index].totHours!.indexOf('hours');
+     int mIndex = timerProvider.timerCardList[index].totHours!.indexOf('minutes');
+       int sIndex = timerProvider.timerCardList[index].totHours!.indexOf('seconds');
+   String  hours = timerProvider.timerCardList[index].totHours!.substring(0, hIndex).trim();
+   String  minutes = timerProvider.timerCardList[index].totHours!.substring(hIndex+5, mIndex);
+   String  second = timerProvider.timerCardList[index].totHours!.substring(mIndex+7, sIndex);
+   timerProvider.timerCardList[index].totHours!.substring(0, 2);
 
     const double cardRadius = 10;
     return Card(
@@ -655,6 +662,11 @@ class ScheduleCard extends StatelessWidget {
                           .bodyText1!
                           .copyWith(height: 1, fontSize: 20),
                     ),
+                 Text(
+                      timerProvider.timerCardList[index].timeIn!.year.toString(),
+                       style: TextStyle(fontSize: 12),
+                    ),
+                    
                   ],
                 ),
                 const SizedBox(
@@ -666,7 +678,7 @@ class ScheduleCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "${weekDaysList[_time.weekday]}, ${_timeIn.hour}:${_timeIn.minute}${_timeInPre}  to  ${_timeOut.hour}:${_timeOut.minute}${_timeOutPre} (${timerProvider.timerCardList[index].totHours!.substring(0, 2)}: ${timerProvider.timerCardList[index].totHours!.substring(8, 10)})h",
+                      "${weekDaysList[_time.weekday]}, ${_timeIn}  to  ${_timeOut} ",
                       style: Theme.of(context)
                           .textTheme
                           .bodyText1!
@@ -676,7 +688,7 @@ class ScheduleCard extends StatelessWidget {
                       height: 2,
                     ),
                     Text(
-                      "Dance at concert",
+                      "(${hours}:${minutes}:${second})h",
                       style: TextStyle(
                           color: primarySwatch[300],
                           fontWeight: FontWeight.normal,
