@@ -17,7 +17,7 @@ import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/news_tab/comment_tab.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:video_player/video_player.dart';
+
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 const String profilePath = "assets/images/image2.jpg";
@@ -459,18 +459,11 @@ class MultipleImageView extends StatefulWidget {
 }
 
 class _MultipleImageViewState extends State<MultipleImageView> {
-  late VideoPlayerController _controller;
+
   @override
   void initState() {
     // TODO: implement initState
-    if (widget.mediaType == MediaType.VIDEO) {
-      _controller = VideoPlayerController.network(widget.images.first)
-        ..initialize().then((_) {
-          // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-          setState(() {});
-          _controller.play();
-        });
-    }
+    
     super.initState();
   }
 
@@ -479,15 +472,13 @@ class _MultipleImageViewState extends State<MultipleImageView> {
     // TODO: implement dispose
 
     super.dispose();
-    if (widget.mediaType == MediaType.VIDEO) _controller.dispose();
+    
   }
 
   @override
   Widget build(BuildContext context) {
     if (widget.images.length == 1) {
-      return widget.mediaType == MediaType.VIDEO
-          ? VideoPlayer(_controller)
-          : NetworkImagesLoader(
+      return  NetworkImagesLoader(
               url: widget.images.first,
               fit: BoxFit.cover,
             );

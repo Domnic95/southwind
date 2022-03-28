@@ -93,18 +93,20 @@ class _Log_InState extends State<Log_In> {
                   ),
                   passwordshow: hidepassword,
                 ),
-                    SizedBox(
+                SizedBox(
                   height: 15,
                 ),
-                Row(children: [
-                  Checkbox(value: keep_me_logged_in, onChanged: (v){
-                    keep_me_logged_in = v ?? false;
-                    setState(() {
-                                          
-                                        });
-                  }),
-                  Text("Keep me logged in")
-                ],),
+                Row(
+                  children: [
+                    Checkbox(
+                        value: keep_me_logged_in,
+                        onChanged: (v) {
+                          keep_me_logged_in = v ?? false;
+                          setState(() {});
+                        }),
+                    Text("Keep me logged in")
+                  ],
+                ),
                 SizedBox(
                   height: 15,
                 ),
@@ -189,6 +191,7 @@ class _Log_InState extends State<Log_In> {
   }
 
   _loginMethod() async {
+    print('validation=${!emailValidator(_emailcontroller.text)}');
     // _emailcontroller.text = "m@m.com";
     // _passwordcontroller.text = "123456";
     if (_emailcontroller.text.isEmpty) {
@@ -206,9 +209,8 @@ class _Log_InState extends State<Log_In> {
           builder: (context) {
             return LoadingWidget();
           });
-      await context
-          .read(authProvider)
-          .login(_emailcontroller.text, _passwordcontroller.text,keep_me_logged_in);
+      await context.read(authProvider).login(
+          _emailcontroller.text, _passwordcontroller.text, keep_me_logged_in);
       Navigator.pop(context);
     }
   }
@@ -281,6 +283,7 @@ class EditTextfild extends StatelessWidget {
     );
   }
 }
+
 class DropDownWidget extends StatelessWidget {
   final List<String> title;
   final String labelTitle;
@@ -369,8 +372,8 @@ class DropDownWidget2 extends StatelessWidget {
   }
 }
 
-class DropDownItemModal{
+class DropDownItemModal {
   String label;
   dynamic val;
-  DropDownItemModal({required this.label,this.val});
+  DropDownItemModal({required this.label, this.val});
 }
