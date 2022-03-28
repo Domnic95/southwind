@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -12,7 +14,6 @@ import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/constant/Global.dart';
 import 'package:southwind/data/providers/providers.dart';
 import 'package:video_player/video_player.dart';
-
 
 class CommentTab extends StatefulHookWidget {
   final PostModal postModal;
@@ -424,7 +425,6 @@ class CommentImage extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }
 

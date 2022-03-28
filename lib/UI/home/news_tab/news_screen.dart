@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, unnecessary_brace_in_string_interps
+
 import 'dart:developer';
 import 'dart:io';
 
@@ -284,7 +286,7 @@ class _FeedPostState extends State<FeedPost> {
                         },
                         child: Row(
                           children: [
-                            IconButton(
+                            IconButton(                                                 
                               icon: const Icon(FontAwesomeIcons.comment),
                               onPressed: () {
                                 Navigator.of(context).push(
@@ -459,11 +461,10 @@ class MultipleImageView extends StatefulWidget {
 }
 
 class _MultipleImageViewState extends State<MultipleImageView> {
-
   @override
   void initState() {
     // TODO: implement initState
-    
+
     super.initState();
   }
 
@@ -472,16 +473,15 @@ class _MultipleImageViewState extends State<MultipleImageView> {
     // TODO: implement dispose
 
     super.dispose();
-    
   }
 
   @override
   Widget build(BuildContext context) {
     if (widget.images.length == 1) {
-      return  NetworkImagesLoader(
-              url: widget.images.first,
-              fit: BoxFit.cover,
-            );
+      return NetworkImagesLoader(
+        url: widget.images.first,
+        fit: BoxFit.cover,
+      );
     }
     return Container(
       child: PageView(

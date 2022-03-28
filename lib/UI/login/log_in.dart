@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, prefer_const_constructors
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -191,15 +193,15 @@ class _Log_InState extends State<Log_In> {
   }
 
   _loginMethod() async {
-    print('validation=${!emailValidator(_emailcontroller.text)}');
+    // print('validation=${!emailValidator(_emailcontroller.text)}');
     // _emailcontroller.text = "m@m.com";
     // _passwordcontroller.text = "123456";
     if (_emailcontroller.text.isEmpty) {
       showToast("Enter Email");
       return;
-    } else if (!emailValidator(_emailcontroller.text)) {
-      showToast("Invalid Email");
-      return;
+      // } else if (!emailValidator(_emailcontroller.text)) {
+      //   showToast("Invalid Email");
+      //   return;
     } else if (_passwordcontroller.text.isEmpty) {
       showToast("Enter Password");
       return;
