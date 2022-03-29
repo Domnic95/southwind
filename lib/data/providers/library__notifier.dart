@@ -1,3 +1,5 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:dio/dio.dart';
 import 'package:hooks_riverpod/all.dart';
 import 'package:southwind/Models/library_model.dart';

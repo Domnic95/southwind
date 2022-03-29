@@ -57,7 +57,7 @@ class _CareerTabState extends State<CareerTab> {
                             if (i == 0) {
                               await careerProvider.setReadibility(false);
                             } else {
-                              await careerProvider.setReadibility(true);
+                              await careerProvider.setReadibility(true);   
                             }
                             setState(() {
                               selectedIndex = i;

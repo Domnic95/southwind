@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -616,18 +618,26 @@ class ScheduleCard extends StatelessWidget {
     final timerProvider = context.read(timerNotifierProvider);
     DateTime _time = timerProvider.timerCardList[index].createdAt!;
 
-    String _timeIn = DateFormat.jm().format(timerProvider.timerCardList[index].timeIn!);
-    
-    String _timeOut = DateFormat.jm().format(timerProvider.timerCardList[index].timeOut!);
- //${timerProvider.timerCardList[index].totHours!.substring(0, 2)}: ${timerProvider.timerCardList[index].totHours!.substring(8, 10)}
-   
-   int hIndex = timerProvider.timerCardList[index].totHours!.indexOf('hours');
-     int mIndex = timerProvider.timerCardList[index].totHours!.indexOf('minutes');
-       int sIndex = timerProvider.timerCardList[index].totHours!.indexOf('seconds');
-   String  hours = timerProvider.timerCardList[index].totHours!.substring(0, hIndex).trim();
-   String  minutes = timerProvider.timerCardList[index].totHours!.substring(hIndex+5, mIndex);
-   String  second = timerProvider.timerCardList[index].totHours!.substring(mIndex+7, sIndex);
-   timerProvider.timerCardList[index].totHours!.substring(0, 2);
+    String _timeIn =
+        DateFormat.jm().format(timerProvider.timerCardList[index].timeIn!);
+
+    String _timeOut =
+        DateFormat.jm().format(timerProvider.timerCardList[index].timeOut!);
+    //${timerProvider.timerCardList[index].totHours!.substring(0, 2)}: ${timerProvider.timerCardList[index].totHours!.substring(8, 10)}
+
+    int hIndex = timerProvider.timerCardList[index].totHours!.indexOf('hours');
+    int mIndex =
+        timerProvider.timerCardList[index].totHours!.indexOf('minutes');
+    int sIndex =
+        timerProvider.timerCardList[index].totHours!.indexOf('seconds');
+    String hours = timerProvider.timerCardList[index].totHours!
+        .substring(0, hIndex)
+        .trim();
+    String minutes = timerProvider.timerCardList[index].totHours!
+        .substring(hIndex + 5, mIndex);
+    String second = timerProvider.timerCardList[index].totHours!
+        .substring(mIndex + 7, sIndex);
+    timerProvider.timerCardList[index].totHours!.substring(0, 2);
 
     const double cardRadius = 10;
     return Card(
@@ -662,11 +672,11 @@ class ScheduleCard extends StatelessWidget {
                           .bodyText1!
                           .copyWith(height: 1, fontSize: 20),
                     ),
-                 Text(
-                      timerProvider.timerCardList[index].timeIn!.year.toString(),
-                       style: TextStyle(fontSize: 12),
+                    Text(
+                      timerProvider.timerCardList[index].timeIn!.year
+                          .toString(),
+                      style: TextStyle(fontSize: 12),
                     ),
-                    
                   ],
                 ),
                 const SizedBox(

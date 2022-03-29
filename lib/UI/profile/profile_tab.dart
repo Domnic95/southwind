@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -29,6 +31,7 @@ class _ProfileState extends State<Profile> {
     String lastName = lastNameFirst +
         _userProvider.userData!.profileLastName
             .substring(1, _userProvider.userData!.profileLastName.length);
+    String location = _userProvider.userData!.teamName;
 
     final size = MediaQuery.of(context).size;
     DateTime now = DateTime.now();
@@ -132,7 +135,7 @@ class _ProfileState extends State<Profile> {
           ),
           SizedBox(
             height: size.height * 0.1,
-           ),
+          ),
           Container(
             margin: EdgeInsets.symmetric(horizontal: 15),
             child: Column(
@@ -207,7 +210,7 @@ class _ProfileState extends State<Profile> {
                             color: primarySwatch[700]),
                       ),
                       subtitle: Text(
-                        'Southwind',
+                        location,
                         style: TextStyle(
                             // height: 1.5,
                             fontWeight: FontWeight.normal,
