@@ -80,7 +80,7 @@ class _CommentTabState extends State<CommentTab> {
                           itemBuilder: (context, index) {
                             return CommentWidget(
                               commentModal: commentNotifier.comments[index],
-                            );
+                            ); 
                           }),
                 ),
                 Container(
