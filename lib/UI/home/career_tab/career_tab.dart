@@ -222,7 +222,7 @@ class _CareerPathState extends State<CareerPath> {
                             Row(
                               children: [
                                 Text(
-                                  careerProvider.selectedCareerPath.name!
+                                  careerProvider.selectedCareerPath.name
                                       .toString(),
                                   style: TextStyle(color: Colors.white),
                                 ),

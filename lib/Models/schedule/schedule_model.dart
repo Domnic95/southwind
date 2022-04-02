@@ -80,7 +80,7 @@ class ProfileSchedule {
         lastModified: DateTime.parse(json["last_modified"]),
         active: json["active"],
         schedule: Schedule.fromJson(json["schedule"]),
-        shift: ScheduleShift.fromJson(json["shift"]??null),
+        shift: ScheduleShift.fromJson(json["shift"]),
       );
 
   Map<String, dynamic> toJson() => {
