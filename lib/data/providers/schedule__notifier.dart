@@ -50,6 +50,8 @@ class ScheduleProvider extends BaseNotifier {
     leaveDays_dates[0] = appliedLeave;
     leaveDays_dates[1] = approvedLeave;
     leaveDays_dates[2] = rejectedLeave;
+    // print("datesssss ${leaveDays_dates[0]}");
+    // print("datesssss ${leaveDays_dates[1]}");
 
     notifyListeners();
   }

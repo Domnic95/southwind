@@ -80,7 +80,7 @@ class _CommentTabState extends State<CommentTab> {
                           itemBuilder: (context, index) {
                             return CommentWidget(
                               commentModal: commentNotifier.comments[index],
-                            );
+                            ); 
                           }),
                 ),
                 Container(
@@ -321,25 +321,44 @@ class CommentWidget extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              "${commentModal.profile.profileFirstName} - ${commentModal.profile.teamName}",
-                              // "${commentModal.profile.profileFirstName}",
-                              style: TextStyle(fontSize: 14),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.6,
+                                  child: Text(
+                                    "${commentModal.profile.profileFirstName} - ${commentModal.profile.teamName}",
+                                    // "${commentModal.profile.profileFirstName}",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Text(
+                                    "${commentModal.timeDifference}",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             Builder(builder: (context) {
                               switch (commentModal.mediaType!) {
                                 case MediaTypes.message:
                                   return Container(
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.6,
+                                    width: MediaQuery.of(context).size.width,
                                     child: Text(
                                       "\"${commentModal.comment}\"",
-                                      maxLines: 2,
+                                      // overflow: TextOverflow.ellipsis,
+                                      // maxLines: 2,
                                       style: TextStyle(
                                           fontSize: 12, color: Colors.grey),
                                     ),
                                   );
-
                                 case MediaTypes.Image:
                                   return CommentImage(
                                     mediaUrl: commentModal.mediaUrl,
@@ -363,16 +382,6 @@ class CommentWidget extends StatelessWidget {
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: Text(
-                  "${commentModal.timeDifference}",
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11,
                   ),
                 ),
               ),

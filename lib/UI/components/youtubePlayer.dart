@@ -61,7 +61,7 @@ class _YouTubePlayerState extends State<YouTubePlayer> {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            NetworkImagesLoader(
+            videoNetworkImagesLoader(
                 radius: 10,
                 url:
                     'https://img.youtube.com/vi/${YoutubePlayer.convertUrlToId(widget.url.toString())}/0.jpg'),
