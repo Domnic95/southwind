@@ -18,7 +18,7 @@ class _CareerpathBottomSheetState extends State<CareerpathBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final careerProvider = useProvider(carerNotifierProvider);
-  
+
     return Container(
       decoration: BoxDecoration(
           color: Colors.white,
@@ -29,12 +29,12 @@ class _CareerpathBottomSheetState extends State<CareerpathBottomSheet> {
           child: ListView.builder(
               itemCount: careerProvider.careerModel.careerPath!.length,
               itemBuilder: (context, index) {
-                
+                print("index : " + index.toString());
                 return InkWell(
                   onTap: () {
                     careerProvider.setIndexAndPath(
                         careerProvider.careerModel.careerPath![index], index);
-                        Navigator.pop(context);
+                    Navigator.pop(context);
                   },
                   child: Row(
                     children: [
@@ -60,12 +60,14 @@ class _CareerpathBottomSheetState extends State<CareerpathBottomSheet> {
                                       careerProvider.selectedCareerPathIndex ==
                                               index
                                           ? Theme.of(context).primaryColor
-                                          : Colors.transparent,
+                                          : Colors.green,
                                 )),
                           ),
                         ),
                       ),
-                      Expanded(child: Text(careerProvider.careerModel.careerPath![index].name!))
+                      Expanded(
+                          child: Text(careerProvider
+                              .careerModel.careerPath![index].name!))
                     ],
                   ),
                 );

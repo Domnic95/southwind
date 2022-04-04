@@ -25,19 +25,18 @@ class CareerModel {
 
   factory CareerModel.fromJson(Map<String, dynamic> json) {
     Set<CareerPath> path = {};
-    for(int a =0;a<json["careerpath"].length;a++){
+    for (int a = 0; a < json["careerpath"].length; a++) {
       path.add(CareerPath.fromJson(json["careerpath"][a]));
     }
 
-    
     return CareerModel(
         // careerPath: List<CareerPath>.from(
         //     json["careerpath"].map((x) => CareerPath.fromJson(x))),
         careerPath: path.toList()
         // careerAchievements: List<CareerAchievement>.from(
         //     json["acheivements"].map((x) => CareerAchievement.fromJson(x))),
-      );
-      }
+        );
+  }
 
   Map<String, dynamic> toJson() => {
         "careerpath": List<dynamic>.from(careerPath!.map((x) => x.toJson())),
@@ -61,7 +60,8 @@ class CareerAchievement {
       this.createdAt,
       this.updatedAt,
       this.careerPathNotificationAchievementQuestion,
-      this.is_completed,this.userAchievemnts});
+      this.is_completed,
+      this.userAchievemnts});
 
   int? id;
   int? careerPathNotificationId;
@@ -78,8 +78,7 @@ class CareerAchievement {
   int? is_completed;
   List<CareerPathNotificationAchievementQuestion>?
       careerPathNotificationAchievementQuestion;
-      List<UserAchievement>? userAchievemnts;
-      
+  List<UserAchievement>? userAchievemnts;
 
   factory CareerAchievement.fromJson(Map<String, dynamic> json) =>
       CareerAchievement(
@@ -100,9 +99,9 @@ class CareerAchievement {
             List<CareerPathNotificationAchievementQuestion>.from(
                 json["career_path_notification_achievement_question"].map((x) =>
                     CareerPathNotificationAchievementQuestion.fromJson(x))),
-                    userAchievemnts:  List<UserAchievement>.from(json["career_path_notification_user_achievement"].map((x) => 
-                    UserAchievement.fromJson(x))),
-                    
+        userAchievemnts: List<UserAchievement>.from(
+            json["career_path_notification_user_achievement"]
+                .map((x) => UserAchievement.fromJson(x))),
       );
 
   Map<String, dynamic> toJson() => {
@@ -270,13 +269,13 @@ class CareerAnswer {
 class CareerPath {
   CareerPath({
     this.id,
-    this.name,
+    this.name = "null",
     this.teamId,
     this.current,
   });
 
   int? id;
-  String? name;
+  String? name = "null";
   int? teamId;
   int? current;
 
@@ -293,61 +292,62 @@ class CareerPath {
         "team_id": teamId,
         "current": current,
       };
-    @override
-      int get hashCode => this.id!;
-      
-   @override
-    bool operator ==(Object any){
-      return any is CareerPath && any.id == this.id;
-    }
-}
+  @override
+  int get hashCode => this.id!;
 
+  @override
+  bool operator ==(Object any) {
+    return any is CareerPath && any.id == this.id;
+  }
+}
 
 // To parse this JSON data, do
 //
 //     final userAchievement = userAchievementFromJson(jsonString);
 
+UserAchievement userAchievementFromJson(String str) =>
+    UserAchievement.fromJson(json.decode(str));
 
-
-UserAchievement userAchievementFromJson(String str) => UserAchievement.fromJson(json.decode(str));
-
-String userAchievementToJson(UserAchievement data) => json.encode(data.toJson());
+String userAchievementToJson(UserAchievement data) =>
+    json.encode(data.toJson());
 
 class UserAchievement {
-    UserAchievement({
-        required this.id,
-        this.profileId,
-        this.careerPathNotificationAchievementId,
-        this.careerPathNotificationId,
-        this.completeStatus,
-        this.feedback,
-        this.needAdminRes,
-        this.achievedDate,
-        this.userFeedback,
-        this.submitStatus,
-        this.score,
-        this.createdAt,
-        this.updatedAt,
-    });
+  UserAchievement({
+    required this.id,
+    this.profileId,
+    this.careerPathNotificationAchievementId,
+    this.careerPathNotificationId,
+    this.completeStatus,
+    this.feedback,
+    this.needAdminRes,
+    this.achievedDate,
+    this.userFeedback,
+    this.submitStatus,
+    this.score,
+    this.createdAt,
+    this.updatedAt,
+  });
 
-    int id;
-    int? profileId;
-    int? careerPathNotificationAchievementId;
-    int? careerPathNotificationId;
-    int? completeStatus;
-    String? feedback;
-    int? needAdminRes;
-    DateTime? achievedDate;
-    String? userFeedback;
-    int? submitStatus;
-    int? score;
-    DateTime? createdAt;
-    DateTime? updatedAt;
+  int id;
+  int? profileId;
+  int? careerPathNotificationAchievementId;
+  int? careerPathNotificationId;
+  int? completeStatus;
+  String? feedback;
+  int? needAdminRes;
+  DateTime? achievedDate;
+  String? userFeedback;
+  int? submitStatus;
+  int? score;
+  DateTime? createdAt;
+  DateTime? updatedAt;
 
-    factory UserAchievement.fromJson(Map<String, dynamic> json) => UserAchievement(
+  factory UserAchievement.fromJson(Map<String, dynamic> json) =>
+      UserAchievement(
         id: json["id"],
         profileId: json["profile_id"],
-        careerPathNotificationAchievementId: json["career_path_notification_achievement_id"],
+        careerPathNotificationAchievementId:
+            json["career_path_notification_achievement_id"],
         careerPathNotificationId: json["career_path_notification_id"],
         completeStatus: json["complete_status"],
         feedback: json["feedback"],
@@ -358,12 +358,13 @@ class UserAchievement {
         score: json["score"],
         createdAt: DateTime.parse(json["created_at"]),
         updatedAt: DateTime.parse(json["updated_at"]),
-    );
+      );
 
-    Map<String, dynamic> toJson() => {
+  Map<String, dynamic> toJson() => {
         "id": id,
         "profile_id": profileId,
-        "career_path_notification_achievement_id": careerPathNotificationAchievementId,
+        "career_path_notification_achievement_id":
+            careerPathNotificationAchievementId,
         "career_path_notification_id": careerPathNotificationId,
         "complete_status": completeStatus,
         "feedback": feedback,
@@ -374,7 +375,7 @@ class UserAchievement {
         "score": score,
         "created_at": createdAt?.toIso8601String(),
         "updated_at": updatedAt?.toIso8601String(),
-    };
+      };
 }
 
 
