@@ -49,7 +49,8 @@ class CareerProvider extends BaseNotifier {
     });
 
     careerModel = CareerModel.fromJson(res.data["notifications"]);
-     careerModel.careerPath?.removeWhere((element) => element.teamId != userData!.teamId);
+    careerModel.careerPath
+        ?.removeWhere((element) => element.teamId != userData!.teamId);
     if (careerModel.careerPath!.length > 0) {
       selectedCareerPathIndex = 0;
       selectedCareerPath = careerModel.careerPath!.first;
@@ -81,7 +82,9 @@ class CareerProvider extends BaseNotifier {
 
     final res = await dioClient.getRequest(
         apiEnd: api_career_single_career + selectedCareerPath.id.toString());
-        print("api......"+api_career_single_career + selectedCareerPath.id.toString());
+    print("api......" +
+        api_career_single_career +
+        selectedCareerPath.id.toString());
     if (res.data['careerpath'] != null) {
       allSelectedCareerPath = List<CareerAchievement>.from(res
           .data['careerpath']['career_path_notification_achievement']
@@ -169,25 +172,28 @@ class CareerProvider extends BaseNotifier {
 
     return false;
   }
-  Future<int> getScore()async{
-    
+
+  Future<int> getScore() async {
     int score = 0;
-    for(int a=0;a<selectedAchievement.careerPathNotificationAchievementQuestion!.length;a++){
- final element = selectedAchievement.careerPathNotificationAchievementQuestion![a];
-      if(element.optionId != -1){
+    for (int a = 0;
+        a <
+            selectedAchievement
+                .careerPathNotificationAchievementQuestion!.length;
+        a++) {
+      final element =
+          selectedAchievement.careerPathNotificationAchievementQuestion![a];
+      if (element.optionId != -1) {
         final l = element.options?.where((e) => e.id == element.optionId);
-        if(l?.isNotEmpty ?? false){
-          if(l!.first.score == 1){
+        if (l?.isNotEmpty ?? false) {
+          if (l!.first.score == 1) {
             print("aaaaa");
-            score += 1; 
+            score += 1;
           }
         }
-    }
+      }
     }
     await Future.delayed(Duration(milliseconds: 100));
-   
-  
+
     return score;
   }
-  
 }

@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -11,6 +12,8 @@ import 'package:southwind/UI/components/loadingWidget.dart';
 import 'package:southwind/UI/home/schedule_tab/request_leave.dart';
 import 'package:southwind/UI/theme/apptheme.dart';
 import 'package:southwind/data/providers/providers.dart';
+import 'package:southwind/utils/helpers.dart';
+import 'package:southwind/utils/utilsContstant.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 // final List<int> scheduleDays = [15];
@@ -38,7 +41,7 @@ class _ScheduleState extends State<Schedule> {
     currentTime =
         DateTime(currentTime.year, currentTime.month, currentTime.day);
     await context.read(scheduleNotifierProvider).getScheduleData();
-
+    print(Utils.getPref(key_user_token).toString());
     loading = false;
   }
 
