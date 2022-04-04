@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:developer';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -41,7 +41,7 @@ class _ScheduleState extends State<Schedule> {
     currentTime =
         DateTime(currentTime.year, currentTime.month, currentTime.day);
     await context.read(scheduleNotifierProvider).getScheduleData();
-    log(Utils.getPref(key_user_token).toString());
+    print(Utils.getPref(key_user_token).toString());
     loading = false;
   }
 
@@ -350,12 +350,10 @@ class _ScheduleState extends State<Schedule> {
             FutureBuilder<List<int>>(
               future: provider.getSchedule(currentTime),
               builder: (context, snap) {
-              
                 if (snap.connectionState == ConnectionState.done) {
                   return Column(
                     children: [
                       for (int a in snap.data!)
-                        
                         Card(
                           elevation: 5,
                           shape: RoundedRectangleBorder(
@@ -444,8 +442,7 @@ class _ScheduleState extends State<Schedule> {
                               ],
                             ),
                           ),
-                        )
-                    
+                        ),
                       // Expanded(
                       //   child: ListView.builder(
                       //       itemCount: snap.data!.length,
@@ -550,7 +547,6 @@ class _ScheduleState extends State<Schedule> {
             ),
           if (leaveDays[0].contains(currentTime) ||
               leaveDays[1].contains(currentTime)
-
           // ||leaveDays[2].contains(currentTime)
           )
             FutureBuilder<ProfileTimeOff>(

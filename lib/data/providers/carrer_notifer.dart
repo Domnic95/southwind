@@ -151,10 +151,8 @@ class CareerProvider extends BaseNotifier {
   Future<bool> submitAnswers() async {
     final questionAnser = jsonEncode(
         selectedAchievement.careerPathNotificationAchievementQuestion!.map((e) {
-      print('questionAnser == ${e.id}');
       return e.toAnswerJson();
     }).toList());
-    print(' questionAnser = ${questionAnser}');
     final res = await dioClient
         .postWithFormData(apiEnd: api_career_submit_answer, data: {
       "achievement_id": selectedAchievement.id.toString(),
@@ -187,7 +185,7 @@ class CareerProvider extends BaseNotifier {
         final l = element.options?.where((e) => e.id == element.optionId);
         if (l?.isNotEmpty ?? false) {
           if (l!.first.score == 1) {
-            print("aaaaa");
+            // print("aaaaa");
             score += 1;
           }
         }
