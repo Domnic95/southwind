@@ -77,7 +77,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       resizeToAvoidBottomInset: true,
       //  appBar: AppBar(
       //   title: Text(
-      //     "Southwind".toUpperCase(),
+      //     "Southwind".toUpperCase(), 
       //     style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
       //   ),
       //   leading: Icon(Icons.menu),

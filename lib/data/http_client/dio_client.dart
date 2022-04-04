@@ -47,7 +47,9 @@ class DioClient {
       {required String apiEnd, Map<String, dynamic>? data}) async {
     try {
       final res = await _dio.post(apiEnd, data: FormData.fromMap(data ?? {}));
+      //print("mmmm" + data.toString());
       responeMessage('post', apiEnd, res);
+     // print("mmmm"+res.toString());
       return res;
     } on DioError catch (e) {
       return e.response;
