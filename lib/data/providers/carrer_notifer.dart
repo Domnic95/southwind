@@ -14,7 +14,7 @@ class CareerProvider extends BaseNotifier {
   CareerModel careerModel = CareerModel();
   // carre path
   // List<CareerPath> dropDownCareerPath = [];
-  CareerPath selectedCareerPath = CareerPath();
+  CareerPath selectedCareerPath = CareerPath(name: "Not data found");
   int selectedCareerPathIndex = 0;
   int selectedNewCareerpathIndex = -1;
   // achievement
@@ -48,7 +48,7 @@ class CareerProvider extends BaseNotifier {
       // 'franchiseuser_detail': "",
       // 'questions': "",
     });
-     
+
     careerModel = CareerModel.fromJson(res.data["notifications"]);
     careerModel.careerPath
         ?.removeWhere((element) => element.teamId != userData!.teamId);
@@ -159,8 +159,8 @@ class CareerProvider extends BaseNotifier {
         .postWithFormData(apiEnd: api_career_submit_answer, data: {
       "achievement_id": selectedAchievement.id.toString(),
       // "team_id": userData!.teamId.toString(),
-       //"client_id": userData!.id.toString(),
-       //"is_admin": userData!.isAdmin.toString(),
+      //"client_id": userData!.id.toString(),
+      //"is_admin": userData!.isAdmin.toString(),
       'feedback': "submit data",
       'submit_status': 1,
       'answers': questionAnser,
