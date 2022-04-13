@@ -76,7 +76,6 @@ class ScheduleProvider extends BaseNotifier {
         loc = scheduleModel.profileTimeOff![i];
       }
     }
-
     return loc;
   }
 
@@ -95,9 +94,9 @@ class ScheduleProvider extends BaseNotifier {
       'req_message': reason,
       'off_date': date,
     });
-
+    getScheduleData();
     showToast(res.data['message']);
-    log('dates $date');
+    // log('dates $date');
     //  log('time $time');
   }
 }

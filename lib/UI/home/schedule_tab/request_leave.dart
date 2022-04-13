@@ -95,7 +95,8 @@ class RequestLeave extends HookWidget {
                         reason: controller.text,
                         context: context);
                     Navigator.pop(context);
-                    Focus.of(context).dispose();
+                    
+                    // Focus.of(context).dispose();
                   },
                   lable: "Apply",
                 ),
