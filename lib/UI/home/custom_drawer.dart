@@ -47,14 +47,16 @@ class _CustomDrawerState extends State<CustomDrawer> {
     print("fcmTokenss = ${fcm}");
     RemoteMessage? message =
         await FirebaseMessaging.instance.getInitialMessage();
-    // print(message!.data.toString() + "messgaeNull");
+    print("messgae " + message!.data.toString());
 
-    if (message!.data['area'] == 'survey') {
+    if (message.data['area'] == 'survey') {
       changeIndex(DrawerIndex.Surveys);
     } else if (message.data['area'] == 'communication') {
       changeIndex(DrawerIndex.Home);
-
       selectedIndex = 0;
+    } else if (message.data['area'] == 'schedule') {
+      changeIndex(DrawerIndex.Home);
+      selectedIndex = 1;
     } else {
       //  widget.onindexChange(2);
     }
@@ -62,7 +64,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       floatingActionButton: drawerIndex == DrawerIndex.Jobs
           ? FloatingActionButton(
@@ -77,7 +78,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
       resizeToAvoidBottomInset: true,
       //  appBar: AppBar(
       //   title: Text(
-      //     "Southwind".toUpper_Case(), 
+      //     "Southwind".toUpper_Case(),
       //     style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700),
       //   ),
       //   leading: Icon(Icons.menu),

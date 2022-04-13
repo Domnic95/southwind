@@ -49,7 +49,11 @@ class _HomeScreenState extends State<HomeScreen> {
         widget.onDrawerIndex(DrawerIndex.Home);
         widget.onindexChange(0);
         selectedIndex = 0;
-      } else {
+      }else if (message.data['area'] == 'schedule') {
+      widget.onDrawerIndex(DrawerIndex.Home);
+        widget.onindexChange(1);
+        selectedIndex = 1;
+    } else {
         //  widget.onindexChange(2);
       }
     });

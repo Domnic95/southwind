@@ -23,29 +23,36 @@ class _SplashScrrenState extends State<SplashScrren> {
     super.initState();
     load();
   }
-  load() async {
-    final res =  await FirebaseMessaging.instance.getInitialMessage();
-   print("intital messge from notification"+(res?.data).toString());
-   if(res != null){
-     if(res.data["career_path_user_achivement_id"] != null){
-       print(res.data.toString());
-         Navigator.push(context, MaterialPageRoute(builder: (context){
-       return FeedBackScreen(notificationData: res.data,);
-     }));
-     }
 
-   }
-   FirebaseMessaging.onMessage.listen((event) { 
-     print("Stream for message"+event.data.toString());
-   });
-   
-   FirebaseMessaging.onMessageOpenedApp.listen((event) { 
-     print("App opened"+event.data.toString());
-     Navigator.push(context, MaterialPageRoute(builder: (context){
-       return FeedBackScreen(notificationData: event.data,);
-     }));
-   });
-   Future.delayed(
+  load() async {
+    final res = await FirebaseMessaging.instance.getInitialMessage();
+    print("intital messge from notification" + (res?.data).toString());
+    // if (res != null) {
+    //   if (res.data["career_path_user_achivement_id"] != null) {
+    //     print(res.data.toString());
+    //     Navigator.push(
+    //       context,
+    //       MaterialPageRoute(builder: (context) {
+    //         return FeedBackScreen(
+    //           notificationData: res.data,
+    //         );
+    //       }),
+    //     );
+    //   }
+    // }
+    FirebaseMessaging.onMessage.listen((event) {
+      print("Stream for message" + event.data.toString());
+    });
+
+    // FirebaseMessaging.onMessageOpenedApp.listen((event) {
+    //   print("App opened" + event.data.toString());
+    //   Navigator.push(context, MaterialPageRoute(builder: (context) {
+    //     return FeedBackScreen(
+    //       notificationData: event.data,
+    //     );
+    //   }));
+    // });
+    Future.delayed(
         Duration(
           seconds: 5,
         ), () {

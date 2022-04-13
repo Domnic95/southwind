@@ -60,7 +60,7 @@ class _CareerpathBottomSheetState extends State<CareerpathBottomSheet> {
                                       careerProvider.selectedCareerPathIndex ==
                                               index
                                           ? Theme.of(context).primaryColor
-                                          : Colors.green,
+                                          : null,
                                 )),
                           ),
                         ),

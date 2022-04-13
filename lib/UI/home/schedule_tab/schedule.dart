@@ -599,28 +599,64 @@ class _ScheduleState extends State<Schedule> {
                                   width: 20,
                                 ),
                                 Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        "Leave Reason",
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                            color: primarySwatch[900]),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            "Leave Reason",
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 14,
+                                                color: primarySwatch[900]),
+                                          ),
+                                          Text(
+                                            snapshot.data!.reqMessage
+                                                .toString(),
+                                            style: TextStyle(
+                                                color: primarySwatch[400],
+                                                fontSize: 12),
+                                          ),
+                                        ],
                                       ),
-                                      Text(
-                                        snapshot.data!.reqMessage.toString(),
-                                        style: TextStyle(
-                                            color: primarySwatch[400],
-                                            fontSize: 12),
-                                      )
+                                      snapshot.data!.status == 0
+                                          ? Container(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  10, 2, 10, 2),
+                                              decoration: ShapeDecoration(
+                                                color: colorList[1],
+                                                shape: StadiumBorder(),
+                                              ),
+                                              child: Text(
+                                                "Pending",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white),
+                                              ),
+                                            )
+                                          : Container(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  10, 2, 10, 2),
+                                              decoration: ShapeDecoration(
+                                                color: colorList[2],
+                                                shape: StadiumBorder(),
+                                              ),
+                                              child: Text(
+                                                "Approved",
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white),
+                                              ),
+                                            )
                                     ],
                                   ),
-                                )
+                                ),
                               ],
                             ),
                           ),
