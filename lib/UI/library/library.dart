@@ -67,48 +67,51 @@ class _LibraryState extends State<Library> {
         // ),
         body: isLoading
             ? LoadingWidget()
-            : Padding(
-                padding: EdgeInsets.all(8),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: typeList
-                      .map((e) => Padding(
-                            padding: const EdgeInsets.all(2.0),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  _libraryNotifier.setFilter(e);
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(8),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: typeList
+                        .map((e) => Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _libraryNotifier.setFilter(e);
 
-                                  Navigator.pushNamed(
-                                    context,
-                                    Routes.libraryFilter,
-                                  );
-                                });
-                              },
-                              child: Card(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                shadowColor: primarySwatch.shade400,
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
-                                  width: size.width,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(
-                                          color: primaryColor, width: 0.3)),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      vertical: 15,
+                                    Navigator.pushNamed(
+                                      context,
+                                      Routes.libraryFilter,
+                                    );
+                                  });
+                                },
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                  ),
+                                  shadowColor: primarySwatch.shade400,
+                                  child: Container(
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 8),
+                                    width: size.width,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        border: Border.all(
+                                            color: primaryColor, width: 0.3)),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 15,
+                                      ),
+                                      child: Text(e.toString()),
                                     ),
-                                    child: Text(e.toString()),
                                   ),
                                 ),
                               ),
-                            ),
-                          ))
-                      .toList(),
+                            ))
+                        .toList(),
+                  ),
                 ),
               ));
   }

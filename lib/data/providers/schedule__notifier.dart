@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:southwind/Models/schedule/schedule_model.dart';
 import 'package:southwind/Models/user_data.dart';
@@ -74,6 +76,7 @@ class ScheduleProvider extends BaseNotifier {
         loc = scheduleModel.profileTimeOff![i];
       }
     }
+
     return loc;
   }
 
@@ -81,14 +84,20 @@ class ScheduleProvider extends BaseNotifier {
       {required DateTime time,
       required String reason,
       required BuildContext context}) async {
-    String date =
-        time.year.toString() + time.month.toString() + time.day.toString();
+    String date = time.year.toString() +
+        "-" +
+        time.month.toString() +
+        "-" +
+        time.day.toString();
     final res = await dioClient
         .postWithFormData(apiEnd: api_set_time_off_request, data: {
       'team_id': userData!.teamId,
       'req_message': reason,
       'off_date': date,
     });
+
     showToast(res.data['message']);
+    log('dates $date');
+    //  log('time $time');
   }
 }
