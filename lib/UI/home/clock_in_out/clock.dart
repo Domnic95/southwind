@@ -102,128 +102,130 @@ class _FlutterStopWatchState extends State<FlutterStopWatch> {
   @override
   Widget build(BuildContext context) {
     final timerProvider = useProvider(timerNotifierProvider);
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Container(
-          // color: Colors.red,
-          height: 100,
-          child: Center(
-            child: Text(
-              "CLOCK IN / OUT",
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Container(
+            // color: Colors.red,
+            height: 100,
+            child: Center(
+              child: Text(
+                "CLOCK IN / OUT",
+                style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
             ),
           ),
-        ),
-        Container(
-          height: 300,
-          child: Card(
-            elevation: 10,
-            child: Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      "$hoursStr:$minutesStr:$secondsStr",
-                      style: TextStyle(
-                        fontSize: 60.0,
+          Container(
+            height: 300,
+            child: Card(
+              elevation: 10,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        "$hoursStr:$minutesStr:$secondsStr",
+                        style: TextStyle(
+                          fontSize: 60.0,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                CommonButton(
-                  lable: isClockOn ? "Clock Out" : "Clock In",
-                  ontap: (){
+                  CommonButton(
+                    lable: isClockOn ? "Clock Out" : "Clock In",
+                    ontap: () {
                       showToast("This functionality is temporarily disabled");
-                  },
-                  // ontap: isClockOn
-                  //     ? () async {
-                  //         await timerProvider.punchOut();
-                  //         timerSubscription.pause();
-                  //         timerStream;
-                  //         isClockOn = false;
-                  //         setState(() {});
-                  //         showDialog(
-                  //             context: context,
-                  //             builder: (context) {
-                  //               return CustomPopUp(
-                  //                 title: "Clock out!",
-                  //                 subTitle:
-                  //                     "You have been successfully clocked out.Have a great day.",
-                  //               );
-                  //             });
-                  //       }
-                  //     : () async {
-                  //         await timerProvider.punchIn();
-                  //         timerStream = stopWatchStream();
-                  //         clockCounter();
+                    },
+                    // ontap: isClockOn
+                    //     ? () async {
+                    //         await timerProvider.punchOut();
+                    //         timerSubscription.pause();
+                    //         timerStream;
+                    //         isClockOn = false;
+                    //         setState(() {});
+                    //         showDialog(
+                    //             context: context,
+                    //             builder: (context) {
+                    //               return CustomPopUp(
+                    //                 title: "Clock out!",
+                    //                 subTitle:
+                    //                     "You have been successfully clocked out.Have a great day.",
+                    //               );
+                    //             });
+                    //       }
+                    //     : () async {
+                    //         await timerProvider.punchIn();
+                    //         timerStream = stopWatchStream();
+                    //         clockCounter();
 
-                  //         showToast("You have succesfully clocked in.");
-                  //       },
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-              ],
+                    //         showToast("You have succesfully clocked in.");
+                    //       },
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        SizedBox(height: 30.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // RaisedButton(
-            //   padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-            //   onPressed: () {
-            // timerStream = stopWatchStream();
-            // timerSubscription = timerStream.listen((int newTick) {
-            //   setState(() {
-            //     hoursStr = ((newTick / (60 * 60)) % 60)
-            //         .floor()
-            //         .toString()
-            //         .padLeft(2, '0');
-            //     minutesStr = ((newTick / 60) % 60)
-            //         .floor()
-            //         .toString()
-            //         .padLeft(2, '0');
-            //     secondsStr =
-            //         (newTick % 60).floor().toString().padLeft(2, '0');
-            //   });
-            // });
-            //   },
-            //   color: Colors.green,
-            //   child: Text(
-            //     'START',
-            //     style: TextStyle(
-            //       fontSize: 20.0,
-            //     ),
-            //   ),
-            // ),
-            SizedBox(width: 40.0),
-            // RaisedButton(
-            //   padding:
-            //       EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
-            //   onPressed: () {
-            // timerSubscription.pause();
-            // timerStream;
-            //     /*setState(() {
-            //       hoursStr = '00';
-            //       minutesStr = '00';
-            //       secondsStr = '00';
-            //     });*/
-            //   },
-            //   color: Colors.red,
-            //   child: Text(
-            //     'STOP',
-            //     style: TextStyle(
-            //       color: Colors.white,
-            //       fontSize: 20.0,
-            //     ),
-            //   ),
-            // ),
-          ],
-        ),
-      ],
+          SizedBox(height: 30.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // RaisedButton(
+              //   padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+              //   onPressed: () {
+              // timerStream = stopWatchStream();
+              // timerSubscription = timerStream.listen((int newTick) {
+              //   setState(() {
+              //     hoursStr = ((newTick / (60 * 60)) % 60)
+              //         .floor()
+              //         .toString()
+              //         .padLeft(2, '0');
+              //     minutesStr = ((newTick / 60) % 60)
+              //         .floor()
+              //         .toString()
+              //         .padLeft(2, '0');
+              //     secondsStr =
+              //         (newTick % 60).floor().toString().padLeft(2, '0');
+              //   });
+              // });
+              //   },
+              //   color: Colors.green,
+              //   child: Text(
+              //     'START',
+              //     style: TextStyle(
+              //       fontSize: 20.0,
+              //     ),
+              //   ),
+              // ),
+              SizedBox(width: 40.0),
+              // RaisedButton(
+              //   padding:
+              //       EdgeInsets.symmetric(horizontal: 20.0, vertical: 8.0),
+              //   onPressed: () {
+              // timerSubscription.pause();
+              // timerStream;
+              //     /*setState(() {
+              //       hoursStr = '00';
+              //       minutesStr = '00';
+              //       secondsStr = '00';
+              //     });*/
+              //   },
+              //   color: Colors.red,
+              //   child: Text(
+              //     'STOP',
+              //     style: TextStyle(
+              //       color: Colors.white,
+              //       fontSize: 20.0,
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

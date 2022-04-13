@@ -80,7 +80,7 @@ class _CommentTabState extends State<CommentTab> {
                           itemBuilder: (context, index) {
                             return CommentWidget(
                               commentModal: commentNotifier.comments[index],
-                            ); 
+                            );
                           }),
                 ),
                 Container(
@@ -327,7 +327,7 @@ class CommentWidget extends StatelessWidget {
                               children: [
                                 Container(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.6,
+                                      MediaQuery.of(context).size.width * 0.5,
                                   child: Text(
                                     "${commentModal.profile.profileFirstName} - ${commentModal.profile.teamName}",
                                     // "${commentModal.profile.profileFirstName}",
