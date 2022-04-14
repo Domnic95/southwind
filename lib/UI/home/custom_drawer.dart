@@ -1,3 +1,7 @@
+// ignore_for_file: unused_import
+
+import 'dart:developer';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:southwind/UI/home/home_screen.dart';
@@ -28,7 +32,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
   Widget screenView = NewsScreen();
   DrawerIndex drawerIndex = DrawerIndex.Home;
   int currentBottomBarIndex = 0;
-  int selectedIndex = 0;
+ 
+  // int selectedIndex = 0;
   GlobalKey<SliderMenuContainerState> _key =
       new GlobalKey<SliderMenuContainerState>();
   var type;
@@ -47,23 +52,28 @@ class _CustomDrawerState extends State<CustomDrawer> {
     print("fcmTokenss = ${fcm}");
     RemoteMessage? message =
         await FirebaseMessaging.instance.getInitialMessage();
-    print("messgae " + message!.data.toString());
-
-    if (message.data['area'] == 'survey') {
+    //currentBottomBarIndex = 1;
+    if (message!.data['area'] == 'survey') {
       changeIndex(DrawerIndex.Surveys);
+      //  currentBottomBarIndex = 1;
     } else if (message.data['area'] == 'communication') {
       changeIndex(DrawerIndex.Home);
-      selectedIndex = 0;
     } else if (message.data['area'] == 'schedule') {
+      log('areaa' + message.data.toString());
       changeIndex(DrawerIndex.Home);
+      
       selectedIndex = 1;
     } else {
       //  widget.onindexChange(2);
+
     }
+    currentBottomBarIndex = 0;
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    print('currentBottomBarIndex = ${currentBottomBarIndex}');
     return Scaffold(
       floatingActionButton: drawerIndex == DrawerIndex.Jobs
           ? FloatingActionButton(
@@ -120,6 +130,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
     switch (drawerIndex) {
       case DrawerIndex.Home:
         return HomeScreen(
+          parentIndex: currentBottomBarIndex,
           onindexChange: (i) {
             currentBottomBarIndex = i;
             setState(() {});

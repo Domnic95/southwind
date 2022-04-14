@@ -6,6 +6,8 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:southwind/UI/auth_wrapper.dart';
 import 'package:southwind/UI/feedback_screen/feedbackScreen.dart';
+import 'package:southwind/UI/home/home_screen.dart';
+import 'package:southwind/component/drawe_controller.dart';
 
 import 'package:southwind/data/providers/providers.dart';
 
@@ -18,6 +20,9 @@ class SplashScrren extends StatefulHookWidget {
 
 class _SplashScrrenState extends State<SplashScrren> {
   bool nextScreen = false;
+  DrawerIndex drawerIndex = DrawerIndex.Home;
+  int currentBottomBarIndex = 0;
+  int selectedIndex = 0;
   @override
   void initState() {
     super.initState();
@@ -46,11 +51,45 @@ class _SplashScrrenState extends State<SplashScrren> {
 
     // FirebaseMessaging.onMessageOpenedApp.listen((event) {
     //   print("App opened" + event.data.toString());
-    //   Navigator.push(context, MaterialPageRoute(builder: (context) {
-    //     return FeedBackScreen(
-    //       notificationData: event.data,
+    //   if (event.data['area'] == 'survey') {
+    //     // changeIndex(DrawerIndex.Surveys);
+    //   Navigator.push(
+    //       context,
+    //       MaterialPageRoute(builder: (context) {
+    //         return HomeScreen(onindexChange:(i){
+    //           currentBottomBarIndex = 0;
+    //         setState(() {});
+    //         }, onDrawerIndex: (j){changeIndex(j);
+    //         setState(() {});});
+    //       }),
     //     );
-    //   }));
+    // } else if (event.data['area'] == 'communication') {
+    //    Navigator.push(
+    //       context,
+    //       MaterialPageRoute(builder: (context) {
+    //         return HomeScreen(onindexChange:(i){
+    //           currentBottomBarIndex = 0;
+    //         setState(() {});
+    //         }, onDrawerIndex: (j){changeIndex(j);
+    //         setState(() {});});
+    //       }),
+    //     );
+
+    // } else if (event.data['area'] == 'schedule') {
+    //   Navigator.push(
+    //       context,
+    //       MaterialPageRoute(builder: (context) {
+    //         return HomeScreen(onindexChange:(i){
+    //           currentBottomBarIndex = 2;
+    //         setState(() {});
+    //         }, onDrawerIndex: (j){changeIndex(j);
+    //         setState(() {});});
+    //       }),
+    //     );
+    // } else {
+    //   //  widget.onindexChange(2);
+    // }
+
     // });
     Future.delayed(
         Duration(
@@ -60,6 +99,13 @@ class _SplashScrrenState extends State<SplashScrren> {
         nextScreen = true;
       });
     });
+  }
+
+  void changeIndex(DrawerIndex drawerIndexdata) {
+    if (drawerIndex != drawerIndexdata) {
+      drawerIndex = drawerIndexdata;
+      setState(() {});
+    }
   }
 
   @override

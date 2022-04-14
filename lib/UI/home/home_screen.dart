@@ -17,19 +17,24 @@ import 'package:southwind/component/navigationtheme.dart';
 class HomeScreen extends StatefulWidget {
   final Function(int) onindexChange;
   final Function(DrawerIndex) onDrawerIndex;
-  const HomeScreen(
-      {required this.onindexChange, required this.onDrawerIndex, Key? key})
+  int? parentIndex;
+  HomeScreen(
+      {required this.onindexChange,
+      required this.onDrawerIndex,
+      this.parentIndex = 0,
+      Key? key})
       : super(key: key);
 
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
-
+late int selectedIndex;
 class _HomeScreenState extends State<HomeScreen> {
-  int selectedIndex = 0;
+  
   @override
   void initState() {
     super.initState();
+    selectedIndex = widget.parentIndex!;
     notification();
   }
 
@@ -37,26 +42,33 @@ class _HomeScreenState extends State<HomeScreen> {
     String? token = await FirebaseMessaging.instance.getToken();
 
     // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-    //   RemoteNotification? notification = message.notification;
+    //   RemoteNotification? notification = message.notificati
     //   AndroidNotification? android = message.notification?.android;
     //   log('A new onMessageOpenedApp = ${message.data}');
     // });
 
+    
+
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      log('areaa' + message.data.toString());
       if (message.data['area'] == 'survey') {
+        log('survey' + message.data.toString());
         widget.onDrawerIndex(DrawerIndex.Surveys);
       } else if (message.data['area'] == 'communication') {
         widget.onDrawerIndex(DrawerIndex.Home);
         widget.onindexChange(0);
         selectedIndex = 0;
-      }else if (message.data['area'] == 'schedule') {
-      widget.onDrawerIndex(DrawerIndex.Home);
+      } else if (message.data['area'] == 'schedule') {
+        widget.onDrawerIndex(DrawerIndex.Home);
         widget.onindexChange(1);
         selectedIndex = 1;
-    } else {
+      } else {
         //  widget.onindexChange(2);
       }
     });
+
+
+
     // FirebaseMessaging.onBackgroundMessage((message) async {
     //   log('A new onMessageOpenedApp = ${message.data}');
     // });
