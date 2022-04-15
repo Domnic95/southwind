@@ -32,7 +32,7 @@ class _CustomDrawerState extends State<CustomDrawer> {
   Widget screenView = NewsScreen();
   DrawerIndex drawerIndex = DrawerIndex.Home;
   int currentBottomBarIndex = 0;
- 
+
   // int selectedIndex = 0;
   GlobalKey<SliderMenuContainerState> _key =
       new GlobalKey<SliderMenuContainerState>();
@@ -59,15 +59,17 @@ class _CustomDrawerState extends State<CustomDrawer> {
     } else if (message.data['area'] == 'communication') {
       changeIndex(DrawerIndex.Home);
     } else if (message.data['area'] == 'schedule') {
-      log('areaa' + message.data.toString());
+      log('1111' + message.contentAvailable.toString());
+      log('1111' + message.data.toString());
+      log('1111' + message.notification.toString());
       changeIndex(DrawerIndex.Home);
-      
+
       selectedIndex = 1;
     } else {
       //  widget.onindexChange(2);
 
     }
-    currentBottomBarIndex = 0;
+    selectedIndex = 0;
     setState(() {});
   }
 

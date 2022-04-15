@@ -211,6 +211,7 @@ class _FeedPostState extends State<FeedPost> {
                         Text(
                           "${widget.post.title}",
                           overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
                           style: Theme.of(context)
                               .textTheme
                               .bodyText1!
@@ -240,7 +241,6 @@ class _FeedPostState extends State<FeedPost> {
                       Pagecontroller: controller,
                       onIndexChanged: (a) {
                         currentIndex = a;
-
                         setState(() {});
                       },
                     )),
@@ -286,7 +286,7 @@ class _FeedPostState extends State<FeedPost> {
                         },
                         child: Row(
                           children: [
-                            IconButton(                                                 
+                            IconButton(
                               icon: const Icon(FontAwesomeIcons.comment),
                               onPressed: () {
                                 Navigator.of(context).push(
