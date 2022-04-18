@@ -25,33 +25,6 @@ import Firebase // Add this import
     application.registerForRemoteNotifications()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-  override func application(
-      _ application: UIApplication,
-      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
-    ) {
-      Messaging.messaging().apnsToken = deviceToken
-    }
-
-}
-
-
-
-extension AppDelegate: MessagingDelegate {
-  func messaging(
-    _ messaging: Messaging,
-    didReceiveRegistrationToken fcmToken: String?
-  ) {
-    let tokenDict = ["token": fcmToken ?? ""]
-      print("token : -->",fcmToken)
-    NotificationCenter.default.post(
-      name: Notification.Name("FCMToken"),
-      object: nil,
-      userInfo: tokenDict)
-  }
-    
-    override func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        print("Notification reciverd")
-    }
 }
 
 //import UIKit

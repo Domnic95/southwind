@@ -35,7 +35,6 @@
 	<string>SouthWind requires photolibrary access to update user profile</string>
 	<key>UIBackgroundModes</key>
 	<array>
-	    <string>fetch</string>
 		<string>remote-notification</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
