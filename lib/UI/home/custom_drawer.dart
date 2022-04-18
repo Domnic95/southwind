@@ -1,5 +1,6 @@
 // ignore_for_file: unused_import
 
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -53,7 +54,9 @@ class _CustomDrawerState extends State<CustomDrawer> {
     RemoteMessage? message =
         await FirebaseMessaging.instance.getInitialMessage();
     //currentBottomBarIndex = 1;
-    if (message!.data['area'] == 'survey') {
+    log('jsonwww' + jsonEncode(message!.data).toString());
+
+    if (message.data['area'] == 'survey') {
       changeIndex(DrawerIndex.Surveys);
       //  currentBottomBarIndex = 1;
     } else if (message.data['area'] == 'communication') {
@@ -69,7 +72,8 @@ class _CustomDrawerState extends State<CustomDrawer> {
       //  widget.onindexChange(2);
 
     }
-    selectedIndex = 0;
+    // selectedIndex = 0;
+    currentBottomBarIndex = 0;
     setState(() {});
   }
 
